@@ -1,6 +1,6 @@
 # US-18 · Gestión Académica Base
 
-- **Sprint:** Sprint 1 · **Prioridad:** ALTA · **Puntos:** valor 13, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 1 · **Prioridad:** ALTA · **Puntos:** valor 13, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 

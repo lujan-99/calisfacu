@@ -1,6 +1,6 @@
 # US-01 · Registro Central de Notas
 
-- **Sprint:** Sprint 1 · **Prioridad:** ALTA · **Puntos:** valor 13, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 1 · **Prioridad:** ALTA · **Puntos:** valor 13, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 

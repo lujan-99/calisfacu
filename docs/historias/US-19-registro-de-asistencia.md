@@ -1,6 +1,6 @@
 # US-19 · Registro de Asistencia
 
-- **Sprint:** Sprint 2 · **Prioridad:** ALTA · **Puntos:** valor 8, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 2 · **Prioridad:** ALTA · **Puntos:** valor 8, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 

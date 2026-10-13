@@ -1,6 +1,6 @@
 # US-04 · Corrección Auditable de Notas
 
-- **Sprint:** Sprint 2 · **Prioridad:** ALTA · **Puntos:** valor 8, esfuerzo 3 · **Estado:** Planificada
+- **Sprint:** Sprint 2 · **Prioridad:** ALTA · **Puntos:** valor 8, esfuerzo 3 · **Estado:** En proceso
 
 ## Historia
 

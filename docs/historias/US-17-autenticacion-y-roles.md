@@ -1,6 +1,6 @@
 # US-17 · Autenticación y Roles
 
-- **Sprint:** Sprint 1 · **Prioridad:** ALTA · **Puntos:** valor 13, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 1 · **Prioridad:** ALTA · **Puntos:** valor 13, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 

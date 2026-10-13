@@ -35,4 +35,4 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). Base de todas
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-17-autenticacion-y-roles`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

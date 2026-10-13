@@ -27,4 +27,4 @@ Depende de US-01 y US-18. (Valores estimados: validar con el dueño del producto
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-10-control-de-entrega-de-notas`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

@@ -8,7 +8,7 @@ Como profesor, quiero recibir una alerta automática cuando el promedio de un es
 
 ## Notas y dependencias
 
-Depende de US-02 y US-06. Requiere definir el canal de notificación (propuesta: correo + aviso en el sistema).
+Depende de US-02 y US-06. Canal de notificación: aviso en el sistema y correo (decisión D7 de `docs/backlog/reglas-ministerio.md`).
 
 ## Criterios de aceptación
 
@@ -28,4 +28,4 @@ Depende de US-02 y US-06. Requiere definir el canal de notificación (propuesta:
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-08-alerta-de-promedio-bajo`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

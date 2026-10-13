@@ -30,4 +30,4 @@ Depende de US-01. Las notas importadas pasan por la misma validación y auditor�
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-05-importacion-desde-excel`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

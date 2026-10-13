@@ -14,7 +14,7 @@ Depende de US-17 y US-18. Módulo crítico del SQAP (TDD obligatorio).
 
 1. Dado un profesor en una materia asignada y un trimestre abierto, cuando registra la nota de una actividad dentro de una dimensión (Ser, Saber, Hacer o Autoevaluación) en la escala de 1 a 100, entonces la nota se guarda y aparece en la planilla.  
    _Prueba: Cypress · SQAP: M02_
-2. ❓ Dado un valor fuera de 1 a 100 [confirmar con el cliente si se admite 0 para actividades no presentadas], vacío o no numérico, cuando intenta guardar, entonces aparece un mensaje junto al campo y no se guarda nada.  
+2. Dado un valor fuera de 1 a 100 (no se admite 0; una actividad no presentada se registra con 1, decisión D1), vacío o no numérico, cuando intenta guardar, entonces aparece un mensaje junto al campo y no se guarda nada.  
    _Prueba: Jest (unitaria) · SQAP: M01_
 3. Dado una planilla con las notas de todos los estudiantes de la materia (hasta 60), cuando guarda, entonces se guardan todas o ninguna (una sola transacción).  
    _Prueba: Jest + Supertest (e2e) · SQAP: RNF-02_
@@ -34,4 +34,4 @@ Depende de US-17 y US-18. Módulo crítico del SQAP (TDD obligatorio).
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-01-registro-central-de-notas`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

@@ -1,7 +1,7 @@
 # Pila de producto de CalisFacu v1.0
 
 > Versión en Markdown de `backlog_v2_4sprints.xlsx` (entregable del curso). Si una cambia, la otra se
-> actualiza en el mismo pull request (SQAP, Sección 10.7). Se regenera con `docs/herramientas/gen_backlog_md.py`.
+> actualiza en el mismo commit (SQAP, Sección 10.7). Se regenera con `docs/herramientas/gen_backlog_md.py`.
 
 - 4 sprints de **1 semana** · equipo de 2 (Lujan y Galvan) · velocidad supuesta: 20 puntos por semana.
 - US-17 a US-20 son historias nuevas propuestas en la revisión del backlog.
@@ -53,9 +53,9 @@
 
 - Definition of Done: una historia está Hecha solo si… _(se comprueba en: Cómo se comprueba)_
 - Todos sus criterios de aceptación tienen una prueba automatizada que pasa. _(se comprueba en: Test Result del build de Jenkins)_
-- El pipeline está sano: lint, pruebas, cobertura, Quality Gate y auditoría de dependencias en verde. _(se comprueba en: Checks obligatorios del pull request)_
+- El pipeline está sano: lint, pruebas, cobertura, Quality Gate y auditoría de dependencias en verde. _(se comprueba en: Build de Jenkins del commit en develop (ADR-0008))_
 - Cobertura ≥ 80 % en código nuevo y ≥ 90 % en el módulo de cálculo, exigida por la herramienta. _(se comprueba en: coverageThreshold de Jest y Quality Gate)_
-- El pull request lo aprobó el otro integrante; nadie aprueba su propio código. _(se comprueba en: Historial del PR en GitHub)_
+- El otro integrante revisó sus commits en develop; nadie aprueba su propio código. _(se comprueba en: Comentarios de revisión en los commits de GitHub)_
 - Está desplegada en staging y el smoke test pasa con el commit correcto. _(se comprueba en: Job de smoke test)_
 - El dueño del producto la revisó en la demo del sprint. _(se comprueba en: Acta de la revisión del sprint)_
 

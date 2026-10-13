@@ -31,4 +31,4 @@ Depende de US-01. Se propone como tercer módulo crítico del SQAP (cubre RNF-04
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-04-correccion-auditable-de-notas`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

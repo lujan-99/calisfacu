@@ -21,7 +21,7 @@ export interface ResultadoTrimestral {
   /** Nota trimestral oficial, redondeada al entero. null si falta alguna dimensión. */
   nota: number | null;
   aprobado: boolean | null;
-  /** Dimensiones sin ninguna actividad con nota (❓ regla provisional: la nota queda pendiente). */
+  /** Dimensiones sin ninguna actividad con nota (decisión D4: la nota queda pendiente). */
   pendientes: string[];
 }
 
@@ -63,7 +63,7 @@ export class CalculoService {
     return promedio.times(puntajeMaximo).dividedBy(100);
   }
 
-  /** Redondeo al entero más cercano, 0,5 hacia arriba (❓ confirmar con el cliente). */
+  /** Redondeo al entero más cercano, 0,5 hacia arriba (decisión D2). */
   redondear(valor: Decimal): number {
     return valor.toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toNumber();
   }
@@ -107,7 +107,7 @@ export class CalculoService {
     };
   }
 
-  /** Nota anual = promedio de las notas trimestrales, redondeado (❓ confirmar con el reglamento vigente). */
+  /** Nota anual = promedio de las notas trimestrales, redondeado (decisión D3). */
   notaAnual(trimestrales: readonly number[]): number {
     if (trimestrales.length === 0) throw new BadRequestException('No hay notas trimestrales');
     return this.redondear(this.promedio(trimestrales) as Decimal);

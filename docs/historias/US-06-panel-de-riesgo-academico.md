@@ -14,7 +14,7 @@ Depende de US-02 y US-19.
 
 1. Dado un curso del profesor, cuando abre el panel, entonces ve a cada estudiante con su promedio actual y su porcentaje de asistencia.  
    _Prueba: Cypress_
-2. ❓ Dado un estudiante con promedio menor que 51 o asistencia menor que [umbral a definir con el cliente, p. ej. 80 %], cuando se muestra el panel, entonces aparece marcado como "en riesgo".  
+2. Dado un estudiante con promedio menor que 51 o asistencia menor que 80 % (umbral configurable por gestión, decisión D6), cuando se muestra el panel, entonces aparece marcado como "en riesgo".  
    _Prueba: Jest (unitaria) · SQAP: RNF-01_
 
 ## Tareas
@@ -28,4 +28,4 @@ Depende de US-02 y US-19.
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-06-panel-de-riesgo-academico`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

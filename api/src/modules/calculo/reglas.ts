@@ -1,6 +1,6 @@
 // Reglas fijas de la escala oficial (RNF-01). Los puntajes de las dimensiones NO están aquí:
 // se configuran por gestión en la tabla dimensiones_evaluacion (US-18), porque el Ministerio los cambia.
-export const ESCALA_MIN = 1; // ❓ confirmar con el cliente si se admite 0 (docs/backlog/reglas-ministerio.md)
+export const ESCALA_MIN = 1; // sin 0: decisión D1 (docs/backlog/reglas-ministerio.md)
 export const ESCALA_MAX = 100;
 export const NOTA_MINIMA_APROBACION = 51;
 export const SUMA_DIMENSIONES = 100;

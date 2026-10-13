@@ -18,11 +18,11 @@ Depende de US-01 y US-18. Módulo crítico del SQAP (TDD, cobertura ≥ 90 %). S
    _Prueba: Jest (unitaria, TDD) · SQAP: M01, RNF-01_
 3. Dado una nota trimestral de 50,5 antes de redondear, cuando se redondea, entonces es 51 y el estudiante figura como aprobado; con 50,4 es 50 y figura como reprobado (nota mínima de aprobación: 51).  
    _Prueba: Jest (unitaria, TDD) · SQAP: RNF-01, R02_
-4. ❓ Dado las notas de los tres trimestres, cuando se calcula la nota anual de la materia, entonces es el promedio de los tres trimestres redondeado al entero [confirmar con el texto del reglamento de evaluación vigente].  
+4. Dado las notas de los tres trimestres, cuando se calcula la nota anual de la materia, entonces es el promedio de los tres trimestres redondeado al entero, 0,5 hacia arriba (decisiones D2 y D3).  
    _Prueba: Jest (unitaria, TDD) · SQAP: RNF-01, R02_
 5. Dado la tabla de casos de prueba firmada por el cliente (semilla en la hoja Reglas MinEdu), cuando corre la suite, entonces el 100 % de los casos da el resultado esperado.  
    _Prueba: Jest (unitaria, TDD) · SQAP: M01, R02_
-6. ❓ Dado una dimensión que todavía no tiene actividades con nota, cuando se calcula la nota parcial del trimestre, entonces [definir con el cliente: se muestra como "pendiente" o cuenta como 0].  
+6. Dado una dimensión que todavía no tiene actividades con nota, cuando se calcula la nota parcial del trimestre, entonces la nota trimestral se muestra como "pendiente" e indica qué dimensiones faltan (decisión D4).  
    _Prueba: Jest (unitaria, TDD) · SQAP: R02_
 
 ## Tareas
@@ -37,4 +37,4 @@ Depende de US-01 y US-18. Módulo crítico del SQAP (TDD, cobertura ≥ 90 %). S
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-02-calculo-automatico-de-promedios`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

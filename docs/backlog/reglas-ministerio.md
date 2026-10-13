@@ -3,24 +3,39 @@
 > Reglas que implementa el módulo `api/src/modules/calculo` (US-02, RNF-01). Los puntajes de las dimensiones
 > se **configuran por gestión** (tabla `dimensiones_evaluacion`, US-18): no se programan fijos.
 
-| Regla                              | Valor 2026                   | Fuente                                                                                      | Estado                                  |
-| ---------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------- |
-| Periodos de evaluación             | 3 trimestres                 | Reglamento de evaluación RM 0190/2024 (evaluación al cierre del 1.er, 2.º y 3.er trimestre) | Confirmado                              |
-| Escala de calificación             | 1 a 100                      | Ministerio de Educación, vigente desde 2013                                                 | Confirmar si se admite 0                |
-| Nota mínima de aprobación          | 51                           | Ministerio de Educación, vigente desde 2013                                                 | Confirmado                              |
-| Dimensión Ser (puntaje máximo)     | 10                           | RM 001/2026 (5 de enero de 2026). Absorbe a la antigua dimensión Decidir.                   | Confirmado                              |
-| Dimensión Saber (puntaje máximo)   | 45                           | RM 001/2026                                                                                 | Confirmado                              |
-| Dimensión Hacer (puntaje máximo)   | 40                           | RM 001/2026                                                                                 | Confirmado                              |
-| Autoevaluación (puntaje máximo)    | 5                            | RM 001/2026                                                                                 | Confirmado                              |
-| Nota anual de la materia           | Promedio de los 3 trimestres | Práctica habitual; no se encontró el texto oficial                                          | ❓ Confirmar con el reglamento completo |
-| Suma de dimensiones (debe ser 100) | 100                          | OK                                                                                          | ❓ Confirmar con el cliente             |
+| Regla                              | Valor 2026                   | Fuente                                                                                      | Estado        |
+| ---------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------- | ------------- |
+| Periodos de evaluación             | 3 trimestres                 | Reglamento de evaluación RM 0190/2024 (evaluación al cierre del 1.er, 2.º y 3.er trimestre) | Confirmado    |
+| Escala de calificación             | 1 a 100 (sin 0)              | Ministerio de Educación, vigente desde 2013                                                 | Decidido (D1) |
+| Nota mínima de aprobación          | 51                           | Ministerio de Educación, vigente desde 2013                                                 | Confirmado    |
+| Dimensión Ser (puntaje máximo)     | 10                           | RM 001/2026 (5 de enero de 2026). Absorbe a la antigua dimensión Decidir.                   | Confirmado    |
+| Dimensión Saber (puntaje máximo)   | 45                           | RM 001/2026                                                                                 | Confirmado    |
+| Dimensión Hacer (puntaje máximo)   | 40                           | RM 001/2026                                                                                 | Confirmado    |
+| Autoevaluación (puntaje máximo)    | 5                            | RM 001/2026                                                                                 | Confirmado    |
+| Nota anual de la materia           | Promedio de los 3 trimestres | Práctica habitual; no se encontró el texto oficial                                          | Decidido (D3) |
+| Suma de dimensiones (debe ser 100) | 100                          | OK                                                                                          | Confirmado    |
 
 ## Fórmula
 
 1. Puntos de una dimensión = promedio de las notas de sus actividades × (puntaje máximo de la dimensión / 100).
 2. Nota trimestral = suma de los puntos de las cuatro dimensiones, redondeada al entero (0,5 hacia arriba).
 3. Aprueba si la nota es ≥ 51.
-4. Si una dimensión todavía no tiene actividades con nota, la nota trimestral queda **pendiente** (regla provisional ❓).
+4. Si una dimensión todavía no tiene actividades con nota, la nota trimestral queda **pendiente** (D4).
+
+## Decisiones del equipo (13/10/2026)
+
+Las preguntas abiertas del SRS (Sección 2.3) se resolvieron así. Si el cliente o el reglamento dicen otra cosa, se cambia
+con una solicitud de cambio (SQAP, Sección 16) y se agrega el caso a `casos-calculo.json`.
+
+| N.º | Pregunta                                           | Decisión                                                                                     | Dónde se aplica                                        |
+| --- | -------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| D1  | ¿Se admite 0 en una actividad no presentada?       | No. La escala es de 1 a 100; una actividad no presentada se registra con 1.                  | DTO de la API, `CHECK notas_valor_escala`, web (US-01) |
+| D2  | ¿Cómo se redondea?                                 | Al entero más cercano, 0,5 hacia arriba (`ROUND_HALF_UP`), solo al final de la suma.         | `CalculoService.redondear` (US-02)                     |
+| D3  | ¿La nota anual es el promedio de los 3 trimestres? | Sí, redondeado con la regla D2.                                                              | `CalculoService.notaAnual` (US-02)                     |
+| D4  | Dimensión sin notas: ¿"pendiente" o 0?             | Pendiente: no hay nota trimestral hasta que las cuatro dimensiones tengan al menos una nota. | `CalculoService.notaTrimestral` (US-02)                |
+| D5  | ¿Una licencia cuenta como asistencia?              | Sí: porcentaje = (presentes + licencias) / clases dictadas × 100, con un decimal.            | US-19                                                  |
+| D6  | Umbral de asistencia para "en riesgo"              | Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 **o** asistencia < 80 %.     | US-06                                                  |
+| D7  | Canal de notificación                              | Aviso dentro del sistema y correo electrónico.                                               | US-08, US-12                                           |
 
 ## Casos de ejemplo (semilla de la tabla que firma el cliente, riesgo R02)
 

@@ -18,4 +18,4 @@ Depende de US-13. Integración con QR/transferencia: requiere proveedor de pagos
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-14-pago-en-linea`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

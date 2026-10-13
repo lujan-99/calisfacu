@@ -40,4 +40,4 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-01 necesit
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-18-gestion-academica-base`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

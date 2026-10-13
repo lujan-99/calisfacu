@@ -18,4 +18,4 @@ Propuesta: módulo de pagos fuera de la versión 1.0. No cabe en 4 sprints con 2
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-16-control-de-pagos`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

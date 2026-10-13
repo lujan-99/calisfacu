@@ -18,4 +18,4 @@ Depende de US-13. Módulo de pagos fuera de v1.0 (ver US-16). (Valores estimados
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-15-recordatorio-de-pago`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

@@ -28,4 +28,4 @@ Depende de US-07 y US-20 (mismo sprint: hacer primero US-07 y US-20). (Valores e
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-11-consulta-de-boletin`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

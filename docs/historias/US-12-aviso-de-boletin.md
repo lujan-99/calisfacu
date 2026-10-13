@@ -25,4 +25,4 @@ Depende de US-07, US-11 y US-20. Usa el mismo canal de notificación que US-08. 
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-12-aviso-de-boletin`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

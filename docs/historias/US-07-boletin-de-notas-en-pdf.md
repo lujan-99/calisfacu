@@ -31,4 +31,4 @@ Depende de US-02, US-03 y US-19. Riesgo R05 / defecto CAL-001: generación en co
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-07-boletin-de-notas-en-pdf`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

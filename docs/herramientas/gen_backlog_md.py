@@ -51,7 +51,7 @@ def archivo(h):
 ORDEN = ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4', 'Release 2 (fuera de v1.0)']
 L = ['# Pila de producto de CalisFacu v1.0', '',
      '> Versión en Markdown de `backlog_v2_4sprints.xlsx` (entregable del curso). Si una cambia, la otra se',
-     '> actualiza en el mismo pull request (SQAP, Sección 10.7). Se regenera con `docs/herramientas/gen_backlog_md.py`.', '',
+     '> actualiza en el mismo commit (SQAP, Sección 10.7). Se regenera con `docs/herramientas/gen_backlog_md.py`.', '',
      '- 4 sprints de **1 semana** · equipo de 2 (Lujan y Galvan) · velocidad supuesta: 20 puntos por semana.',
      '- US-17 a US-20 son historias nuevas propuestas en la revisión del backlog.',
      '- El módulo de pagos (US-13 a US-16) queda **fuera de la v1.0** (Release 2).', '', '## Plan de sprints', '']
@@ -68,6 +68,31 @@ L += ['', '## Hallazgos de la revisión del backlog', '',
       tabla(['N.º', 'Hallazgo', 'Dónde', 'Por qué importa', 'Qué se hizo'], HZ)]
 open(f'{DOCS}/backlog/backlog.md', 'w').write('\n'.join(L) + '\n')
 
+# Decisiones del equipo sobre las preguntas abiertas del SRS (Sección 2.3). No están en el Excel del curso.
+DECISIONES = [
+    '## Decisiones del equipo (13/10/2026)', '',
+    'Las preguntas abiertas del SRS (Sección 2.3) se resolvieron así. Si el cliente o el reglamento dicen otra cosa, se cambia',
+    'con una solicitud de cambio (SQAP, Sección 16) y se agrega el caso a `casos-calculo.json`.', '',
+    tabla(['N.º', 'Pregunta', 'Decisión', 'Dónde se aplica'], [
+        ['D1', '¿Se admite 0 en una actividad no presentada?',
+         'No. La escala es de 1 a 100; una actividad no presentada se registra con 1.',
+         'DTO de la API, `CHECK notas_valor_escala`, web (US-01)'],
+        ['D2', '¿Cómo se redondea?',
+         'Al entero más cercano, 0,5 hacia arriba (`ROUND_HALF_UP`), solo al final de la suma.',
+         '`CalculoService.redondear` (US-02)'],
+        ['D3', '¿La nota anual es el promedio de los 3 trimestres?', 'Sí, redondeado con la regla D2.',
+         '`CalculoService.notaAnual` (US-02)'],
+        ['D4', 'Dimensión sin notas: ¿"pendiente" o 0?',
+         'Pendiente: no hay nota trimestral hasta que las cuatro dimensiones tengan al menos una nota.',
+         '`CalculoService.notaTrimestral` (US-02)'],
+        ['D5', '¿Una licencia cuenta como asistencia?',
+         'Sí: porcentaje = (presentes + licencias) / clases dictadas × 100, con un decimal.', 'US-19'],
+        ['D6', 'Umbral de asistencia para "en riesgo"',
+         'Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 **o** asistencia < 80 %.', 'US-06'],
+        ['D7', 'Canal de notificación', 'Aviso dentro del sistema y correo electrónico.', 'US-08, US-12'],
+    ]), '',
+]
+
 R = ['# Reglas de evaluación del Ministerio de Educación', '',
      '> Reglas que implementa el módulo `api/src/modules/calculo` (US-02, RNF-01). Los puntajes de las dimensiones',
      '> se **configuran por gestión** (tabla `dimensiones_evaluacion`, US-18): no se programan fijos.', '',
@@ -75,7 +100,8 @@ R = ['# Reglas de evaluación del Ministerio de Educación', '',
      '1. Puntos de una dimensión = promedio de las notas de sus actividades × (puntaje máximo de la dimensión / 100).',
      '2. Nota trimestral = suma de los puntos de las cuatro dimensiones, redondeada al entero (0,5 hacia arriba).',
      '3. Aprueba si la nota es ≥ 51.',
-     '4. Si una dimensión todavía no tiene actividades con nota, la nota trimestral queda **pendiente** (regla provisional ❓).', '',
+     '4. Si una dimensión todavía no tiene actividades con nota, la nota trimestral queda **pendiente** (D4).', '',
+     *DECISIONES,
      '## Casos de ejemplo (semilla de la tabla que firma el cliente, riesgo R02)', '',
      'Son los mismos casos de `api/test/fixtures/casos-calculo.json`, que verifica la prueba `calculo.casos.spec.ts` (M01).', '',
      tabla(['Caso', 'Ser', 'Saber', 'Hacer', 'Autoev.', 'Pts Ser', 'Pts Saber', 'Pts Hacer', 'Pts Autoev.',
@@ -87,7 +113,6 @@ R = ['# Reglas de evaluación del Ministerio de Educación', '',
 open(f'{DOCS}/backlog/reglas-ministerio.md', 'w').write('\n'.join(R) + '\n')
 
 for h in hist:
-    rama = ('feature/' if not h['sprint'].startswith('Release') else 'feature/') + f"{h['id']}-{slug(h['alias'])}"
     L = [f"# {h['id']} · {h['alias']}", '',
          f"- **Sprint:** {h['sprint']} · **Prioridad:** {h['prioridad']} · **Puntos:** valor {h['valor']}, "
          f"esfuerzo {h['esfuerzo']} · **Estado:** {h['estado']}", '',
@@ -102,7 +127,7 @@ for h in hist:
     L += ['', '## Antes de empezar', '',
           '- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).',
           '- [ ] No quedan ❓ sin respuesta del cliente.',
-          f'- [ ] La rama sale de `develop`: `{rama}`.']
+          '- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).']
     open(f"{DOCS}/historias/{archivo(h)}", 'w').write('\n'.join(L) + '\n')
 
 tr = sorted([t for k, v in T.items() if k in ('Calidad', 'Infra') for t in v], key=lambda t: t['id'])

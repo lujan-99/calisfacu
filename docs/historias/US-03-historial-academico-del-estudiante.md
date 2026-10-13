@@ -28,4 +28,4 @@ Depende de US-01.
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-03-historial-academico-del-estudiante`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

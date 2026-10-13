@@ -31,4 +31,4 @@ Depende de US-01, US-02 y US-10. (Valores estimados: validar con el dueño del p
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-09-centralizacion-de-notas`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

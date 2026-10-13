@@ -28,4 +28,4 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-11 y US-12
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-20-vinculacion-padre-estudiante`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

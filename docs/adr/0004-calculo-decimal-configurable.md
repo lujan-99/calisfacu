@@ -14,7 +14,7 @@ La nota trimestral decide quién aprueba. En punto flotante, `(0.1 + 0.2) / 2` n
 - `CalculoService` es puro (sin base de datos) y usa `decimal.js` con redondeo `ROUND_HALF_UP`.
 - Los puntajes de las dimensiones viven en `dimensiones_evaluacion`, por gestión, y deben sumar 100.
 - La nota trimestral se calcula al consultarla; no se guarda.
-- Regla provisional (❓): si una dimensión no tiene notas, la nota trimestral queda **pendiente**.
+- Si una dimensión no tiene notas, la nota trimestral queda **pendiente** (decisión D4 de `reglas-ministerio.md`).
 
 ## Consecuencias
 

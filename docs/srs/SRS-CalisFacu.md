@@ -59,13 +59,14 @@ Los términos del dominio (dimensión, trimestre, gestión, boletín, centraliza
 
 ## 2.3 Supuestos y preguntas abiertas
 
-Las reglas marcadas con ❓ deben confirmarse con el cliente el día 1 de la semana 1 (SQAP, Anexo F):
+Las preguntas abiertas se resolvieron el 13/10/2026; la decisión de cada una (D1 a D7) está en
+`docs/backlog/reglas-ministerio.md`:
 
-1. ¿La nota anual es el promedio de los tres trimestres?
-2. ¿Se admite 0 en una actividad no presentada? (Hoy la escala es de 1 a 100.)
-3. ¿El redondeo es al entero más cercano, con 0,5 hacia arriba?
-4. ¿Una licencia cuenta como asistencia? ¿Cuál es el umbral de asistencia para marcar "en riesgo"?
-5. Si una dimensión todavía no tiene notas, ¿la nota trimestral queda "pendiente" o la dimensión cuenta como 0?
+1. ¿La nota anual es el promedio de los tres trimestres? **Sí (D3).**
+2. ¿Se admite 0 en una actividad no presentada? **No, la escala es de 1 a 100 (D1).**
+3. ¿El redondeo es al entero más cercano, con 0,5 hacia arriba? **Sí (D2).**
+4. ¿Una licencia cuenta como asistencia? ¿Cuál es el umbral de asistencia para marcar "en riesgo"? **Sí; menos de 80 %, configurable (D5, D6).**
+5. Si una dimensión todavía no tiene notas, ¿la nota trimestral queda "pendiente" o la dimensión cuenta como 0? **Pendiente (D4).**
 
 # 3. Requerimientos funcionales
 

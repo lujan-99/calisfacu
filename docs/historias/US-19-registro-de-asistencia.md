@@ -14,7 +14,7 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-06 y US-07
 
 1. Dado una clase de su materia, cuando el profesor marca a cada estudiante como presente, ausente o con licencia, entonces se guarda la asistencia de esa fecha.  
    _Prueba: Cypress_
-2. ❓ Dado las asistencias registradas, cuando se calcula el porcentaje, entonces es (presentes [+ licencias, confirmar con el cliente]) / clases dictadas × 100, redondeado a un decimal.  
+2. Dado las asistencias registradas, cuando se calcula el porcentaje, entonces es (presentes + licencias) / clases dictadas × 100, redondeado a un decimal (decisión D5).  
    _Prueba: Jest (unitaria)_
 3. Dado una fecha futura, cuando el profesor intenta registrar asistencia, entonces el sistema lo impide.  
    _Prueba: Jest (unitaria)_
@@ -30,4 +30,4 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-06 y US-07
 
 - [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
 - [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] La rama sale de `develop`: `feature/US-19-registro-de-asistencia`.
+- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

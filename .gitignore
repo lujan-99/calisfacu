@@ -4,6 +4,7 @@ build/
 coverage/
 reports/
 *.log
+*.tsbuildinfo
 .env
 .env.*
 !.env.example
@@ -23,6 +24,9 @@ e2e/cypress/downloads/
 # Respaldos (nunca se versionan)
 *.dump
 *.dump.gpg
+
+# Configuración local de Claude Code (no se comparte)
+.claude/settings.local.json
 
 # Editores y SO
 .vscode/*

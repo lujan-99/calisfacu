@@ -12,7 +12,6 @@ export default tseslint.config(
       '**/dist/**',
       '**/coverage/**',
       '**/reports/**',
-      'api/prisma/migrations/**',
       'docs/**',
       'perf/**',
       'jenkins/**',

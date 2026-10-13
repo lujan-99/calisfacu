@@ -1,1 +1,2 @@
-npm run -w api test -- --onlyChanged --passWithNoTests
+# ADR-0008: se sube directo a develop, así que antes del push corren todas las pruebas unitarias (API y web).
+npm run -w api test && npm run -w web test -- --run

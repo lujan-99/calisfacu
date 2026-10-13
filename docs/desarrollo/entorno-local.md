@@ -2,7 +2,7 @@
 
 ## Requisitos
 
-- Node.js 22 (`.nvmrc`), npm 10
+- Node.js 22 o superior (`.nvmrc`), npm 10 u 11
 - Docker Desktop (PostgreSQL 16 y Redis)
 - Git 2.40 o superior
 
@@ -13,7 +13,7 @@ git clone https://github.com/lujan-99/calisfacu.git && cd calisfacu
 git switch develop
 npm ci                                  # instala todo e instala los hooks de Husky
 cp .env.example api/.env                # completar JWT_SECRET
-npm run db:up                           # PostgreSQL y Redis en Docker
+npm run db:up                           # PostgreSQL (puerto 55432) y Redis (6379) en Docker
 npm run -w api db:migrate               # crea las tablas
 npm run -w api seed                     # datos sintéticos
 ```
@@ -49,5 +49,5 @@ Usuarios del seed (contraseña `Calis2026!`, o la de `SEED_PASSWORD`):
 | Todo lo que corre Jenkins, en local                             | `npm run ci:local`                                         |
 | Reiniciar la base (borra todo)                                  | `npm run -w api db:reset`                                  |
 
-Las pruebas e2e usan `DATABASE_URL` (por defecto `postgresql://calis:calis@localhost:5432/calis_test`) y **borran esa
-base** antes de correr. No apunte `DATABASE_URL` a una base con datos que quiera conservar.
+Las pruebas e2e usan `DATABASE_URL` (por defecto `postgresql://calis:calis@localhost:55432/calis_test`) y **borran esa
+base** antes de correr; si no existe, la crean. No apunte `DATABASE_URL` a una base con datos que quiera conservar.

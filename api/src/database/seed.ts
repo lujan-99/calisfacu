@@ -26,6 +26,7 @@ import {
   Usuario,
   VinculoPadre,
 } from './entities';
+import { cargarEnv } from './cargar-env';
 import { opcionesBaseDeDatos } from './typeorm.config';
 
 const MATERIAS = [
@@ -91,6 +92,7 @@ async function crearCurso(
 async function sembrar() {
   faker.seed(2026);
   const perf = process.env.PERF === '1';
+  cargarEnv();
   const ds = await new DataSource(opcionesBaseDeDatos()).initialize();
   if ((await ds.getRepository(Usuario).count()) > 0) {
     console.warn(

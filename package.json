@@ -36,5 +36,13 @@
     "prettier": "^3.9.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.71.0"
+  },
+  "allowScripts": {
+    "argon2@0.44.0": true,
+    "cypress@15.21.1": true,
+    "esbuild@0.28.2": true,
+    "unrs-resolver@1.12.2": true,
+    "@parcel/watcher@2.6.0": true,
+    "@scarf/scarf": false
   }
 }

@@ -100,7 +100,7 @@ pipeline {
       when { branch 'develop' }
       steps {
         sh '''npx cypress run --project e2e --config baseUrl="$STAGING_WEB_URL" --env apiUrl="$STAGING_API_URL" \
-              --reporter junit --reporter-options "mochaFile=e2e/reports/junit-[hash].xml"'''
+              --reporter junit --reporter-options "mochaFile=reports/junit-[hash].xml"'''
       }
       post {
         always {

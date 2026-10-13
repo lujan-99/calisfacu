@@ -6,6 +6,7 @@ interface Sesion {
 }
 
 function crearActividad() {
+  const nombre = `E2E ${Date.now()}`;
   const api = String(Cypress.env('apiUrl') ?? 'http://localhost:3000');
   return cy
     .request<Sesion>('POST', `${api}/api/auth/login`, {
@@ -17,17 +18,19 @@ function crearActividad() {
         method: 'POST',
         url: `${api}/api/notas/actividades`,
         headers: { Authorization: `Bearer ${body.token}` },
-        body: { materiaId: 1, trimestreId: 1, dimensionId: 1, nombre: `E2E ${Date.now()}` },
+        body: { materiaId: 1, trimestreId: 1, dimensionId: 1, nombre },
       }),
     )
-    .then(({ body }) => body.id);
+    .then(({ body }) => ({ id: body.id, nombre }));
 }
 
 describe('Registrar calificación (US-01)', () => {
   beforeEach(() => {
-    crearActividad().then((id) => {
+    crearActividad().then(({ id, nombre }) => {
       cy.ingresar(Cypress.env('profesorEmail') as string);
-      cy.get('label').contains('Actividad').find('input').clear().type(String(id));
+      // {selectall} reemplaza el valor de una vez: con clear() el campo numérico vuelve a 0 y el número se concatena.
+      cy.get('label').contains('Actividad').find('input').type(`{selectall}${id}`);
+      cy.contains('h2', nombre).should('be.visible');
     });
   });
 

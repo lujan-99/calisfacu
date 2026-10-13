@@ -57,6 +57,26 @@ describe('Planilla', () => {
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Sin permiso'));
   });
 
+  it('debe mostrar la planilla de la última actividad aunque una respuesta anterior llegue tarde', async () => {
+    let resolverVieja: (p: api.Planilla) => void = () => undefined;
+    const vieja = new Promise<api.Planilla>((r) => (resolverVieja = r));
+    const nueva: api.Planilla = {
+      ...planilla,
+      actividad: { ...planilla.actividad, id: 2, nombre: 'Examen 2' },
+    };
+    vi.spyOn(api, 'obtenerPlanilla').mockImplementation((id) =>
+      id === 1 ? vieja : Promise.resolve(nueva),
+    );
+    const { rerender } = render(<Planilla token="t" actividadId={1} />);
+    rerender(<Planilla token="t" actividadId={2} />);
+    expect(await screen.findByText(/Examen 2/)).toBeInTheDocument();
+
+    resolverVieja(planilla); // la respuesta de la actividad 1 llega después
+    await new Promise((r) => setTimeout(r, 0));
+    expect(screen.getByText(/Examen 2/)).toBeInTheDocument();
+    expect(screen.queryByText(/Examen 1/)).not.toBeInTheDocument();
+  });
+
   it('debe mostrar el error si no puede cargar la planilla', async () => {
     vi.spyOn(api, 'obtenerPlanilla').mockRejectedValue(new Error('No encontrada'));
     render(<Planilla token="t" actividadId={99} />);

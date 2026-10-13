@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 
 // Escenarios E2E críticos (métrica M02). Se ejecutan contra staging en la etapa E2E del Jenkinsfile:
 //   npx cypress run --project e2e --config baseUrl=$STAGING_WEB_URL
-// Usuarios del seed sintético (api/prisma/seed.ts): contraseña en CYPRESS_SEED_PASSWORD.
+// Usuarios del seed sintético (api/src/database/seed.ts): contraseña en CYPRESS_SEED_PASSWORD.
 export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:5173',

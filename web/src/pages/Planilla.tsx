@@ -15,14 +15,22 @@ export function Planilla({ token, actividadId }: Props) {
   const [errores, setErrores] = useState<Record<number, string>>({});
 
   useEffect(() => {
+    // Si cambia la actividad antes de que llegue la respuesta, la respuesta vieja se descarta.
+    let vigente = true;
     obtenerPlanilla(actividadId, token)
       .then((p) => {
+        if (!vigente) return;
         setPlanilla(p);
         setValores(
           Object.fromEntries(p.filas.map((f) => [f.estudianteId, f.valor?.toString() ?? ''])),
         );
       })
-      .catch((e: Error) => setMensaje(e.message));
+      .catch((e: Error) => {
+        if (vigente) setMensaje(e.message);
+      });
+    return () => {
+      vigente = false;
+    };
   }, [actividadId, token]);
 
   async function guardar() {

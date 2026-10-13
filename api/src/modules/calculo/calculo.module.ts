@@ -4,14 +4,16 @@ import { DimensionEvaluacion, Estudiante, Materia, Nota, Trimestre } from '../..
 import { NotasModule } from '../notas/notas.module';
 import { CalculoController } from './calculo.controller';
 import { CalculoService } from './calculo.service';
+import { DimensionesController } from './dimensiones.controller';
+import { DimensionesService } from './dimensiones.service';
 
 @Module({
   imports: [
     NotasModule,
     TypeOrmModule.forFeature([Materia, Trimestre, DimensionEvaluacion, Estudiante, Nota]),
   ],
-  controllers: [CalculoController],
-  providers: [CalculoService],
+  controllers: [CalculoController, DimensionesController],
+  providers: [CalculoService, DimensionesService],
   exports: [CalculoService],
 })
 export class CalculoModule {}

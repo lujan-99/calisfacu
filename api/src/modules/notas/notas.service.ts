@@ -105,6 +105,12 @@ export class NotasService {
     }
 
     return this.db.transaction(async (tx) => {
+      // La gestión se toma en modo compartido: mientras se guardan notas no pueden cambiar los puntajes de sus
+      // dimensiones (US-18, criterio 7; DimensionesService la bloquea en modo exclusivo).
+      await tx.query(
+        'SELECT g.id FROM gestiones g JOIN cursos c ON c.gestion_id = g.id WHERE c.id = $1 FOR SHARE OF g',
+        [actividad.materia.curso.id],
+      );
       const delCurso = await tx.count(Estudiante, {
         where: { id: In(ids), curso: { id: actividad.materia.curso.id } },
       });

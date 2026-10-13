@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/) y versio
 
 ## [Sin publicar]
 
+### Agregado (Sprint 1)
+
+- Configuración de dimensiones de evaluación por gestión: `GET` y `PUT /api/gestiones/:id/dimensiones`. Solo el
+  administrador las cambia, deben sumar 100 y quedan bloqueadas cuando la gestión tiene notas; el registro de notas y
+  el cambio de puntajes no pueden cruzarse (US-18, criterios 6 y 7; T-015).
+
 ### Cambiado
 
 - Se trabaja directo en `develop`; la revisión de código pasa a ser revisión de commits y `main` sigue protegida por el

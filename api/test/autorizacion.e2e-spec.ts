@@ -64,6 +64,14 @@ describe('Autorización de las rutas de notas (M09, RNF-04)', () => {
       metodo: 'get' as const,
       url: `/api/calculo/materias/${e.matematica.id}/trimestres/${e.t1.id}`,
     },
+    {
+      nombre: 'configurar dimensiones (solo administrador)',
+      metodo: 'put' as const,
+      url: `/api/gestiones/${e.t1.gestion.id}/dimensiones`,
+      cuerpo: {
+        dimensiones: [{ codigo: 'SER', nombre: 'Ser', puntajeMaximo: 100, orden: 1 }],
+      },
+    },
   ];
 
   it('debe responder 401 a todas las rutas protegidas sin token', async () => {

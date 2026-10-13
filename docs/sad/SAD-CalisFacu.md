@@ -57,8 +57,10 @@ api/src/
     auth/         [crítico] login, JWT, bloqueo, guards de rol           US-17
     notas/        [crítico] actividades, planilla, acceso por asignación  US-01
     calculo/      [crítico] nota trimestral según la RM 001/2026          US-02
+                  [crítico] dimensiones por gestión: suman 100; bloqueadas  US-18 (T-015)
+                  si la gestión tiene notas (GET/PUT /api/gestiones/:id/dimensiones)
     auditoria/    [crítico] corrección con motivo e historial             US-04
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, esquema) y fixtures
 web/src/         App, pages/, lib/ (cliente de la API y validación)
 e2e/             Cypress
 perf/            planes de JMeter

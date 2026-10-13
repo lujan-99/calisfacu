@@ -1,0 +1,22 @@
+# Servicios para desarrollo local (SQAP, Sección 7.1: ambiente Local)
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: calis
+      POSTGRES_PASSWORD: calis
+      POSTGRES_DB: calis
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U calis']
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7
+    ports:
+      - '6379:6379'
+volumes:
+  pgdata: {}

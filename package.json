@@ -1,0 +1,40 @@
+{
+  "name": "calisfacu",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CalisFacu: registro de calificaciones para unidades educativas del Subsistema de Educación Regular de Bolivia",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "api",
+    "web",
+    "e2e"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run -w api test && npm run -w web test -- --run",
+    "build": "npm run -w api build && npm run -w web build",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "ci:local": "bash scripts/ci-local.sh"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@eslint/js": "^9.39.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.0",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "license-checker": "^25.0.1",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.9.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.0"
+  }
+}

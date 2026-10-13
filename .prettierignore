@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+reports
+package-lock.json
+api/prisma/migrations
+docs/**/*.docx
+docs/**/*.pdf
+docs/**/*.xlsx
+docs/**/*.png
+*.jmx

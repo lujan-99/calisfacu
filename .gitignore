@@ -1,0 +1,33 @@
+node_modules/
+dist/
+build/
+coverage/
+reports/
+*.log
+.env
+.env.*
+!.env.example
+
+# Jenkins / rendimiento
+api.pid
+perf/*.jtl
+perf/boletin/
+perf/planilla/
+calisfacu-*.tgz
+
+# Cypress
+e2e/cypress/videos/
+e2e/cypress/screenshots/
+e2e/cypress/downloads/
+
+# Respaldos (nunca se versionan)
+*.dump
+*.dump.gpg
+
+# Editores y SO
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+~$*

@@ -1,0 +1,38 @@
+// Conventional Commits 1.0.0 (SQAP, Sección 10.3). Todo commit cita la historia o el defecto.
+export default {
+  extends: ['@commitlint/config-conventional'],
+  parserPreset: { parserOpts: { issuePrefixes: ['US-', 'CAL-', 'T-', '#'] } },
+  rules: {
+    'scope-enum': [
+      2,
+      'always',
+      [
+        'auth',
+        'academico',
+        'notas',
+        'calculo',
+        'auditoria',
+        'asistencia',
+        'importacion',
+        'boletin',
+        'panel',
+        'centralizacion',
+        'notificaciones',
+        'salud',
+        'api',
+        'web',
+        'e2e',
+        'perf',
+        'ci',
+        'deps',
+        'docs',
+        'sqap',
+        'repo',
+      ],
+    ],
+    'references-empty': [2, 'never'],
+    'subject-case': [0],
+    'body-max-line-length': [0],
+    'footer-max-line-length': [0],
+  },
+};

@@ -1,10 +1,6 @@
 > Versión en Markdown del SQAP para lectura rápida y para la IA. **El documento oficial es `SQAP-CalisFacu.docx`**
 > (y su PDF). Si se cambia el .docx, se regenera este archivo en el mismo PR:
 > `pandoc docs/sqap/SQAP-CalisFacu.docx -t gfm --wrap=none --extract-media=docs/sqap -o docs/sqap/SQAP-CalisFacu.md`
->
-> **Pendiente:** la versión 1.1 (13/10/2026, ADR-0008: desarrollo directo en develop) está aplicada solo en este
-> Markdown. Hay que pasarla al .docx y al PDF antes de la próxima entrega; hasta entonces, para el flujo de ramas manda
-> esta versión.
 
 CalisFacu v1.0
 
@@ -12,7 +8,7 @@ Plan de Aseguramiento de Calidad de Software (SQAP)
 
 Conforme a IEEE Std 730-2002, agrupado según las áreas de IEEE Std 730-2014
 
-Equipo L-001 · COM450 Calidad de Software · Universidad San Francisco Xavier · Gestión II/2026 · Versión del plan 1.0
+Equipo L-001 · COM450 Calidad de Software · Universidad San Francisco Xavier · Gestión II/2026 · Versión del plan 1.1
 
 **Tabla 1.** Control del documento
 
@@ -23,7 +19,7 @@ Equipo L-001 · COM450 Calidad de Software · Universidad San Francisco Xavier �
 | Equipo                       | L-001: Lujan (Líder, Arquitecto, Desarrollador backend) y Galvan (Responsable SQA, Desarrollador frontend / Tester)                        |
 | Stack                        | NestJS + TypeScript + TypeORM + PostgreSQL 16 (API) · React + Vite + TypeScript (web) · Jenkins (Multibranch Pipeline) · Render (ADR-0009) |
 | Duración                     | 4 sprints de 1 semana (Semanas 1 a 4)                                                                                                      |
-| Versión y fecha              | 1.0 · 12/10/2026                                                                                                                           |
+| Versión y fecha              | 1.1 · 13/10/2026                                                                                                                           |
 | Estado                       | Para revisión del docente                                                                                                                  |
 | Ubicación                    | docs/sqap/SQAP-CalisFacu.docx y .pdf en el repositorio del proyecto                                                                        |
 
@@ -490,7 +486,7 @@ Esta sección define dónde vive cada artefacto, cómo entra un cambio, cómo se
 
 Se usa una variante de **Git Flow** (ADR-0008): main contiene solo versiones liberadas (producción) y develop es la rama de desarrollo e integración (staging), donde se trabaja directamente. **Justificación:** separa lo que está en integración de lo que usa el cliente, y cada release pasa por un PR develop → main que revisa el otro integrante. Con dos personas y sprints de una semana, un PR por tarea frenaba la integración; la calidad de develop la cuidan los hooks de Husky, el build de Jenkins de cada push y la revisión de cada commit. No se usan ramas release/\*: el release candidate es una etiqueta sobre develop.
 
-<img src="./media/image4.png" style="width:6.9in;height:1.34739in" />
+<img src="./media/image4.png" style="width:6.9in;height:1.44066in" />
 
 **Figura 4.** Recorrido de un cambio: de la tarea a la versión
 

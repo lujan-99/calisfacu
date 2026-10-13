@@ -5,7 +5,7 @@ Si se cambia uno, se actualiza el otro en el mismo commit.
 
 | Documento                          | Markdown                                                                           | Original                            | Qué es                                                                       |
 | ---------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------- |
-| SQAP v1.0                          | [sqap/SQAP-CalisFacu.md](sqap/SQAP-CalisFacu.md)                                   | `sqap/SQAP-CalisFacu.docx` · `.pdf` | Plan de calidad (IEEE 730): métricas, revisiones, pruebas, defectos, riesgos |
+| SQAP v1.1                          | [sqap/SQAP-CalisFacu.md](sqap/SQAP-CalisFacu.md)                                   | `sqap/SQAP-CalisFacu.docx` · `.pdf` | Plan de calidad (IEEE 730): métricas, revisiones, pruebas, defectos, riesgos |
 | Matrices del SQAP                  | [sqap/matrices-sqap.md](sqap/matrices-sqap.md)                                     | `sqap/matrices-sqap.xlsx`           | Métricas, riesgos, SLA y componentes de terceros                             |
 | Métricas (resumen)                 | [calidad/metricas.md](calidad/metricas.md)                                         | —                                   | Umbrales y dónde se configuran                                               |
 | Backlog                            | [backlog/backlog.md](backlog/backlog.md)                                           | `backlog/backlog_v2_4sprints.xlsx`  | Pila de producto, plan de 4 sprints, DoR, DoD                                |
@@ -21,19 +21,11 @@ Si se cambia uno, se actualiza el otro en el mismo commit.
 | Evidencias, manuales, capacitación | [evidencias/](evidencias/), [manuales/](manuales/), [capacitacion/](capacitacion/) | —                                   | Se llenan durante los sprints                                                |
 | Referencias                        | [referencias/](referencias/)                                                       | PDF, DOCX, XLSX                     | Guías del curso y entregas anteriores (solo lectura)                         |
 
-## Pendientes de pasar al formato original
-
-Estos cambios ya están en el Markdown, pero todavía no en el Word ni en el PDF. Hay que pasarlos antes de la próxima entrega:
-
-- **SQAP v1.1** (13/10/2026): desarrollo directo en `develop` y revisión de commits (Secciones 3, 6, 8, 9, 10.2 y
-  Tabla 32; ADR-0008).
-- **SQAP v1.1 y SAD:** la web se despliega en Render y no en Vercel; staging con despliegue continuo desde el Sprint 1
-  (ADR-0009). En el backlog, T-028 y T-029 pasan al Sprint 1.
-- **SRS, Sección 2.3:** las preguntas abiertas quedaron resueltas (decisiones D1 a D7 de `backlog/reglas-ministerio.md`).
-
 ## Regenerar las versiones en Markdown
 
 ```bash
 python3 docs/herramientas/gen_backlog_md.py         # backlog e historias desde el Excel (requiere openpyxl)
 pandoc docs/sqap/SQAP-CalisFacu.docx -t gfm --wrap=none --extract-media=docs/sqap -o docs/sqap/SQAP-CalisFacu.md
+soffice --headless --convert-to pdf --outdir docs/sqap docs/sqap/SQAP-CalisFacu.docx   # PDF (requiere la fuente Carlito)
+python3 docs/herramientas/fig_flujo_develop.py docs/sqap/media/image4.png             # Figura 4 del SQAP
 ```

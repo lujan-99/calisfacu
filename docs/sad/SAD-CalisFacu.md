@@ -1,6 +1,6 @@
 ---
 title: 'CalisFacu v1.0 — Documento de Arquitectura de Software (SAD)'
-subtitle: 'Equipo L-001 · COM450 Calidad de Software · Gestión II/2026 · Versión 1.0'
+subtitle: 'Equipo L-001 · COM450 Calidad de Software · Gestión II/2026 · Versión 1.1'
 lang: es
 ---
 
@@ -176,6 +176,7 @@ La API en Render se construye con su Dockerfile (`api/Dockerfile`) y aplica las 
 
 # 10. Historial
 
-| Versión | Fecha      | Cambio                                              | Autor | Revisor |
-| ------- | ---------- | --------------------------------------------------- | ----- | ------- |
-| 1.0     | 13/10/2026 | Versión inicial: arquitectura del repositorio base. | Lujan | Galvan  |
+| Versión | Fecha      | Cambio                                                                                                                                                                   | Autor | Revisor |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | ------- |
+| 1.0     | 13/10/2026 | Versión inicial: arquitectura del repositorio base.                                                                                                                      | Lujan | Galvan  |
+| 1.1     | 13/10/2026 | La web se despliega en Render y no en Vercel (ADR-0009); módulos de dimensiones por gestión (T-015) y de asistencia (T-036); arranque con migraciones y seed de staging. | Lujan | Galvan  |

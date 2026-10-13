@@ -1,6 +1,6 @@
 ---
 title: 'CalisFacu v1.0 — Especificación de Requerimientos de Software (SRS)'
-subtitle: 'Equipo L-001 · COM450 Calidad de Software · Gestión II/2026 · Versión 1.0'
+subtitle: 'Equipo L-001 · COM450 Calidad de Software · Gestión II/2026 · Versión 1.1'
 lang: es
 ---
 
@@ -59,7 +59,7 @@ Los términos del dominio (dimensión, trimestre, gestión, boletín, centraliza
 
 ## 2.3 Supuestos y preguntas abiertas
 
-Las preguntas abiertas se resolvieron el 13/10/2026; la decisión de cada una (D1 a D7) está en
+Las preguntas abiertas se resolvieron el 13/10/2026; la decisión de cada una (D1 a D9) está en
 `docs/backlog/reglas-ministerio.md`:
 
 1. ¿La nota anual es el promedio de los tres trimestres? **Sí (D3).**
@@ -140,6 +140,7 @@ Cada RNF tiene una métrica verificable del SQAP (Sección 5, M01 a M16).
 
 # 7. Historial
 
-| Versión | Fecha      | Cambio                                                                                         | Autor | Revisor |
-| ------- | ---------- | ---------------------------------------------------------------------------------------------- | ----- | ------- |
-| 1.0     | 13/10/2026 | Versión inicial a partir del backlog v2.0, las reglas de la RM 001/2026 y el Anexo A del SQAP. | Lujan | Galvan  |
+| Versión | Fecha      | Cambio                                                                                                                                     | Autor | Revisor |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----- | ------- |
+| 1.0     | 13/10/2026 | Versión inicial a partir del backlog v2.0, las reglas de la RM 001/2026 y el Anexo A del SQAP.                                             | Lujan | Galvan  |
+| 1.1     | 13/10/2026 | Sección 2.3: preguntas abiertas resueltas (decisiones D1 a D9 de reglas-ministerio.md). Sección 2.2: Render en lugar de Vercel (ADR-0009). | Lujan | Galvan  |

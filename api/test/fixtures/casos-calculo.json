@@ -1,0 +1,62 @@
+[
+  {
+    "caso": "Caso típico",
+    "promedios": {
+      "SER": 80,
+      "SABER": 80,
+      "HACER": 80,
+      "AUTOEVALUACION": 100
+    },
+    "sinRedondear": 81,
+    "nota": 81,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Frontera: 50,5 se redondea a 51 (aprueba)",
+    "promedios": {
+      "SER": 100,
+      "SABER": 50,
+      "HACER": 40,
+      "AUTOEVALUACION": 40
+    },
+    "sinRedondear": 50.5,
+    "nota": 51,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Frontera: 50,4 se redondea a 50 (reprueba)",
+    "promedios": {
+      "SER": 80,
+      "SABER": 52,
+      "HACER": 40,
+      "AUTOEVALUACION": 60
+    },
+    "sinRedondear": 50.4,
+    "nota": 50,
+    "resultado": "Reprueba"
+  },
+  {
+    "caso": "Todo al máximo",
+    "promedios": {
+      "SER": 100,
+      "SABER": 100,
+      "HACER": 100,
+      "AUTOEVALUACION": 100
+    },
+    "sinRedondear": 100,
+    "nota": 100,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Todo al mínimo de la escala",
+    "promedios": {
+      "SER": 1,
+      "SABER": 1,
+      "HACER": 1,
+      "AUTOEVALUACION": 1
+    },
+    "sinRedondear": 1,
+    "nota": 1,
+    "resultado": "Reprueba"
+  }
+]

@@ -1,0 +1,24 @@
+export enum Rol {
+  ADMINISTRADOR = 'ADMINISTRADOR',
+  SECRETARIA = 'SECRETARIA',
+  PROFESOR = 'PROFESOR',
+  PADRE = 'PADRE',
+}
+
+export enum Nivel {
+  INICIAL = 'INICIAL',
+  PRIMARIA = 'PRIMARIA',
+  SECUNDARIA = 'SECUNDARIA',
+}
+
+export enum OrigenCambio {
+  REGISTRO = 'REGISTRO',
+  CORRECCION = 'CORRECCION',
+  IMPORTACION = 'IMPORTACION',
+}
+
+export enum EstadoAsistencia {
+  PRESENTE = 'PRESENTE',
+  AUSENTE = 'AUSENTE',
+  LICENCIA = 'LICENCIA',
+}

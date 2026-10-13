@@ -1,17 +1,18 @@
-# Jenkins + servicios de CI (SQAP, Anexo C.2).
-# Levantar desde la raíz del repositorio:
-#   cp jenkins/.env.example jenkins/.env   # y completar
+# Jenkins + servicios de CI (SQAP, Anexo C.2). Toda la configuración está en jenkins/casc.yaml.
+# Levantar desde la raíz del repositorio (ver jenkins/README.md):
 #   docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env up -d --build
 services:
   jenkins:
     build:
       context: .
       args:
-        SONAR_SCANNER_VERSION: ${SONAR_SCANNER_VERSION:?Defina SONAR_SCANNER_VERSION en jenkins/.env}
+        SONAR_SCANNER_VERSION: ${SONAR_SCANNER_VERSION:-}
     ports:
       - '8080:8080'
     volumes:
       - jenkins_home:/var/jenkins_home
+      # Secretos (no se versionan): contraseñas de los usuarios, token de GitHub y Deploy Hooks de Render.
+      - ./secretos:/run/secrets:ro
     environment:
       STAGING_API_URL: ${STAGING_API_URL:-}
       STAGING_WEB_URL: ${STAGING_WEB_URL:-}

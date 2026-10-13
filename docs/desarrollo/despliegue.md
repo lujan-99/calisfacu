@@ -28,17 +28,22 @@ push a develop ─► Jenkins: lint ─► pruebas ─► build ─► Deploy Ho
    `CORS_ORIGINS` (API) y `VITE_API_URL` (web) y volver a desplegar.
 5. En cada servicio: **Settings → Deploy Hook** → copiar la URL. Son secretos: no se pegan en el repositorio ni en el chat.
 
-### 2. Jenkins: credenciales y variables
+### 2. Jenkins: guardar los Deploy Hooks
 
-En Jenkins (ver [`jenkins/README.md`](../../jenkins/README.md)):
+Jenkins se configura solo con `jenkins/casc.yaml` (ver [`jenkins/README.md`](../../jenkins/README.md)). Solo hay que
+guardar cada Deploy Hook en su archivo, sin salto de línea final, y reiniciar Jenkins **sin builds en curso**:
 
-| Dónde                                   | Qué                                                                             |
-| --------------------------------------- | ------------------------------------------------------------------------------- |
-| Credentials → `render-hook-staging`     | Deploy Hook de `calisfacu-api-staging` (Secret text)                            |
-| Credentials → `render-hook-web-staging` | Deploy Hook de `calisfacu-web-staging` (Secret text)                            |
-| `jenkins/.env`                          | `STAGING_API_URL` y `STAGING_WEB_URL` (las de Render), `SONAR_HABILITADO=false` |
+| Archivo                                    | Contenido                              |
+| ------------------------------------------ | -------------------------------------- |
+| `jenkins/secretos/render-hook-staging`     | Deploy Hook de `calisfacu-api-staging` |
+| `jenkins/secretos/render-hook-web-staging` | Deploy Hook de `calisfacu-web-staging` |
 
-Después de cambiar `jenkins/.env`: `docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env up -d`.
+```bash
+docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env -p calisfacu-jenkins up -d
+```
+
+No confundir con la URL de sincronización del Blueprint (`/sync/exs-...`): esa vuelve a aplicar `render.yaml`, pero no
+despliega un commit concreto.
 
 ### 3. Probar la cadena completa
 

@@ -76,14 +76,19 @@ pipeline {
         // Variables globales de Jenkins (jenkins/README.md, sección 3): sin ellas fallarían el smoke test y E2E.
         script {
           ['STAGING_API_URL', 'STAGING_WEB_URL'].each { v ->
-            if (!env."${v}") { error "Falta la variable global ${v} (Manage Jenkins → System → Global properties)" }
+            if (!env."${v}") { error "Falta la variable ${v} en jenkins/.env" }
           }
         }
         // API y web en Render (render.yaml, ADR-0009): cada Deploy Hook construye exactamente este commit.
         withCredentials([string(credentialsId: 'render-hook-staging', variable: 'HOOK_API'),
                          string(credentialsId: 'render-hook-web-staging', variable: 'HOOK_WEB')]) {
-          sh 'curl -fsS -X POST "$HOOK_API&ref=$GIT_COMMIT"'
-          sh 'curl -fsS -X POST "$HOOK_WEB&ref=$GIT_COMMIT"'
+          sh '''
+            for h in "$HOOK_API" "$HOOK_WEB"; do
+              case "$h" in https://api.render.com/deploy/*) ;; *) echo "Deploy Hook sin configurar: ver jenkins/secretos/ (docs/desarrollo/despliegue.md)"; exit 1 ;; esac
+            done
+            curl -fsS -X POST "$HOOK_API&ref=$GIT_COMMIT"
+            curl -fsS -X POST "$HOOK_WEB&ref=$GIT_COMMIT"
+          '''
         }
       }
     }

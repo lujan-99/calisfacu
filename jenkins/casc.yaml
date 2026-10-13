@@ -1,0 +1,94 @@
+# Configuration as Code de Jenkins (SQAP, Secciones 9 y 10; ADR-0003).
+# Los secretos NO están aquí: se leen de archivos en jenkins/secretos/ (no se versionan), montados en /run/secrets.
+jenkins:
+  systemMessage: 'CalisFacu · CI/CD (Jenkinsfile en la raíz del repositorio)'
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: lujan
+          name: Lujan
+          password: '${readFile:/run/secrets/clave-lujan}'
+        - id: galvan
+          name: Galvan
+          password: '${readFile:/run/secrets/clave-galvan}'
+  # SQAP, Sección 3: solo los dos integrantes; sin acceso anónimo.
+  authorizationStrategy:
+    globalMatrix:
+      entries:
+        - user:
+            name: lujan
+            permissions: ['Overall/Administer']
+        - user:
+            name: galvan
+            permissions: ['Overall/Administer']
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: github-calisfacu
+              description: GitHub (escaneo del repositorio y estados de commit)
+              username: lujan-99
+              password: '${readFile:/run/secrets/github-token}'
+          - string:
+              scope: GLOBAL
+              id: render-hook-staging
+              description: Deploy Hook de calisfacu-api-staging
+              secret: '${readFile:/run/secrets/render-hook-staging}'
+          - string:
+              scope: GLOBAL
+              id: render-hook-web-staging
+              description: Deploy Hook de calisfacu-web-staging
+              secret: '${readFile:/run/secrets/render-hook-web-staging}'
+
+unclassified:
+  location:
+    url: http://localhost:8080/
+  gitHubConfiguration:
+    # Con token hay 5000 consultas por hora: solo frenar si se acerca al límite.
+    apiRateLimitChecker: ThrottleOnOver
+
+jobs:
+  - script: |
+      multibranchPipelineJob('calisfacu') {
+        displayName('CalisFacu')
+        description('develop despliega a staging en Render; main y las etiquetas vX.Y.Z, a producción (ADR-0008, ADR-0009).')
+        branchSources {
+          branchSource {
+            source {
+              github {
+                id('calisfacu')
+                repoOwner('lujan-99')
+                repository('calisfacu')
+                repositoryUrl('https://github.com/lujan-99/calisfacu')
+                configuredByUrl(true)
+                credentialsId('github-calisfacu')
+                traits {
+                  gitHubBranchDiscovery { strategyId(1) }
+                  gitHubPullRequestDiscovery { strategyId(1) }
+                  gitHubTagDiscovery()
+                }
+              }
+            }
+            buildStrategies {
+              buildRegularBranches()
+              buildChangeRequests {
+                ignoreTargetOnlyChanges(true)
+                ignoreUntrustedChanges(true)
+              }
+              buildTags {
+                atLeastDays('-1')
+                atMostDays('7')
+              }
+            }
+          }
+        }
+        factory { workflowBranchProjectFactory { scriptPath('Jenkinsfile') } }
+        // Jenkins es local y GitHub no puede enviarle webhooks: escanea el repositorio cada minuto.
+        triggers { periodicFolderTrigger { interval('1m') } }
+        orphanedItemStrategy { discardOldItems { numToKeep(10) } }
+      }

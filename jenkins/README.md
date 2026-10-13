@@ -3,54 +3,51 @@
 Jenkins es el sistema de CI/CD del proyecto (SQAP, Secciones 9 y 10). Corre en Docker en la computadora de Lujan y
 lee el `Jenkinsfile` de la raíz del repositorio como un **Multibranch Pipeline**.
 
-## 1. Levantar Jenkins (una sola vez, ~15 min)
+## 1. Levantar Jenkins (una sola vez, ~20 min la primera construcción)
+
+Toda la configuración está en código (`casc.yaml`, plugin Configuration as Code): usuarios `lujan` y `galvan`,
+permisos (sin acceso anónimo), credenciales y el job Multibranch **calisfacu**. No hay que configurar nada a mano.
 
 ```bash
-cp jenkins/.env.example jenkins/.env          # completar SONAR_SCANNER_VERSION y las URL de staging
-docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env up -d --build
-docker compose -f jenkins/docker-compose.yml exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+cp jenkins/.env.example jenkins/.env          # URL de staging y SONAR_HABILITADO
+# Secretos, uno por archivo y sin salto de línea final (jenkins/secretos/ no se versiona):
+#   clave-lujan, clave-galvan       contraseñas de los usuarios de Jenkins
+#   github-token                    token de GitHub con lectura del repositorio y estados de commit
+#   render-hook-staging             Deploy Hook de calisfacu-api-staging
+#   render-hook-web-staging         Deploy Hook de calisfacu-web-staging
+docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env -p calisfacu-jenkins up -d --build
 ```
 
-Abrir <http://localhost:8080>, pegar la contraseña, **omitir** la instalación de plugins sugeridos (ya vienen en
-`plugins.txt`) y crear los usuarios `lujan` y `galvan`.
+Abrir <http://localhost:8080> y entrar como `lujan` o `galvan`. Si se cambia `casc.yaml` o un secreto, volver a correr
+el mismo comando: Jenkins recarga la configuración al reiniciar. **No reinicie Jenkins con un build en curso**: el
+build se interrumpe.
 
-## 2. Seguridad
+## 2. Qué define `casc.yaml`
 
-_Manage Jenkins → Security_: **Matrix-based security**. Solo `lujan` y `galvan` con todos los permisos; `Anonymous`
-sin ninguno.
+| Qué              | Valor                                                                                                |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| Seguridad        | Usuarios locales `lujan` y `galvan`, ambos administradores; anónimo sin permisos (SQAP, Sección 3)   |
+| Credenciales     | `github-calisfacu`, `render-hook-staging`, `render-hook-web-staging` (leídas de `jenkins/secretos/`) |
+| Job              | Multibranch `calisfacu` sobre `lujan-99/calisfacu`: ramas, PR y etiquetas de menos de 7 días         |
+| Disparo          | Escaneo del repositorio cada minuto (Jenkins es local y GitHub no puede enviarle webhooks)           |
+| Límite de la API | `ThrottleOnOver`: con token hay 5000 consultas por hora; solo frena cerca del límite                 |
 
-## 3. Credenciales (Manage Jenkins → Credentials → System → Global)
+En el release (T-069) se agregan a `casc.yaml` `render-hook-prod` y `render-hook-web-prod`; con SonarQube (T-030),
+`sonar-token`.
 
-| ID                        | Tipo                   | Valor                                                                                                         |
-| ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `github-calisfacu`        | Username with password | usuario de GitHub + token _fine-grained_: Contents (read), Commit statuses (read/write), Pull requests (read) |
-| `sonar-token`             | Secret text            | token de SonarQube Cloud                                                                                      |
-| `render-hook-staging`     | Secret text            | Deploy Hook de `calisfacu-api-staging` en Render (Settings → Deploy Hook)                                     |
-| `render-hook-web-staging` | Secret text            | Deploy Hook de `calisfacu-web-staging` en Render                                                              |
-| `render-hook-prod`        | Secret text            | Deploy Hook de la API de producción (se crea en el release, T-069)                                            |
-| `render-hook-web-prod`    | Secret text            | Deploy Hook de la web de producción (se crea en el release, T-069)                                            |
+## 3. Variables de entorno (`jenkins/.env`)
 
-**Variables de entorno** (en `jenkins/.env`; `docker-compose.yml` las pasa al contenedor). Las URL las usan el smoke
-test y la etapa E2E de `develop`; si faltan, la etapa Deploy staging se detiene con un mensaje claro:
-
-| Variable           | Valor                                                                               |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| `STAGING_API_URL`  | URL pública de la API de staging en Render, **sin** `/api` (los scripts lo agregan) |
-| `STAGING_WEB_URL`  | URL pública de la web de staging en Render                                          |
-| `SONAR_HABILITADO` | `true` cuando SonarQube Cloud esté configurado (T-030); mientras, se omite          |
+| Variable                | Valor                                                                               |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `STAGING_API_URL`       | URL pública de la API de staging, **sin** `/api` (los scripts lo agregan)           |
+| `STAGING_WEB_URL`       | URL pública de la web de staging                                                    |
+| `SONAR_HABILITADO`      | `true` cuando SonarQube Cloud esté configurado (T-030); mientras, la etapa se omite |
+| `SONAR_SCANNER_VERSION` | versión del SonarScanner CLI (solo cuando se habilite SonarQube)                    |
 
 **Etiquetas de versión:** créelas anotadas (`git tag -a v1.0.0 -m "..."`). La etapa Aprobar producción lee quién creó la
 etiqueta y rechaza que esa misma persona apruebe el despliegue.
 
-## 4. Job Multibranch "calisfacu" (New Item → Multibranch Pipeline)
-
-| Opción                             | Valor                                                                                                           |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Branch Sources                     | GitHub · credencial `github-calisfacu` · `https://github.com/lujan-99/calisfacu`                                |
-| Behaviours                         | Discover branches (excluir las que también son PR) · Discover pull requests from origin (merge) · Discover tags |
-| Build strategies                   | Regular branches · Change requests · Tags (ignorar etiquetas de más de 7 días)                                  |
-| Build Configuration                | by Jenkinsfile, ruta `Jenkinsfile`                                                                              |
-| Scan Multibranch Pipeline Triggers | Periodically if not otherwise run: **1 minute** (Jenkins es local y no recibe webhooks)                         |
+## 4. Check obligatorio de `main`
 
 Después del primer escaneo, Jenkins publica en cada PR el estado `continuous-integration/jenkins/pr-merge`. Ese es el
 **check obligatorio** de la protección de `main` (ver `docs/desarrollo/flujo-git.md`).
@@ -67,7 +64,7 @@ Después del primer escaneo, Jenkins publica en cada PR el estado `continuous-in
 Cada viernes (día 5):
 
 ```bash
-docker run --rm -v jenkins_jenkins_home:/data -v "$PWD":/backup alpine \
+docker run --rm -v calisfacu-jenkins_jenkins_home:/data -v "$PWD":/backup alpine \
   tar czf /backup/jenkins_home-$(date +%F).tgz -C /data .
 ```
 

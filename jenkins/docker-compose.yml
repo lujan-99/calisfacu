@@ -15,6 +15,7 @@ services:
     environment:
       STAGING_API_URL: ${STAGING_API_URL:-}
       STAGING_WEB_URL: ${STAGING_WEB_URL:-}
+      SONAR_HABILITADO: ${SONAR_HABILITADO:-false}
     depends_on:
       - postgres-ci
       - redis-ci

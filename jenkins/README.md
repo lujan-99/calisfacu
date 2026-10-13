@@ -21,23 +21,23 @@ sin ninguno.
 
 ## 3. Credenciales (Manage Jenkins → Credentials → System → Global)
 
-| ID                    | Tipo                   | Valor                                                                                                         |
-| --------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `github-calisfacu`    | Username with password | usuario de GitHub + token _fine-grained_: Contents (read), Commit statuses (read/write), Pull requests (read) |
-| `sonar-token`         | Secret text            | token de SonarQube Cloud                                                                                      |
-| `render-hook-staging` | Secret text            | Deploy Hook del servicio de staging en Render                                                                 |
-| `render-hook-prod`    | Secret text            | Deploy Hook del servicio de producción en Render                                                              |
-| `vercel-token`        | Secret text            | token de Vercel                                                                                               |
-| `vercel-org-id`       | Secret text            | `orgId` de `web/.vercel/project.json`                                                                         |
-| `vercel-project-id`   | Secret text            | `projectId` de `web/.vercel/project.json`                                                                     |
+| ID                        | Tipo                   | Valor                                                                                                         |
+| ------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `github-calisfacu`        | Username with password | usuario de GitHub + token _fine-grained_: Contents (read), Commit statuses (read/write), Pull requests (read) |
+| `sonar-token`             | Secret text            | token de SonarQube Cloud                                                                                      |
+| `render-hook-staging`     | Secret text            | Deploy Hook de `calisfacu-api-staging` en Render (Settings → Deploy Hook)                                     |
+| `render-hook-web-staging` | Secret text            | Deploy Hook de `calisfacu-web-staging` en Render                                                              |
+| `render-hook-prod`        | Secret text            | Deploy Hook de la API de producción (se crea en el release, T-069)                                            |
+| `render-hook-web-prod`    | Secret text            | Deploy Hook de la web de producción (se crea en el release, T-069)                                            |
 
-**Variables globales** (Manage Jenkins → System → Global properties → Environment variables). Las usan el smoke test
-y la etapa E2E de `develop`; si faltan, la etapa Deploy staging se detiene con un mensaje claro:
+**Variables de entorno** (en `jenkins/.env`; `docker-compose.yml` las pasa al contenedor). Las URL las usan el smoke
+test y la etapa E2E de `develop`; si faltan, la etapa Deploy staging se detiene con un mensaje claro:
 
-| Variable          | Valor                                                  |
-| ----------------- | ------------------------------------------------------ |
-| `STAGING_API_URL` | URL pública de la API de staging en Render, con `/api` |
-| `STAGING_WEB_URL` | URL pública de la web de staging en Vercel             |
+| Variable           | Valor                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| `STAGING_API_URL`  | URL pública de la API de staging en Render, **sin** `/api` (los scripts lo agregan) |
+| `STAGING_WEB_URL`  | URL pública de la web de staging en Render                                          |
+| `SONAR_HABILITADO` | `true` cuando SonarQube Cloud esté configurado (T-030); mientras, se omite          |
 
 **Etiquetas de versión:** créelas anotadas (`git tag -a v1.0.0 -m "..."`). La etapa Aprobar producción lee quién creó la
 etiqueta y rechaza que esa misma persona apruebe el despliegue.

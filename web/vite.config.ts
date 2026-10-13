@@ -7,7 +7,7 @@ export default defineConfig({
   define: {
     // Commit desplegado, visible en el pie de la aplicación (verificación posterior del despliegue)
     __GIT_COMMIT__: JSON.stringify(
-      process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.GIT_COMMIT ?? 'local',
+      process.env.RENDER_GIT_COMMIT ?? process.env.GIT_COMMIT ?? 'local',
     ),
   },
   test: {

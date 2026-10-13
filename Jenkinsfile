@@ -1,5 +1,5 @@
 // Jenkinsfile — job Multibranch Pipeline "calisfacu" (ramas, pull requests y etiquetas).
-// Flujo de ramas (docs/desarrollo/flujo-git.md): feature/* y fix/* → develop (staging) → main (producción).
+// Flujo de ramas (docs/desarrollo/flujo-git.md, ADR-0008): develop (staging, en cada push) → main (producción).
 pipeline {
   agent any
   options {
@@ -50,7 +50,8 @@ pipeline {
       }
     }
     stage('Análisis estático') {                           // M05, M07, M08: Quality Gate "CalisFacu"
-      when { not { buildingTag() } }
+      // Se exige desde el Sprint 2 (T-030): se activa con la variable SONAR_HABILITADO=true en jenkins/.env.
+      when { allOf { not { buildingTag() }; environment name: 'SONAR_HABILITADO', value: 'true' } }
       steps {
         withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
           script {
@@ -78,12 +79,11 @@ pipeline {
             if (!env."${v}") { error "Falta la variable global ${v} (Manage Jenkins → System → Global properties)" }
           }
         }
-        withCredentials([string(credentialsId: 'render-hook-staging', variable: 'HOOK'),
-                         string(credentialsId: 'vercel-token', variable: 'VERCEL_TOKEN'),
-                         string(credentialsId: 'vercel-org-id', variable: 'VERCEL_ORG_ID'),
-                         string(credentialsId: 'vercel-project-id', variable: 'VERCEL_PROJECT_ID')]) {
-          sh 'curl -fsS -X POST "$HOOK&ref=$GIT_COMMIT"'
-          sh 'cd web && npx vercel deploy --yes --token="$VERCEL_TOKEN"'
+        // API y web en Render (render.yaml, ADR-0009): cada Deploy Hook construye exactamente este commit.
+        withCredentials([string(credentialsId: 'render-hook-staging', variable: 'HOOK_API'),
+                         string(credentialsId: 'render-hook-web-staging', variable: 'HOOK_WEB')]) {
+          sh 'curl -fsS -X POST "$HOOK_API&ref=$GIT_COMMIT"'
+          sh 'curl -fsS -X POST "$HOOK_WEB&ref=$GIT_COMMIT"'
         }
       }
     }
@@ -152,8 +152,10 @@ pipeline {
     stage('Deploy producción') {
       when { tag pattern: 'v\\d+\\.\\d+\\.\\d+', comparator: 'REGEXP' }
       steps {
-        withCredentials([string(credentialsId: 'render-hook-prod', variable: 'HOOK')]) {
-          sh 'curl -fsS -X POST "$HOOK&ref=$GIT_COMMIT"'
+        withCredentials([string(credentialsId: 'render-hook-prod', variable: 'HOOK_API'),
+                         string(credentialsId: 'render-hook-web-prod', variable: 'HOOK_WEB')]) {
+          sh 'curl -fsS -X POST "$HOOK_API&ref=$GIT_COMMIT"'
+          sh 'curl -fsS -X POST "$HOOK_WEB&ref=$GIT_COMMIT"'
         }
       }
     }

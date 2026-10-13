@@ -13,7 +13,7 @@
     "e2e"
   ],
   "scripts": {
-    "prepare": "husky",
+    "prepare": "husky || echo 'husky no está instalado (instalación parcial): se omiten los hooks'",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

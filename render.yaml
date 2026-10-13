@@ -1,0 +1,56 @@
+# Blueprint de Render: infraestructura de staging como código (ADR-0009, docs/desarrollo/despliegue.md).
+# Se aplica una vez: Render → New → Blueprint → repositorio lujan-99/calisfacu.
+# Los despliegues no son automáticos: los dispara Jenkins con los Deploy Hooks después de que pasan las pruebas.
+# Si Render asigna otro nombre de dominio (por ejemplo con un sufijo), corregir CORS_ORIGINS y VITE_API_URL.
+services:
+  - type: web
+    name: calisfacu-api-staging
+    runtime: docker
+    plan: free
+    region: virginia
+    branch: develop
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: 'off'
+    healthCheckPath: /api/salud
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: calisfacu-db-staging
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30m
+      - key: CORS_ORIGINS
+        value: https://calisfacu-web-staging.onrender.com
+      # Staging usa solo datos sintéticos: el seed se carga si la base está vacía (SQAP, Sección 7.2).
+      - key: SEMBRAR
+        value: '1'
+
+  - type: web
+    name: calisfacu-web-staging
+    runtime: static
+    branch: develop
+    buildCommand: npm ci -w web && npm run -w web build
+    staticPublishPath: ./web/dist
+    autoDeployTrigger: 'off'
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      - key: CYPRESS_INSTALL_BINARY
+        value: '0'
+      - key: VITE_API_URL
+        value: https://calisfacu-api-staging.onrender.com/api
+
+databases:
+  - name: calisfacu-db-staging
+    plan: free
+    region: virginia
+    databaseName: calis
+    user: calis
+    postgresMajorVersion: '16'

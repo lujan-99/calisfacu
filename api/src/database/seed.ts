@@ -90,6 +90,10 @@ async function crearCurso(
 }
 
 async function sembrar() {
+  // En una imagen de producción solo siembra si se pide explícitamente (staging define SEMBRAR=1; producción nunca).
+  if (process.env.NODE_ENV === 'production' && process.env.SEMBRAR !== '1') {
+    throw new Error('Seed rechazado: NODE_ENV=production sin SEMBRAR=1');
+  }
   faker.seed(2026);
   const perf = process.env.PERF === '1';
   cargarEnv();

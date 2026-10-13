@@ -55,7 +55,7 @@ Los términos del dominio (dimensión, trimestre, gestión, boletín, centraliza
 - El cálculo debe seguir el reglamento vigente; los puntajes de las dimensiones cambian por resolución ministerial, así que
   se configuran por gestión y no se programan fijos.
 - Equipo de dos personas y 4 semanas de construcción: se priorizan las historias de la Sección 3.
-- Infraestructura de planes gratuitos (Render, Vercel): ver los riesgos R04 y R10 del SQAP.
+- Infraestructura de planes gratuitos (Render): ver los riesgos R04 y R10 del SQAP.
 
 ## 2.3 Supuestos y preguntas abiertas
 

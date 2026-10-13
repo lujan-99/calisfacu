@@ -16,16 +16,16 @@ Equipo L-001 · COM450 Calidad de Software · Universidad San Francisco Xavier �
 
 **Tabla 1.** Control del documento
 
-| **Campo**                    | **Valor**                                                                                                                                |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Producto                     | CalisFacu v1.0: sistema web de registro de calificaciones para unidades educativas del Subsistema de Educación Regular de Bolivia        |
-| Cliente (dueño del producto) | \[Nombre de la unidad educativa piloto\] — profesores y secretaría                                                                       |
-| Equipo                       | L-001: Lujan (Líder, Arquitecto, Desarrollador backend) y Galvan (Responsable SQA, Desarrollador frontend / Tester)                      |
-| Stack                        | NestJS + TypeScript + TypeORM + PostgreSQL 16 (API) · React + Vite + TypeScript (web) · Jenkins (Multibranch Pipeline) · Render y Vercel |
-| Duración                     | 4 sprints de 1 semana (Semanas 1 a 4)                                                                                                    |
-| Versión y fecha              | 1.0 · 12/10/2026                                                                                                                         |
-| Estado                       | Para revisión del docente                                                                                                                |
-| Ubicación                    | docs/sqap/SQAP-CalisFacu.docx y .pdf en el repositorio del proyecto                                                                      |
+| **Campo**                    | **Valor**                                                                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Producto                     | CalisFacu v1.0: sistema web de registro de calificaciones para unidades educativas del Subsistema de Educación Regular de Bolivia          |
+| Cliente (dueño del producto) | \[Nombre de la unidad educativa piloto\] — profesores y secretaría                                                                         |
+| Equipo                       | L-001: Lujan (Líder, Arquitecto, Desarrollador backend) y Galvan (Responsable SQA, Desarrollador frontend / Tester)                        |
+| Stack                        | NestJS + TypeScript + TypeORM + PostgreSQL 16 (API) · React + Vite + TypeScript (web) · Jenkins (Multibranch Pipeline) · Render (ADR-0009) |
+| Duración                     | 4 sprints de 1 semana (Semanas 1 a 4)                                                                                                      |
+| Versión y fecha              | 1.0 · 12/10/2026                                                                                                                           |
+| Estado                       | Para revisión del docente                                                                                                                  |
+| Ubicación                    | docs/sqap/SQAP-CalisFacu.docx y .pdf en el repositorio del proyecto                                                                        |
 
 **Cómo leer este plan.** Cada compromiso de calidad tiene un número, una herramienta que lo hace cumplir y una evidencia que queda archivada. Los números se definen una sola vez, en la Tabla de métricas de la Sección 5 (M01 a M16); las demás secciones se refieren a esas filas. Los textos entre corchetes, por ejemplo \[Nombre de la unidad educativa piloto\], son datos que el equipo debe completar; están listados en el Anexo F.
 
@@ -350,7 +350,7 @@ La integración usa PostgreSQL real y no una base en memoria ni SQLite, porque l
 | ------------ | --------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
 | Local        | Desarrollo y pruebas rápidas      | Docker Compose: PostgreSQL 16 y Redis                                                            | Seed sintético (npm run -w api seed)                      |
 | CI           | Pruebas de cada PR y de main      | Agente de Jenkins con PostgreSQL 16 y Redis del jenkins/docker-compose.yml; una base por build   | Base vacía + migraciones + fixtures; se borra al terminar |
-| Staging      | E2E, smoke test y demo del sprint | API en Render, web en Vercel, PostgreSQL administrado                                            | Seed sintético; se recrea en cada sprint                  |
+| Staging      | E2E, smoke test y demo del sprint | API y web en Render (render.yaml), PostgreSQL de Render                                          | Seed sintético; se recrea en cada sprint                  |
 | Rendimiento  | JMeter (M03, M04)                 | API compilada del commit etiquetado, ejecutada en el agente de Jenkins con su PostgreSQL y Redis | Seed sintético de 40 cursos y 60 estudiantes por curso    |
 | Producción   | Uso del cliente                   | Igual que staging, con su propia base y secretos                                                 | Datos reales; nunca se copian a otro ambiente             |
 
@@ -436,7 +436,7 @@ El servicio gratuito de Render se suspende tras 15 minutos sin tráfico y tarda 
 | Pruebas E2E                        | Cypress                                                                                               | Fijada en package-lock.json                      | 4                      |
 | Pruebas de carga                   | Apache JMeter                                                                                         | 5.6.3                                            | 5                      |
 | Dependencias y licencias           | npm audit, Dependabot, license-checker                                                                | —                                                | 3                      |
-| Hosting                            | Render (API, PostgreSQL, Redis), Vercel (web)                                                         | Planes gratuitos                                 | 8                      |
+| Hosting                            | Render (API, web estática, PostgreSQL, Redis), definido en render.yaml                                | Planes gratuitos                                 | 8                      |
 | Monitoreo                          | Monitor externo de disponibilidad \[elegir proveedor\]                                                | —                                                | —                      |
 | Gestión de defectos y comunicación | GitHub Issues; \[canal de chat del equipo\]                                                           | —                                                | —                      |
 
@@ -549,7 +549,7 @@ Un cambio que rompe compatibilidad (por ejemplo, un contrato de API) lleva ! des
 
 ## 10.5 Secretos y control de acceso
 
-- Los secretos (URL de bases de datos, JWT_SECRET, tokens de Render, Vercel y SonarQube, frase de cifrado de respaldos, clave del proveedor de correo) viven solo en **Jenkins Credentials** (tipo \*secret text\*, usados con withCredentials), en el panel de cada plataforma y, para los respaldos, en GitHub Secrets. El repositorio tiene .env.example sin valores; .env está en .gitignore.
+- Los secretos (URL de bases de datos, JWT_SECRET, Deploy Hooks de Render, token de SonarQube, frase de cifrado de respaldos, clave del proveedor de correo) viven solo en **Jenkins Credentials** (tipo \*secret text\*, usados con withCredentials), en el panel de cada plataforma y, para los respaldos, en GitHub Secrets. El repositorio tiene .env.example sin valores; .env está en .gitignore.
 
 - Jenkins: solo los dos integrantes tienen cuenta (seguridad basada en matriz); el token de GitHub de Jenkins tiene únicamente permisos de lectura del repositorio y de escritura de estados de commit; el volumen jenkins_home se respalda junto con el bundle del repositorio cada día 5.
 
@@ -626,7 +626,7 @@ CalisFacu depende de librerías de npm y de servicios en la nube. Ninguna depend
 | GitHub (repositorio, Issues, Actions solo para respaldos) | Código, defectos, respaldos | Caída temporal del servicio                                                                 | Bundle del repositorio (Sección 10.6); los respaldos se ejecutan a mano con el mismo script.            |
 | Jenkins (autoalojado en Docker)                           | CI/CD                       | La computadora que lo aloja está apagada o falla                                            | Reinstalación desde jenkins/ probada en la semana 1; restauración de jenkins_home (R04).                |
 | Render (API, PostgreSQL, Redis)                           | Staging y producción        | Plan gratuito: base que vence a los 30 días, sin respaldos y con suspensión por inactividad | Respaldo diario cifrado; migración a otro PostgreSQL administrado restaurando el último respaldo (R10). |
-| Vercel                                                    | Aplicación web              | Límites del plan gratuito                                                                   | Build estático desplegable en cualquier hosting estático.                                               |
+| Render (sitio estático)                                   | Aplicación web              | Límites del plan gratuito                                                                   | Build estático desplegable en cualquier hosting estático.                                               |
 | SonarQube Cloud                                           | Quality Gate                | Servicio no disponible                                                                      | El PR espera; ESLint y la cobertura de Jest siguen bloqueando.                                          |
 | Proveedor de correo con API HTTP                          | Avisos de US-08 y US-12     | Render gratuito bloquea los puertos SMTP 25, 465 y 587                                      | Se usa la API HTTP del proveedor; el aviso dentro del sistema funciona aunque falle el correo.          |
 
@@ -776,7 +776,7 @@ Cualquier integrante propone un cambio con un pull request que modifica docs/sqa
 | 0.12        | 12/10/2026 | Sección 10.2: GitHub Flow se reemplaza por Git Flow (ramas develop y main, hotfix desde main), como enseñó el docente; develop despliega a staging y main a producción; ambas ramas protegidas.                                                                                                                                                    | Lujan     | Galvan      |
 | 0.13        | 12/10/2026 | Secciones 1, 4, 5, 7, 9, 11, 13, 14 y 15: Prisma se reemplaza por TypeORM por decisión del equipo: es el ORM de la documentación oficial de NestJS, está escrito en JavaScript y no depende de binarios propios que se descargan aparte; las pruebas e2e se integran en test:cov para que M06 mida la cobertura combinada.                         | Galvan    | Lujan       |
 | 1.0         | 12/10/2026 | Consolidado: portada, control del documento, índice, listas de tablas y figuras, agrupación según IEEE 730-2014 y Anexos A a F.                                                                                                                                                                                                                    | Lujan     | Galvan      |
-| 1.1         | 13/10/2026 | Secciones 3, 6, 8, 9 y 10.2: se trabaja directo en develop y la revisión de código pasa a ser revisión de commits; main sigue protegida por el PR de release (ADR-0008).                                                                                                                                                                           | Lujan     | Galvan      |
+| 1.1         | 13/10/2026 | Secciones 3, 6, 8, 9 y 10.2: se trabaja directo en develop y la revisión de código pasa a ser revisión de commits; main sigue protegida por el PR de release (ADR-0008). Secciones 1, 7, 10, 11 y Anexo C: la web se despliega en Render y no en Vercel, y el despliegue continuo a staging funciona desde el Sprint 1 (ADR-0009).                 | Lujan     | Galvan      |
 
 Rige desde la versión 1.0, antes del inicio de la semana 1. Las versiones 0.3 a 0.11 se registran por separado para que cada corrección sea identificable, como pide la Práctica 7.
 
@@ -830,10 +830,13 @@ Estos archivos son la versión inicial que se crea en la semana 1 (tareas de inf
 | Build strategies                           | Regular branches; Change requests; Tags (ignorar etiquetas de más de 7 días). Requiere el plugin basic-branch-build-strategies; sin él, las etiquetas no se construyen solas |
 | Build Configuration                        | by Jenkinsfile, ruta Jenkinsfile                                                                                                                                             |
 | Scan Multibranch Pipeline Triggers         | Periodically if not otherwise run: 1 minuto (Jenkins es local y no recibe webhooks de GitHub)                                                                                |
-| Credenciales (secret text)                 | sonar-token, render-hook-staging, render-hook-prod, vercel-token, vercel-org-id, vercel-project-id                                                                           |
+| Credenciales (secret text)                 | sonar-token, render-hook-staging, render-hook-web-staging, render-hook-prod, render-hook-web-prod                                                                            |
 | Seguridad                                  | Matrix-based security: solo lujan y galvan; sin acceso anónimo                                                                                                               |
 
 **C.1 Jenkinsfile**
+
+> **Nota (versión 1.1):** la copia de este anexo es la de la versión 1.0. La vigente es el `Jenkinsfile` de la raíz del
+> repositorio (aprobación independiente, despliegue en Render y SonarQube condicionado a `SONAR_HABILITADO`).
 
 > // Jenkinsfile — job Multibranch Pipeline "calisfacu" (ramas, pull requests y etiquetas).
 >

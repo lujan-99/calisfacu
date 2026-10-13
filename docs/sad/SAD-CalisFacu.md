@@ -17,10 +17,8 @@ flowchart LR
   subgraph Usuario
     N[Navegador]
   end
-  subgraph Vercel
-    W[Web React + Vite]
-  end
   subgraph Render
+    W[Web React + Vite<br/>sitio estático]
     A[API NestJS]
     P[(PostgreSQL 16)]
     R[(Redis · cola de boletines)]
@@ -35,7 +33,7 @@ flowchart LR
 
 | Componente    | Tecnología                              | Responsabilidad                                                                      |
 | ------------- | --------------------------------------- | ------------------------------------------------------------------------------------ |
-| Web           | React + Vite + TypeScript, en Vercel    | Pantallas de cada rol; valida la entrada y muestra los resultados que calcula la API |
+| Web           | React + Vite + TypeScript, en Render    | Pantallas de cada rol; valida la entrada y muestra los resultados que calcula la API |
 | API           | NestJS + TypeScript, en Render (Docker) | Reglas de negocio, autorización, cálculo, auditoría, PDF                             |
 | Base de datos | PostgreSQL 16 con TypeORM               | Datos académicos, notas y registro de auditoría                                      |
 | Cola          | BullMQ + Redis (semana 3)               | Generación de boletines de cursos grandes (RNF-03, R05)                              |
@@ -142,12 +140,12 @@ Decisiones del modelo:
 | ----------- | ---------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------- |
 | Local       | cualquier rama                           | `docker compose up` + `npm run -w api start:dev` / `npm run -w web dev` | PostgreSQL del compose                          |
 | CI          | toda rama y PR                           | Agente de Jenkins                                                       | PostgreSQL de CI, una base desechable por build |
-| Staging     | `develop`                                | Render (API) + Vercel (web)                                             | PostgreSQL de staging con seed sintético        |
+| Staging     | `develop`                                | Render: API (Docker) y web (sitio estático), según `render.yaml`        | PostgreSQL de staging con seed sintético        |
 | Rendimiento | etiqueta `vX.Y.Z-rc.N`                   | Agente de Jenkins                                                       | Base desechable con `seed:perf`                 |
-| Producción  | etiqueta `vX.Y.Z` en `main` + aprobación | Render + Vercel                                                         | PostgreSQL de producción, respaldo diario       |
+| Producción  | etiqueta `vX.Y.Z` en `main` + aprobación | Render (API y web)                                                      | PostgreSQL de producción, respaldo diario       |
 
 La API en Render se construye con su Dockerfile (`api/Dockerfile`) y aplica las migraciones al iniciar
-(`npm run db:migrate && node dist/main.js`). El commit desplegado se lee de `RENDER_GIT_COMMIT` y lo comprueba el smoke test.
+(`migration:run` y después `node dist/main.js`; en staging, con `SEMBRAR=1`, carga el seed si la base está vacía). El commit desplegado se lee de `RENDER_GIT_COMMIT` y lo comprueba el smoke test.
 
 # 8. Cómo cubre la arquitectura cada RNF
 

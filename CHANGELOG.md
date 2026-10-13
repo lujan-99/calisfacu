@@ -14,7 +14,14 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/) y versio
   correo (D1 a D7).
 - PostgreSQL de desarrollo en el puerto 55432; las pruebas crean `calis_test` si no existe.
 
+- Despliegue continuo a staging desde el Sprint 1: API y web en Render definidos en `render.yaml`; Jenkins despliega
+  en cada push a `develop` que pasa las pruebas (ADR-0009). Se deja Vercel. T-028 y T-029 pasan al Sprint 1.
+- La imagen Docker de la API solo lleva las dependencias de producción (de 830 MB a ~500 MB) y carga el seed en staging.
+- SonarQube Cloud se activa con `SONAR_HABILITADO` (Sprint 2) y no bloquea el despliegue del Sprint 1.
+
 ### Corregido
+
+- `npm ci` parcial (por ejemplo, solo la web) fallaba porque el script `prepare` exigía Husky.
 
 - Dos correcciones simultáneas de la misma nota dejaban un historial de auditoría incoherente (US-04, M15).
 - El login revelaba qué correos existen (por el mensaje de cuenta bloqueada y por el tiempo de respuesta) y el bloqueo

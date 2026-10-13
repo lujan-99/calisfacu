@@ -26,7 +26,7 @@ según la RM 001/2026 del Ministerio de Educación y genera boletines. Equipo de
 - **API:** NestJS 11 + TypeScript estricto + TypeORM 0.3 + PostgreSQL 16 (`api/`)
 - **Web:** React 19 + Vite + TypeScript (`web/`)
 - **Pruebas:** Jest + Supertest (API, e2e con PostgreSQL real), Vitest + Testing Library (web), Cypress (`e2e/`), JMeter (`perf/`)
-- **CI/CD:** Jenkins Multibranch (`Jenkinsfile`, `jenkins/`); respaldos en GitHub Actions (`.github/workflows/backup.yml`)
+- **CI/CD:** Jenkins Multibranch (`Jenkinsfile`, `jenkins/`); despliegue continuo a staging en Render (`render.yaml`, ADR-0009); respaldos en GitHub Actions (`.github/workflows/backup.yml`)
 - **Estilo:** ESLint (typescript-eslint recommended-type-checked) + Prettier; Husky + lint-staged + commitlint
 
 ## Comandos

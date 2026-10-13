@@ -27,6 +27,8 @@ Estos cambios ya están en el Markdown, pero todavía no en el Word ni en el PDF
 
 - **SQAP v1.1** (13/10/2026): desarrollo directo en `develop` y revisión de commits (Secciones 3, 6, 8, 9, 10.2 y
   Tabla 32; ADR-0008).
+- **SQAP v1.1 y SAD:** la web se despliega en Render y no en Vercel; staging con despliegue continuo desde el Sprint 1
+  (ADR-0009). En el backlog, T-028 y T-029 pasan al Sprint 1.
 - **SRS, Sección 2.3:** las preguntas abiertas quedaron resueltas (decisiones D1 a D7 de `backlog/reglas-ministerio.md`).
 
 ## Regenerar las versiones en Markdown

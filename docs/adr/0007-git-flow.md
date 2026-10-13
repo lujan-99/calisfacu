@@ -1,6 +1,6 @@
 # ADR-0007: Git Flow con develop y main protegidas
 
-- **Estado:** Aceptada · **Fecha:** 13/10/2026 · **Decisores:** Lujan, Galvan
+- **Estado:** Reemplazada en parte por [ADR-0008](0008-desarrollo-directo-en-develop.md) (ramas de trabajo y PR por tarea) · **Fecha:** 13/10/2026 · **Decisores:** Lujan, Galvan
 - **Relacionado con:** SQAP Sección 10.2 (versión 0.12)
 
 ## Contexto

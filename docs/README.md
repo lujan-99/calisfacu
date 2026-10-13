@@ -1,7 +1,7 @@
 # Documentos de CalisFacu
 
 Cada documento está en su formato original (para el curso) y en Markdown (para leerlo en GitHub y para la IA).
-Si se cambia uno, se actualiza el otro en el mismo pull request.
+Si se cambia uno, se actualiza el otro en el mismo commit.
 
 | Documento                          | Markdown                                                                           | Original                            | Qué es                                                                       |
 | ---------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------- |
@@ -20,6 +20,14 @@ Si se cambia uno, se actualiza el otro en el mismo pull request.
 | Plantillas                         | [actas/](actas/), [defectos/](defectos/)                                           | —                                   | Acta de revisión, reporte de defecto, CAL-001                                |
 | Evidencias, manuales, capacitación | [evidencias/](evidencias/), [manuales/](manuales/), [capacitacion/](capacitacion/) | —                                   | Se llenan durante los sprints                                                |
 | Referencias                        | [referencias/](referencias/)                                                       | PDF, DOCX, XLSX                     | Guías del curso y entregas anteriores (solo lectura)                         |
+
+## Pendientes de pasar al formato original
+
+Estos cambios ya están en el Markdown, pero todavía no en el Word ni en el PDF. Hay que pasarlos antes de la próxima entrega:
+
+- **SQAP v1.1** (13/10/2026): desarrollo directo en `develop` y revisión de commits (Secciones 3, 6, 8, 9, 10.2 y
+  Tabla 32; ADR-0008).
+- **SRS, Sección 2.3:** las preguntas abiertas quedaron resueltas (decisiones D1 a D7 de `backlog/reglas-ministerio.md`).
 
 ## Regenerar las versiones en Markdown
 

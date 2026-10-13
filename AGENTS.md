@@ -18,7 +18,7 @@ según la RM 001/2026 del Ministerio de Educación y genera boletines. Equipo de
 | Requerimientos y RNF           | `docs/srs/SRS-CalisFacu.md`                                                                       |
 | Arquitectura y modelo de datos | `docs/sad/SAD-CalisFacu.md` y `docs/adr/`                                                         |
 | Umbrales de calidad            | `docs/calidad/metricas.md`                                                                        |
-| Ramas, commits y PR            | `docs/desarrollo/flujo-git.md`                                                                    |
+| Ramas, commits y releases      | `docs/desarrollo/flujo-git.md` y `docs/adr/0008-desarrollo-directo-en-develop.md`                 |
 | Vocabulario                    | `docs/glosario.md`                                                                                |
 
 ## Stack
@@ -39,14 +39,14 @@ npm run -w api start:dev                 # API en :3000 (/api/docs)
 npm run -w web dev                       # web en :5173
 npm run lint && npm run format:check     # M16: 0 errores y 0 advertencias
 npm run -w api test                      # unitarias (rápidas, sin base)
-npm run -w api test:cov                  # unitarias + e2e + cobertura (requiere PostgreSQL; BORRA la base de DATABASE_URL)
+npm run -w api test:cov                  # unitarias + e2e + cobertura (PostgreSQL en :55432; BORRA y recrea calis_test)
 npm run -w web test -- --run
 npm run ci:local                         # todas las etapas de Jenkins en local
 ```
 
 ## Reglas que no se negocian
 
-1. **Ramas:** se trabaja en `feature/US-NN-...` o `fix/CAL-NNN-...` desde `develop`. Nunca commits directos a `develop` ni a `main`.
+1. **Ramas:** se trabaja directo en `develop` (ADR-0008). Nunca commits directos a `main`: solo recibe el PR de release `develop → main`. No reescriba el historial (sin force push).
 2. **Commits:** Conventional Commits con referencia, por ejemplo `feat(calculo): ... ` + `Refs: US-02`. commitlint los rechaza si no.
 3. **TDD en módulos críticos** (`api/src/modules/{auth,notas,calculo,auditoria}`): primero la prueba que falla. Cobertura ≥ 90 % por módulo (`api/jest.config.ts`) y ≥ 80 % en código nuevo (SonarQube Cloud).
 4. **Cada criterio de aceptación tiene una prueba**; los nombres empiezan con "debe…".
@@ -56,10 +56,10 @@ npm run ci:local                         # todas las etapas de Jenkins en local
 8. **Base de datos:** `synchronize` siempre en `false`. Todo cambio de esquema es una migración nueva en `api/src/database/migrations/` (`npm run -w api db:migration:generate ...`). No edite migraciones ya fusionadas.
 9. **Datos:** solo sintéticos (`seed.ts`, fixtures). Nunca datos reales de estudiantes (son menores de edad).
 10. **Secretos:** nunca en el código ni en los logs. Usar variables de entorno (`.env.example` lista las necesarias).
-11. **Dependencias:** licencia MIT, Apache-2.0, BSD, ISC o 0BSD; justificar en el PR y agregar la fila en `docs/sqap/matrices-sqap.xlsx` (hoja Componentes de terceros). `npm audit --audit-level=high` debe pasar.
-12. **Umbrales:** no baje un umbral para que el pipeline pase. Un umbral cambia solo con el procedimiento del SQAP (Sección 16): SQAP, matrices y configuración en el mismo PR.
-13. **Documentación viva:** si cambia el comportamiento, actualice en el mismo PR la historia, el SRS, el SAD o el SQAP que corresponda. Si cambia el Excel del backlog, regenere el Markdown con `python3 docs/herramientas/gen_backlog_md.py`.
-14. **Si un requisito es ambiguo** (marcado con ❓), pregunte; no invente la regla.
+11. **Dependencias:** licencia MIT, Apache-2.0, BSD, ISC o 0BSD; justificar en el commit; si la dependencia tiene scripts de instalación, apruébelos con `npm install-scripts approve` y agregar la fila en `docs/sqap/matrices-sqap.xlsx` (hoja Componentes de terceros). `npm audit --audit-level=high` debe pasar.
+12. **Umbrales:** no baje un umbral para que el pipeline pase. Un umbral cambia solo con el procedimiento del SQAP (Sección 16): SQAP, matrices y configuración en el mismo commit.
+13. **Documentación viva:** si cambia el comportamiento, actualice en el mismo commit la historia, el SRS, el SAD o el SQAP que corresponda. Si cambia el Excel del backlog, regenere el Markdown con `python3 docs/herramientas/gen_backlog_md.py`.
+14. **Si un requisito es ambiguo**, decida una regla razonable, documéntela en el mismo commit (historia, `reglas-ministerio.md` o un ADR) e informe la decisión. Las decisiones vigentes están en `docs/backlog/reglas-ministerio.md` (D1 a D7).
 
 ## Convenciones de código
 

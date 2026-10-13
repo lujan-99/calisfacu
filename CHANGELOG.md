@@ -5,6 +5,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/) y versio
 
 ## [Sin publicar]
 
+### Agregado (Sprint 2)
+
+- Registro de asistencia por clase: `GET` y `PUT /api/asistencias/materias/:id/fechas/:fecha` y porcentaje por
+  estudiante en `GET /api/asistencias/materias/:id/porcentajes` ((presentes + licencias) / clases, un decimal); sin
+  fechas futuras según la hora de Bolivia y con la lista completa del curso (US-19, T-036; decisiones D8 y D9).
+
 ### Agregado (Sprint 1)
 
 - Configuración de dimensiones de evaluación por gestión: `GET` y `PUT /api/gestiones/:id/dimensiones`. Solo el

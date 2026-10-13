@@ -90,6 +90,12 @@ DECISIONES = [
         ['D6', 'Umbral de asistencia para "en riesgo"',
          'Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 **o** asistencia < 80 %.', 'US-06'],
         ['D7', 'Canal de notificación', 'Aviso dentro del sistema y correo electrónico.', 'US-08, US-12'],
+        ['D8', '¿Qué es una "fecha futura" en la asistencia?',
+         'Posterior a hoy en Bolivia (America/La_Paz), no a la fecha del servidor (UTC).',
+         '`reglas-asistencia.ts` (US-19)'],
+        ['D9', '¿Se puede tomar asistencia a una parte del curso?',
+         'No: cada clase registra a todos los estudiantes del curso, así "clases dictadas" es igual para todos.',
+         '`AsistenciaService.registrar` (US-19)'],
     ]), '',
 ]
 

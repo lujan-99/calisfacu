@@ -65,6 +65,22 @@ describe('Autorización de las rutas de notas (M09, RNF-04)', () => {
       url: `/api/calculo/materias/${e.matematica.id}/trimestres/${e.t1.id}`,
     },
     {
+      nombre: 'registrar asistencia',
+      metodo: 'put' as const,
+      url: `/api/asistencias/materias/${e.matematica.id}/fechas/2026-03-02`,
+      cuerpo: { registros: e.estudiantes.map((x) => ({ estudianteId: x.id, estado: 'PRESENTE' })) },
+    },
+    {
+      nombre: 'ver lista de asistencia',
+      metodo: 'get' as const,
+      url: `/api/asistencias/materias/${e.matematica.id}/fechas/2026-03-02`,
+    },
+    {
+      nombre: 'ver porcentajes de asistencia',
+      metodo: 'get' as const,
+      url: `/api/asistencias/materias/${e.matematica.id}/porcentajes`,
+    },
+    {
       nombre: 'configurar dimensiones (solo administrador)',
       metodo: 'put' as const,
       url: `/api/gestiones/${e.t1.gestion.id}/dimensiones`,

@@ -27,15 +27,17 @@
 Las preguntas abiertas del SRS (Sección 2.3) se resolvieron así. Si el cliente o el reglamento dicen otra cosa, se cambia
 con una solicitud de cambio (SQAP, Sección 16) y se agrega el caso a `casos-calculo.json`.
 
-| N.º | Pregunta                                           | Decisión                                                                                     | Dónde se aplica                                        |
-| --- | -------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| D1  | ¿Se admite 0 en una actividad no presentada?       | No. La escala es de 1 a 100; una actividad no presentada se registra con 1.                  | DTO de la API, `CHECK notas_valor_escala`, web (US-01) |
-| D2  | ¿Cómo se redondea?                                 | Al entero más cercano, 0,5 hacia arriba (`ROUND_HALF_UP`), solo al final de la suma.         | `CalculoService.redondear` (US-02)                     |
-| D3  | ¿La nota anual es el promedio de los 3 trimestres? | Sí, redondeado con la regla D2.                                                              | `CalculoService.notaAnual` (US-02)                     |
-| D4  | Dimensión sin notas: ¿"pendiente" o 0?             | Pendiente: no hay nota trimestral hasta que las cuatro dimensiones tengan al menos una nota. | `CalculoService.notaTrimestral` (US-02)                |
-| D5  | ¿Una licencia cuenta como asistencia?              | Sí: porcentaje = (presentes + licencias) / clases dictadas × 100, con un decimal.            | US-19                                                  |
-| D6  | Umbral de asistencia para "en riesgo"              | Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 **o** asistencia < 80 %.     | US-06                                                  |
-| D7  | Canal de notificación                              | Aviso dentro del sistema y correo electrónico.                                               | US-08, US-12                                           |
+| N.º | Pregunta                                           | Decisión                                                                                              | Dónde se aplica                                        |
+| --- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| D1  | ¿Se admite 0 en una actividad no presentada?       | No. La escala es de 1 a 100; una actividad no presentada se registra con 1.                           | DTO de la API, `CHECK notas_valor_escala`, web (US-01) |
+| D2  | ¿Cómo se redondea?                                 | Al entero más cercano, 0,5 hacia arriba (`ROUND_HALF_UP`), solo al final de la suma.                  | `CalculoService.redondear` (US-02)                     |
+| D3  | ¿La nota anual es el promedio de los 3 trimestres? | Sí, redondeado con la regla D2.                                                                       | `CalculoService.notaAnual` (US-02)                     |
+| D4  | Dimensión sin notas: ¿"pendiente" o 0?             | Pendiente: no hay nota trimestral hasta que las cuatro dimensiones tengan al menos una nota.          | `CalculoService.notaTrimestral` (US-02)                |
+| D5  | ¿Una licencia cuenta como asistencia?              | Sí: porcentaje = (presentes + licencias) / clases dictadas × 100, con un decimal.                     | US-19                                                  |
+| D6  | Umbral de asistencia para "en riesgo"              | Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 **o** asistencia < 80 %.              | US-06                                                  |
+| D7  | Canal de notificación                              | Aviso dentro del sistema y correo electrónico.                                                        | US-08, US-12                                           |
+| D8  | ¿Qué es una "fecha futura" en la asistencia?       | Posterior a hoy en Bolivia (America/La_Paz), no a la fecha del servidor (UTC).                        | `reglas-asistencia.ts` (US-19)                         |
+| D9  | ¿Se puede tomar asistencia a una parte del curso?  | No: cada clase registra a todos los estudiantes del curso, así "clases dictadas" es igual para todos. | `AsistenciaService.registrar` (US-19)                  |
 
 ## Casos de ejemplo (semilla de la tabla que firma el cliente, riesgo R02)
 

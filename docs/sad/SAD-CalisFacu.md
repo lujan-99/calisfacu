@@ -60,7 +60,8 @@ api/src/
                   [crítico] dimensiones por gestión: suman 100; bloqueadas  US-18 (T-015)
                   si la gestión tiene notas (GET/PUT /api/gestiones/:id/dimensiones)
     auditoria/    [crítico] corrección con motivo e historial             US-04
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, esquema) y fixtures
+    asistencia/   asistencia por clase y porcentaje por estudiante        US-19 (T-036)
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, esquema) y fixtures
 web/src/         App, pages/, lib/ (cliente de la API y validación)
 e2e/             Cypress
 perf/            planes de JMeter

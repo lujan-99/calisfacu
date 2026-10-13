@@ -1,0 +1,13 @@
+{
+  "name": "@calisfacu/e2e",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+  },
+  "devDependencies": {
+    "cypress": "^15.21.1",
+    "typescript": "~5.9.3"
+  }
+}

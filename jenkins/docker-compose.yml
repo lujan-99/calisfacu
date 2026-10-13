@@ -1,0 +1,33 @@
+# Jenkins + servicios de CI (SQAP, Anexo C.2).
+# Levantar desde la raíz del repositorio:
+#   cp jenkins/.env.example jenkins/.env   # y completar
+#   docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env up -d --build
+services:
+  jenkins:
+    build:
+      context: .
+      args:
+        SONAR_SCANNER_VERSION: ${SONAR_SCANNER_VERSION:?Defina SONAR_SCANNER_VERSION en jenkins/.env}
+    ports:
+      - '8080:8080'
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    environment:
+      STAGING_API_URL: ${STAGING_API_URL:-}
+      STAGING_WEB_URL: ${STAGING_WEB_URL:-}
+    depends_on:
+      - postgres-ci
+      - redis-ci
+    restart: unless-stopped
+  postgres-ci:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: calis
+      POSTGRES_PASSWORD: calis
+      POSTGRES_DB: calis
+    restart: unless-stopped
+  redis-ci:
+    image: redis:7
+    restart: unless-stopped
+volumes:
+  jenkins_home: {}

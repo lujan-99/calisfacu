@@ -1,0 +1,9 @@
+workflow-aggregator
+git
+github-branch-source
+basic-branch-build-strategies
+junit
+credentials-binding
+timestamper
+pipeline-stage-view
+matrix-auth

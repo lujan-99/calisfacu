@@ -31,6 +31,17 @@ sin ninguno.
 | `vercel-org-id`       | Secret text            | `orgId` de `web/.vercel/project.json`                                                                         |
 | `vercel-project-id`   | Secret text            | `projectId` de `web/.vercel/project.json`                                                                     |
 
+**Variables globales** (Manage Jenkins → System → Global properties → Environment variables). Las usan el smoke test
+y la etapa E2E de `develop`; si faltan, la etapa Deploy staging se detiene con un mensaje claro:
+
+| Variable          | Valor                                                  |
+| ----------------- | ------------------------------------------------------ |
+| `STAGING_API_URL` | URL pública de la API de staging en Render, con `/api` |
+| `STAGING_WEB_URL` | URL pública de la web de staging en Vercel             |
+
+**Etiquetas de versión:** créelas anotadas (`git tag -a v1.0.0 -m "..."`). La etapa Aprobar producción lee quién creó la
+etiqueta y rechaza que esa misma persona apruebe el despliegue.
+
 ## 4. Job Multibranch "calisfacu" (New Item → Multibranch Pipeline)
 
 | Opción                             | Valor                                                                                                           |

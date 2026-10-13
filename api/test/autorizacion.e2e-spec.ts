@@ -171,7 +171,27 @@ describe('Inicio de sesión (US-17)', () => {
       .post('/api/auth/login')
       .send({ email: 'secre@ue.test', contrasena: 'Prueba2026!' })
       .expect(401);
-    expect(r.body.message).toContain('Cuenta bloqueada');
+    // El bloqueo no se anuncia: el mensaje es el mismo que el de un correo inexistente (no revela la cuenta).
+    expect(r.body.message).toBe('Credenciales inválidas');
+  });
+
+  it('debe contar cada intento fallido una sola vez aunque lleguen en paralelo', async () => {
+    await Promise.all(
+      Array.from({ length: 8 }, () =>
+        request(app.getHttpServer())
+          .post('/api/auth/login')
+          .send({ email: 'admin@ue.test', contrasena: 'mala' })
+          .expect(401),
+      ),
+    );
+    const [fila] = await ds.query<{ bloqueado_hasta: Date | null }[]>(
+      `SELECT bloqueado_hasta FROM usuarios WHERE email = 'admin@ue.test'`,
+    );
+    expect(fila.bloqueado_hasta).not.toBeNull();
+    await request(app.getHttpServer())
+      .post('/api/auth/login')
+      .send({ email: 'admin@ue.test', contrasena: 'Prueba2026!' })
+      .expect(401);
   });
 
   it('debe rechazar datos de entrada inválidos con 400', async () => {

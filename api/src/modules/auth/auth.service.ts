@@ -7,11 +7,15 @@ import { Usuario } from '../../database/entities';
 
 export const MAX_INTENTOS = 5;
 export const MINUTOS_BLOQUEO = 15;
-const CREDENCIALES_INVALIDAS = 'Credenciales inválidas';
+/** Único mensaje de error del login: no revela si el correo existe ni si la cuenta está bloqueada. */
+export const CREDENCIALES_INVALIDAS = 'Credenciales inválidas';
 
 /** Módulo crítico: autenticación (US-17). El mensaje de error no revela si el correo existe. */
 @Injectable()
 export class AuthService {
+  /** Hash de relleno: se verifica contra él cuando el usuario no existe, para que el tiempo de respuesta sea el mismo. */
+  private hashRelleno?: Promise<string>;
+
   constructor(
     @InjectRepository(Usuario) private readonly usuarios: Repository<Usuario>,
     private readonly jwt: JwtService,
@@ -36,22 +40,19 @@ export class AuthService {
         'bloqueadoHasta',
       ],
     });
-    if (!usuario || !usuario.activo) throw new UnauthorizedException(CREDENCIALES_INVALIDAS);
-
-    const ahora = this.ahora();
-    if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > ahora) {
-      throw new UnauthorizedException(
-        `Cuenta bloqueada por ${MAX_INTENTOS} intentos fallidos. Intente de nuevo en ${MINUTOS_BLOQUEO} minutos.`,
-      );
+    if (!usuario || !usuario.activo) {
+      this.hashRelleno ??= AuthService.hash('relleno-sin-usuario');
+      await argon2.verify(await this.hashRelleno, contrasena);
+      throw new UnauthorizedException(CREDENCIALES_INVALIDAS);
     }
 
-    if (!(await argon2.verify(usuario.hashContrasena, contrasena))) {
-      const intentos = usuario.intentosFallidos + 1;
-      const bloquear = intentos >= MAX_INTENTOS;
-      await this.usuarios.update(usuario.id, {
-        intentosFallidos: bloquear ? 0 : intentos,
-        bloqueadoHasta: bloquear ? new Date(ahora.getTime() + MINUTOS_BLOQUEO * 60_000) : null,
-      });
+    const ahora = this.ahora();
+    const contrasenaValida = await argon2.verify(usuario.hashContrasena, contrasena);
+    if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > ahora) {
+      throw new UnauthorizedException(CREDENCIALES_INVALIDAS);
+    }
+    if (!contrasenaValida) {
+      await this.registrarIntentoFallido(usuario.id, ahora);
       throw new UnauthorizedException(CREDENCIALES_INVALIDAS);
     }
 
@@ -60,5 +61,20 @@ export class AuthService {
     }
     const token = await this.jwt.signAsync({ sub: usuario.id, rol: usuario.rol });
     return { token, usuario: { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol } };
+  }
+
+  /**
+   * Suma el intento y bloquea al llegar a MAX_INTENTOS en una sola sentencia atómica: con peticiones en paralelo
+   * cada intento se cuenta una vez y nadie prueba más contraseñas de las permitidas.
+   */
+  private async registrarIntentoFallido(id: number, ahora: Date) {
+    const hasta = new Date(ahora.getTime() + MINUTOS_BLOQUEO * 60_000);
+    await this.usuarios.query(
+      `UPDATE usuarios
+          SET intentos_fallidos = CASE WHEN intentos_fallidos + 1 >= $2 THEN 0 ELSE intentos_fallidos + 1 END,
+              bloqueado_hasta   = CASE WHEN intentos_fallidos + 1 >= $2 THEN $3::timestamptz ELSE bloqueado_hasta END
+        WHERE id = $1`,
+      [id, MAX_INTENTOS, hasta],
+    );
   }
 }

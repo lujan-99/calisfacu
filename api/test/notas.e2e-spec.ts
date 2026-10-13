@@ -48,6 +48,15 @@ describe('Registro de notas (US-01) y cálculo trimestral (US-02)', () => {
     );
   });
 
+  it('debe rechazar una nota fuera de 1 a 100 aun si se escribe directo en la base', async () => {
+    await expect(
+      ds.query(`INSERT INTO notas (actividad_id, estudiante_id, valor) VALUES ($1, $2, 0)`, [
+        e.actividades.ser.id,
+        e.estudiantes[0].id,
+      ]),
+    ).rejects.toThrow('notas_valor_escala');
+  });
+
   it('debe guardar todas o ninguna: un estudiante de otro curso anula la planilla (US-01, criterio 3)', async () => {
     await planilla(e.actividades.ser.id, [
       { estudianteId: e.estudiantes[0].id, valor: 80 },

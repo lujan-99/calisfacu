@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -33,6 +34,8 @@ export class Actividad {
 
 /** Nota de una actividad, en la escala de 1 a 100 (RNF-01). `numeric` para no perder precisión. */
 @Entity('notas')
+// Las restricciones CHECK se declaran aquí para que migration:generate no las borre.
+@Check('notas_valor_escala', 'valor >= 1 AND valor <= 100')
 @Unique(['actividad', 'estudiante'])
 export class Nota {
   @PrimaryGeneratedColumn()
@@ -76,7 +79,8 @@ export class RegistroAuditoria {
   @Column({ type: 'enum', enum: OrigenCambio, enumName: 'origen_cambio' })
   origen: OrigenCambio;
 
-  @CreateDateColumn({ type: 'timestamptz' })
+  /** clock_timestamp() y no now(): now() es la hora de inicio de la transacción, no la del cambio. */
+  @CreateDateColumn({ type: 'timestamptz', default: () => 'clock_timestamp()' })
   creadoEn: Date;
 }
 

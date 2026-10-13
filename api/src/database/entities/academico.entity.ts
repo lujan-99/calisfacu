@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   Entity,
   JoinColumn,
@@ -37,6 +38,7 @@ export class Gestion {
 }
 
 @Entity('trimestres')
+@Check('trimestres_numero', 'numero BETWEEN 1 AND 3')
 @Unique(['gestion', 'numero'])
 export class Trimestre {
   @PrimaryGeneratedColumn()
@@ -57,6 +59,7 @@ export class Trimestre {
  * 2026, RM 001/2026: SER 10, SABER 45, HACER 40, AUTOEVALUACION 5.
  */
 @Entity('dimensiones_evaluacion')
+@Check('dimensiones_puntaje_positivo', 'puntaje_maximo > 0')
 @Unique(['gestion', 'codigo'])
 export class DimensionEvaluacion {
   @PrimaryGeneratedColumn()

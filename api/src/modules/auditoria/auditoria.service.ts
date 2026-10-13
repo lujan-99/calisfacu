@@ -31,20 +31,27 @@ export class AuditoriaService {
   async corregir(notaId: number, valor: number, motivo: string, usuario: UsuarioToken) {
     const nota = await this.notaConActividad(notaId);
     await this.acceso.actividadDelProfesor(nota.actividad.id, usuario, true);
-    if (nota.valor === valor) {
-      throw new UnprocessableEntityException('La nota nueva es igual a la actual');
-    }
     return this.db.transaction(async (tx) => {
+      // El valor anterior se lee con la fila bloqueada: dos correcciones simultáneas se aplican una tras otra
+      // y cada registro de auditoría guarda el valor que realmente reemplazó (M15).
+      const actual = await tx.findOne(Nota, {
+        where: { id: notaId },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!actual) throw new NotFoundException('La nota no existe');
+      if (actual.valor === valor) {
+        throw new UnprocessableEntityException('La nota nueva es igual a la actual');
+      }
       await tx.update(Nota, { id: notaId }, { valor });
       await tx.insert(RegistroAuditoria, {
         nota: { id: notaId },
         usuario: { id: usuario.id },
-        valorAnterior: nota.valor,
+        valorAnterior: actual.valor,
         valorNuevo: valor,
         motivo: motivo.trim(),
         origen: OrigenCambio.CORRECCION,
       });
-      return { notaId, valorAnterior: nota.valor, valorNuevo: valor };
+      return { notaId, valorAnterior: actual.valor, valorNuevo: valor };
     });
   }
 
@@ -54,7 +61,8 @@ export class AuditoriaService {
     const registros = await this.registros.find({
       where: { nota: { id: notaId } },
       relations: { usuario: true },
-      order: { creadoEn: 'ASC', id: 'ASC' },
+      // Por id: el orden en que se aplicaron los cambios (el id se asigna con la fila de la nota bloqueada).
+      order: { id: 'ASC' },
     });
     return registros.map((r) => ({
       fecha: r.creadoEn,

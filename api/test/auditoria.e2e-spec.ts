@@ -107,4 +107,26 @@ describe('Corrección auditable de notas (US-04, M15)', () => {
       .set('Authorization', `Bearer ${admin}`)
       .expect(200);
   });
+
+  it('debe guardar como valor anterior el que realmente reemplazó, aunque otra transacción cambie la nota', async () => {
+    // Otra transacción tiene la fila bloqueada y está cambiando la nota a 90.
+    const otra = ds.createQueryRunner();
+    await otra.connect();
+    await otra.startTransaction();
+    await otra.query('SELECT id FROM notas WHERE id = $1 FOR UPDATE', [notaId]);
+
+    const correccion = http()
+      .patch(`/api/notas/${notaId}/correccion`)
+      .set('Authorization', `Bearer ${tk}`)
+      .send({ valor: 95, motivo: 'Corrección simultánea' })
+      .then((r) => r);
+    await new Promise((listo) => setTimeout(listo, 300)); // la corrección llega y espera el bloqueo
+    await otra.query('UPDATE notas SET valor = 90 WHERE id = $1', [notaId]);
+    await otra.commitTransaction();
+    await otra.release();
+
+    const r = await correccion;
+    expect(r.status).toBe(200);
+    expect(r.body).toEqual({ notaId, valorAnterior: 90, valorNuevo: 95 });
+  });
 });

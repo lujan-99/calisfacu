@@ -56,8 +56,12 @@ ETIQUETAS = {
 
 
 def gh(*args, entrada=None):
-    r = subprocess.run(['gh', *args], input=entrada, capture_output=True, text=True, check=True)
-    return r.stdout
+    for intento in range(3):  # GitHub a veces corta una respuesta: se reintenta antes de rendirse
+        r = subprocess.run(['gh', *args], input=entrada, capture_output=True, text=True)
+        if r.returncode == 0:
+            return r.stdout
+        time.sleep(2 * (intento + 1))
+    raise SystemExit(f"gh {' '.join(args[:3])} falló: {r.stderr.strip()}")
 
 
 def api(ruta, metodo='GET', **campos):

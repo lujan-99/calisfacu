@@ -100,6 +100,37 @@ export function MateriaActividades() {
 
   return (
     <>
+      {/* Banner Hero Institucional de la Materia (US-01/US-18) */}
+      <section className="hero-rol hero-profesor" aria-label="Resumen de la materia">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="libro" tam={16} />
+            <span>
+              {materia.curso.nombre} · Gestión {materia.gestion.anio}
+            </span>
+          </div>
+          <h2>{materia.nombre}</h2>
+          <p>
+            Planificación y registro de actividades de evaluación según las dimensiones de la RM
+            001/2026.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{total}</span>
+            <span className="hero-metrica-etiqueta">Estudiantes en curso</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{actividades.length}</span>
+            <span className="hero-metrica-etiqueta">Actividades ({dimension?.nombre ?? '—'})</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{dimension?.puntajeMaximo ?? 0} pts</span>
+            <span className="hero-metrica-etiqueta">Puntaje dimensión</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <Link to="/profesor/materias" className="volver" data-cy="link-volver-materias">

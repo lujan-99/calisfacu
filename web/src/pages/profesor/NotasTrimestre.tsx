@@ -75,9 +75,47 @@ export function NotasTrimestre() {
   if (base.estado === 'error')
     return <ErrorCarga mensaje={base.mensaje} reintentar={recargarBase} />;
   const { materia, trimestres, dimensiones } = base.datos;
+  const listaNotas = notas.estado === 'datos' ? notas.datos : [];
+  const aprobados = listaNotas.filter((n) => n.aprobado === true).length;
+  const reprobados = listaNotas.filter((n) => n.aprobado === false).length;
+  const pendientes = listaNotas.filter((n) => n.nota === null).length;
 
   return (
     <>
+      {/* Banner Hero Institucional de Notas Trimestrales (US-02) */}
+      <section className="hero-rol hero-profesor" aria-label="Resumen de notas trimestrales">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="tabla" tam={16} />
+            <span>Cálculo Automático de Promedios · RM 001/2026</span>
+          </div>
+          <h2>{trimestre ? nombreTrimestre(trimestre.numero) : 'Notas del Trimestre'}</h2>
+          <p>
+            Cálculo centralizado con aritmética decimal oficial según ponderación ministerial: Ser
+            (10 pts), Saber (45 pts), Hacer (40 pts) y Autoevaluación (5 pts). Nota mínima de
+            aprobación: 51 puntos.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{listaNotas.length}</span>
+            <span className="hero-metrica-etiqueta">Estudiantes</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{aprobados}</span>
+            <span className="hero-metrica-etiqueta">Aprobados (≥ 51)</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{reprobados}</span>
+            <span className="hero-metrica-etiqueta">Reprobados (&lt; 51)</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{pendientes}</span>
+            <span className="hero-metrica-etiqueta">Pendientes</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <Link
@@ -160,9 +198,7 @@ export function NotasTrimestre() {
                       </td>
                     );
                   })}
-                  <td className="numero" style={{ fontSize: 17, fontWeight: 700 }}>
-                    {f.nota ?? '—'}
-                  </td>
+                  <td className="numero nota-celda-final">{f.nota ?? '—'}</td>
                   <td>
                     <Estado fila={f} dimensiones={dimensiones} />
                   </td>

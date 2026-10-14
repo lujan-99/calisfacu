@@ -108,6 +108,35 @@ export function Planilla() {
 
   return (
     <>
+      {/* Banner Hero Institucional de la Planilla (US-01) */}
+      <section className="hero-rol hero-profesor" aria-label="Resumen de la planilla">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="portapapeles" tam={16} />
+            <span>Planilla Central de Calificaciones · {actividad.dimension}</span>
+          </div>
+          <h2>{actividad.nombre}</h2>
+          <p>
+            Registro central de notas sobre escala 1 a 100 en una sola transacción conforme a la RM
+            001/2026. Utilice la tecla Enter para navegar ágilmente entre estudiantes.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{filas.length}</span>
+            <span className="hero-metrica-etiqueta">Estudiantes</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{filas.length - pendientes.length}</span>
+            <span className="hero-metrica-etiqueta">Registradas</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{pendientes.length}</span>
+            <span className="hero-metrica-etiqueta">Por registrar</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <Link to={volverA} className="volver" data-cy="link-volver">
@@ -150,8 +179,9 @@ export function Planilla() {
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-between',
+            alignItems: 'center',
             gap: 8,
-            padding: '14px 20px',
+            padding: '16px 20px',
             borderBottom: '1px solid var(--borde)',
           }}
         >
@@ -178,7 +208,9 @@ export function Planilla() {
               const error = f.valor === null ? errorDe(f.estudianteId) : null;
               return (
                 <tr key={f.estudianteId} data-cy="fila-estudiante">
-                  <td className="col-n">{i + 1}</td>
+                  <td className="col-n">
+                    <span className="insignia-plomo">{i + 1}</span>
+                  </td>
                   <th scope="row">{f.estudiante}</th>
                   <td>
                     {f.valor !== null ? (

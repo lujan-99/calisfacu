@@ -1672,87 +1672,209 @@ p {
   font-weight: 600;
   color: var(--color-marca);
 }
+
+/* ---------- Tarjetas de materias del docente ---------- */
+.tarjeta-materia {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-tarjeta);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--texto);
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.tarjeta-materia:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-primario-borde);
+  box-shadow: 0 10px 24px rgba(84, 18, 30, 0.08);
+}
+
+.icono-materia {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-guindo-suave);
+  color: var(--color-primario);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(84, 18, 30, 0.08);
+}
+
+.tarjeta-materia-pie {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--borde-suave);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-primario);
+}
+
+/* ---------- Actividades de la materia ---------- */
 .lista-actividades {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  overflow: hidden;
+  gap: 10px;
 }
+
 .actividad {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-height: 64px;
-  padding: 10px 16px;
+  padding: 16px 20px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-tarjeta);
   color: var(--texto);
   text-decoration: none;
-  border-bottom: 1px solid var(--borde-suave);
   font-weight: 600;
   font-size: 15px;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
-.actividad:last-child {
-  border-bottom: 0;
-}
+
 .actividad:hover {
-  background: var(--superficie-2);
-  color: var(--texto);
+  background: var(--superficie);
+  border-color: var(--color-primario-borde);
+  transform: translateX(4px);
+  box-shadow: 0 4px 14px rgba(84, 18, 30, 0.06);
+  color: var(--color-primario);
 }
+
 .actividad-conteo {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 400;
+  gap: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--texto-2);
   white-space: nowrap;
 }
+
 .panel {
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
+
+/* ---------- Planilla central de notas (US-01) ---------- */
 .nota-registrada {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  padding: 6px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #166534;
 }
+
 .nota-registrada strong {
-  min-width: 40px;
-  font-size: 17px;
+  min-width: 44px;
+  font-family: 'Public Sans', monospace;
+  font-size: 16.5px;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
+  color: #14532d;
 }
+
 .nota-registrada span {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--texto-3);
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #15803d;
+  letter-spacing: 0.02em;
 }
+
 .entrada-nota {
   width: 100%;
-  max-width: 120px;
-  min-height: var(--tactil);
+  max-width: 110px;
+  min-height: 42px;
   padding: 0 12px;
-  border: 1px solid var(--borde-campo);
+  border: 1.5px solid var(--borde-campo);
   border-radius: var(--radio);
-  font: inherit;
-  font-size: 17px;
-  text-align: right;
+  font-family: 'Public Sans', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
   color: var(--texto);
   background: var(--superficie);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
+
+.entrada-nota:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(120, 25, 42, 0.15);
+  background: #ffffff;
+}
+
 .entrada-nota[aria-invalid='true'] {
   border: 2px solid var(--error-fuerte);
   background: #fff8f7;
+  box-shadow: 0 0 0 3px rgba(200, 70, 62, 0.15);
 }
+
 .tabla-planilla td,
 .tabla-planilla th {
-  vertical-align: top;
+  vertical-align: middle;
+  padding: 14px 18px;
 }
+
+.tabla-planilla .col-n {
+  width: 56px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--texto-tenue);
+  font-weight: 600;
+}
+
+.ayuda-atajos-planilla {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  font-size: 13.5px;
+  color: var(--texto-2);
+}
+
+.ayuda-atajos-planilla kbd {
+  background: #ffffff;
+  border: 1px solid var(--borde-campo);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
 @container (max-width: 760px) {
   .tabla .col-n {
     display: none;
@@ -1761,4 +1883,42 @@ p {
   .tabla td {
     padding: 10px 12px;
   }
+}
+
+/* ---------- Insignias de estado y notas trimestrales (US-02) ---------- */
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.insignia-exito {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.insignia-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.insignia-neutra {
+  background: var(--superficie-2);
+  color: var(--texto-2);
+  border: 1px solid var(--borde);
+}
+
+.nota-celda-final {
+  font-size: 17px;
+  font-weight: 800;
+  font-family: 'Public Sans', monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primario);
 }

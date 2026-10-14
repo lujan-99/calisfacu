@@ -1,0 +1,352 @@
+import { useEffect, useState, type FormEvent } from 'react';
+import { ConfirmarBorrado, Dialogo } from '../../componentes/Dialogo';
+import { Campo } from '../../componentes/Campo';
+import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
+import { Icono } from '../../componentes/Icono';
+import {
+  actualizarEstudiante,
+  borrarEstudiante,
+  crearEstudiante,
+  listarCursos,
+  listarEstudiantes,
+  type DatosEstudiante,
+  type Estudiante,
+} from '../../lib/api';
+import { useCarga } from '../../lib/useCarga';
+import { textoError, useMensaje } from '../../lib/useMensaje';
+
+type Formulario = DatosEstudiante & { id?: number };
+
+/** Espera a que el usuario deje de escribir antes de buscar. */
+function useRetardo<T>(valor: T, ms = 300): T {
+  const [retardado, setRetardado] = useState(valor);
+  useEffect(() => {
+    const t = window.setTimeout(() => setRetardado(valor), ms);
+    return () => window.clearTimeout(t);
+  }, [valor, ms]);
+  return retardado;
+}
+
+/**
+ * Estudiantes de la gestión más reciente (US-18, criterio 3; T-017). El código RUDE no se repite en una gestión
+ * (decisión D10): si el estudiante ya está inscrito en otro curso, la API lo rechaza y el mensaje dice dónde está.
+ */
+export function Estudiantes() {
+  const { carga: cursos } = useCarga(() => listarCursos({}), []);
+  const [cursoId, setCursoId] = useState<number | ''>('');
+  const [apellido, setApellido] = useState('');
+  const busqueda = useRetardo(apellido.trim());
+  const { carga, recargar } = useCarga(
+    () => listarEstudiantes({ cursoId: cursoId || undefined, apellido: busqueda || undefined }),
+    [cursoId, busqueda],
+  );
+  const [mensaje, setMensaje] = useMensaje();
+  const [form, setForm] = useState<Formulario | null>(null);
+  const [errores, setErrores] = useState<Partial<Record<keyof DatosEstudiante, string>>>({});
+  const [errorForm, setErrorForm] = useState<string | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [aBorrar, setABorrar] = useState<Estudiante | null>(null);
+  const [borrando, setBorrando] = useState(false);
+  const [errorPagina, setErrorPagina] = useState<string | null>(null);
+
+  const listaCursos = cursos.estado === 'datos' ? cursos.datos : [];
+  const gestion = listaCursos[0]?.gestion.anio;
+  const filtrando = !!cursoId || !!busqueda;
+
+  function validar(f: Formulario) {
+    const e: typeof errores = {};
+    if (!/^[0-9A-Z]{6,20}$/.test(f.codigoRude.trim().toUpperCase())) {
+      e.codigoRude = 'El código RUDE debe tener de 6 a 20 letras o números';
+    }
+    if (!f.nombres.trim()) e.nombres = 'Escriba los nombres';
+    if (!f.apellidos.trim()) e.apellidos = 'Escriba los apellidos';
+    if (!f.cursoId) e.cursoId = 'Seleccione un curso';
+    setErrores(e);
+    return Object.keys(e).length === 0;
+  }
+
+  async function guardar(ev: FormEvent) {
+    ev.preventDefault();
+    if (!form || !validar(form)) return;
+    setGuardando(true);
+    setErrorForm(null);
+    const { id, ...datos } = form;
+    try {
+      const est = id ? await actualizarEstudiante(id, datos) : await crearEstudiante(datos);
+      setForm(null);
+      setMensaje(`Se guardó a ${est.apellidos}, ${est.nombres}`);
+      recargar();
+    } catch (err) {
+      setErrorForm(textoError(err));
+    } finally {
+      setGuardando(false);
+    }
+  }
+
+  async function borrar() {
+    if (!aBorrar) return;
+    setBorrando(true);
+    try {
+      await borrarEstudiante(aBorrar.id);
+      setMensaje(`Se eliminó a ${aBorrar.apellidos}, ${aBorrar.nombres}`);
+      recargar();
+    } catch (err) {
+      setErrorPagina(textoError(err));
+    } finally {
+      setBorrando(false);
+      setABorrar(null);
+    }
+  }
+
+  const abrir = (f: Formulario) => {
+    setErrores({});
+    setErrorForm(null);
+    setForm(f);
+  };
+
+  return (
+    <>
+      <div className="titulo-pagina">
+        <div>
+          <h1>Estudiantes</h1>
+          <span className="subtitulo">
+            {gestion ? `Gestión ${gestion} · ` : ''}cada estudiante está inscrito en un solo curso.
+          </span>
+        </div>
+        <button
+          type="button"
+          className="boton boton-primario"
+          data-cy="btn-nuevo-estudiante"
+          onClick={() =>
+            abrir({ cursoId: Number(cursoId) || 0, codigoRude: '', nombres: '', apellidos: '' })
+          }
+        >
+          <Icono nombre="mas" tam={18} />
+          Nuevo estudiante
+        </button>
+      </div>
+      {mensaje && (
+        <Aviso tipo="exito" cy="mensaje-exito">
+          {mensaje}
+        </Aviso>
+      )}
+      {errorPagina && <Aviso tipo="error">{errorPagina}</Aviso>}
+
+      <div className="filtros">
+        <label className="campo">
+          Curso
+          <select
+            data-cy="filtro-curso"
+            value={cursoId}
+            onChange={(e) => setCursoId(Number(e.target.value) || '')}
+          >
+            <option value="">Todos los cursos</option>
+            {listaCursos.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="campo ancho">
+          Apellido
+          <input
+            type="search"
+            data-cy="filtro-apellido"
+            placeholder="Buscar por apellido"
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
+          />
+        </label>
+      </div>
+
+      <section aria-labelledby="titulo-lista">
+        <h2 id="titulo-lista" className="solo-lector">
+          Lista de estudiantes
+        </h2>
+        {carga.estado === 'cargando' && <Cargando texto="Cargando estudiantes…" />}
+        {carga.estado === 'error' && (
+          <ErrorCarga
+            mensaje={`No se pudo cargar la lista. ${carga.mensaje}`}
+            reintentar={recargar}
+          />
+        )}
+        {carga.estado === 'datos' && carga.datos.length === 0 && (
+          <Vacio
+            titulo={
+              filtrando ? 'Ningún estudiante coincide con el filtro.' : 'Todavía no hay estudiantes'
+            }
+            texto={filtrando ? undefined : 'Inscriba al primero con «Nuevo estudiante».'}
+          />
+        )}
+        {carga.estado === 'datos' && carga.datos.length > 0 && (
+          <div className="tabla-marco">
+            <table className="tabla" data-cy="tabla-estudiantes">
+              <thead>
+                <tr>
+                  <th scope="col">Apellidos</th>
+                  <th scope="col">Nombres</th>
+                  <th scope="col" className="ocultar-celular">
+                    RUDE
+                  </th>
+                  <th scope="col">Curso</th>
+                  <th scope="col" className="acciones">
+                    <span className="solo-lector">Acciones</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {carga.datos.map((e) => (
+                  <tr key={e.id} data-cy="fila-estudiante">
+                    <th scope="row">
+                      <strong>{e.apellidos}</strong>
+                    </th>
+                    <td>{e.nombres}</td>
+                    <td className="ocultar-celular" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {e.codigoRude}
+                    </td>
+                    <td>{e.curso.nombre}</td>
+                    <td className="acciones">
+                      <button
+                        type="button"
+                        className="boton-icono"
+                        data-cy="btn-editar-estudiante"
+                        aria-label={`Editar a ${e.apellidos}, ${e.nombres}`}
+                        onClick={() =>
+                          abrir({
+                            id: e.id,
+                            cursoId: e.curso.id,
+                            codigoRude: e.codigoRude,
+                            nombres: e.nombres,
+                            apellidos: e.apellidos,
+                          })
+                        }
+                      >
+                        <Icono nombre="lapiz" tam={18} />
+                      </button>
+                      <button
+                        type="button"
+                        className="boton-icono peligro"
+                        data-cy="btn-eliminar-estudiante"
+                        aria-label={`Eliminar a ${e.apellidos}, ${e.nombres}`}
+                        onClick={() => {
+                          setErrorPagina(null);
+                          setABorrar(e);
+                        }}
+                      >
+                        <Icono nombre="basura" tam={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {form && (
+        <Dialogo
+          titulo={form.id ? 'Editar estudiante' : 'Nuevo estudiante'}
+          alCerrar={() => setForm(null)}
+        >
+          <form
+            data-cy="form-estudiante"
+            onSubmit={(e) => void guardar(e)}
+            style={{ display: 'contents' }}
+            noValidate
+          >
+            {errorForm && (
+              <Aviso tipo="error" cy="form-error-api">
+                {errorForm}
+              </Aviso>
+            )}
+            <div className="dialogo-campos">
+              <Campo etiqueta="Apellidos" error={errores.apellidos}>
+                <input
+                  data-cy="estudiante-apellidos"
+                  value={form.apellidos}
+                  maxLength={80}
+                  aria-invalid={!!errores.apellidos}
+                  onChange={(e) => setForm({ ...form, apellidos: e.target.value })}
+                />
+              </Campo>
+              <Campo etiqueta="Nombres" error={errores.nombres}>
+                <input
+                  data-cy="estudiante-nombres"
+                  value={form.nombres}
+                  maxLength={80}
+                  aria-invalid={!!errores.nombres}
+                  onChange={(e) => setForm({ ...form, nombres: e.target.value })}
+                />
+              </Campo>
+              <Campo
+                etiqueta="Código RUDE"
+                error={errores.codigoRude}
+                ayuda="Registro Único de Estudiantes"
+              >
+                <input
+                  data-cy="estudiante-rude"
+                  value={form.codigoRude}
+                  maxLength={20}
+                  inputMode="text"
+                  autoCapitalize="characters"
+                  aria-invalid={!!errores.codigoRude}
+                  onChange={(e) => setForm({ ...form, codigoRude: e.target.value.toUpperCase() })}
+                />
+              </Campo>
+              <Campo etiqueta="Curso" error={errores.cursoId}>
+                <select
+                  data-cy="estudiante-curso"
+                  value={form.cursoId || ''}
+                  aria-invalid={!!errores.cursoId}
+                  onChange={(e) => setForm({ ...form, cursoId: Number(e.target.value) })}
+                >
+                  <option value="">Seleccione un curso</option>
+                  {listaCursos.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nombre}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
+            </div>
+            <div className="dialogo-acciones">
+              <button
+                type="button"
+                className="boton boton-secundario"
+                data-cy="btn-cancelar"
+                onClick={() => setForm(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="boton boton-primario"
+                data-cy="btn-guardar-estudiante"
+                disabled={guardando}
+              >
+                {guardando ? 'Guardando…' : 'Guardar estudiante'}
+              </button>
+            </div>
+          </form>
+        </Dialogo>
+      )}
+
+      {aBorrar && (
+        <ConfirmarBorrado
+          titulo="¿Eliminar este estudiante?"
+          alConfirmar={() => void borrar()}
+          alCerrar={() => setABorrar(null)}
+          borrando={borrando}
+        >
+          Se eliminará a{' '}
+          <strong>
+            {aBorrar.apellidos}, {aBorrar.nombres}
+          </strong>
+          .
+        </ConfirmarBorrado>
+      )}
+    </>
+  );
+}

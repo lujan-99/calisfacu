@@ -1,43 +1,76 @@
-import { useState } from 'react';
-import type { Sesion } from './lib/api';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { Marco } from './componentes/Marco';
+import { RutaProtegida } from './componentes/RutaProtegida';
+import { INICIO_POR_ROL } from './lib/formato';
+import { InstitucionProvider } from './lib/institucion';
+import { SesionProvider, useSesion } from './lib/sesion';
+import { Dimensiones } from './pages/admin/Dimensiones';
 import { Login } from './pages/Login';
-import { Planilla } from './pages/Planilla';
+import { NoEncontrada } from './pages/NoEncontrada';
+import { Boletin } from './pages/padre/Boletin';
+import { MateriaActividades } from './pages/profesor/MateriaActividades';
+import { MisMaterias } from './pages/profesor/MisMaterias';
+import { NotasTrimestre } from './pages/profesor/NotasTrimestre';
+import { Planilla } from './pages/profesor/Planilla';
+import { Cursos } from './pages/secretaria/Cursos';
+import { Estudiantes } from './pages/secretaria/Estudiantes';
+import { Materias } from './pages/secretaria/Materias';
+import { UnidadEducativa } from './pages/secretaria/UnidadEducativa';
+
+function Inicio() {
+  const { usuario } = useSesion();
+  return <Navigate to={usuario ? INICIO_POR_ROL[usuario.rol] : '/ingresar'} replace />;
+}
+
+/** Rutas de la aplicación: cada rol tiene las suyas (US-17, criterio 1). */
+export const rutas = [
+  { path: '/ingresar', element: <Login /> },
+  { path: '/', element: <Inicio /> },
+  {
+    element: <Marco />,
+    children: [
+      {
+        element: <RutaProtegida roles={['PROFESOR']} />,
+        children: [
+          { path: '/profesor/materias', element: <MisMaterias /> },
+          { path: '/profesor/materias/:materiaId', element: <MateriaActividades /> },
+          { path: '/profesor/materias/:materiaId/actividades/:actividadId', element: <Planilla /> },
+          { path: '/profesor/materias/:materiaId/notas', element: <NotasTrimestre /> },
+        ],
+      },
+      {
+        element: <RutaProtegida roles={['SECRETARIA', 'ADMINISTRADOR']} />,
+        children: [
+          { path: '/secretaria/cursos', element: <Cursos /> },
+          { path: '/secretaria/estudiantes', element: <Estudiantes /> },
+          { path: '/secretaria/materias', element: <Materias /> },
+          { path: '/secretaria/unidad-educativa', element: <UnidadEducativa /> },
+        ],
+      },
+      {
+        element: <RutaProtegida roles={['ADMINISTRADOR']} />,
+        children: [{ path: '/admin/dimensiones', element: <Dimensiones /> }],
+      },
+      {
+        element: <RutaProtegida roles={['PADRE']} />,
+        children: [{ path: '/padre/boletin', element: <Boletin /> }],
+      },
+      {
+        element: <RutaProtegida roles={['PROFESOR', 'SECRETARIA', 'ADMINISTRADOR', 'PADRE']} />,
+        children: [{ path: '*', element: <NoEncontrada /> }],
+      },
+    ],
+  },
+];
+
+const enrutador = createBrowserRouter(rutas);
 
 export function App() {
-  const [sesion, setSesion] = useState<Sesion | null>(null);
-  const [actividadId, setActividadId] = useState<number>(1);
-
   return (
-    <>
-      {!sesion ? (
-        <Login alIniciar={setSesion} />
-      ) : (
-        <div>
-          <header>
-            <span data-cy="usuario">
-              {sesion.usuario.nombre} · {sesion.usuario.rol}
-            </span>
-            <button onClick={() => setSesion(null)}>Salir</button>
-          </header>
-          {sesion.usuario.rol === 'PROFESOR' ? (
-            <>
-              <label>
-                Actividad
-                <input
-                  type="number"
-                  min={1}
-                  value={actividadId}
-                  onChange={(e) => setActividadId(Number(e.target.value))}
-                />
-              </label>
-              <Planilla token={sesion.token} actividadId={actividadId} />
-            </>
-          ) : (
-            <p>Las pantallas de este rol se construyen en los sprints siguientes.</p>
-          )}
-        </div>
-      )}
-      <footer>CalisFacu · versión {__GIT_COMMIT__.slice(0, 7)}</footer>
-    </>
+    <InstitucionProvider>
+      <SesionProvider>
+        <RouterProvider router={enrutador} />
+      </SesionProvider>
+    </InstitucionProvider>
   );
 }

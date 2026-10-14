@@ -11,10 +11,11 @@ declare global {
 
 Cypress.Commands.add('ingresar', (email: string) => {
   const contrasena = String(Cypress.env('SEED_PASSWORD') ?? 'Calis2026!');
-  cy.visit('/');
-  cy.get('[data-cy=email]').type(email);
-  cy.get('[data-cy=contrasena]').type(contrasena, { log: false });
-  cy.get('[data-cy=ingresar]').click();
+  cy.visit('/ingresar');
+  cy.get('[data-cy=login-correo]').type(email);
+  cy.get('[data-cy=login-contrasena]').type(contrasena, { log: false });
+  cy.get('[data-cy=login-ingresar]').click();
+  cy.get('[data-cy=usuario-nombre]').should('be.visible');
 });
 
 export {};

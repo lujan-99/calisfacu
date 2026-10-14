@@ -13,6 +13,7 @@ export default defineConfig({
     env: {
       profesorEmail: 'profesor@calisfacu.test',
       secretariaEmail: 'secretaria@calisfacu.test',
+      adminEmail: 'admin@calisfacu.test',
       padreEmail: 'padre@calisfacu.test',
     },
   },

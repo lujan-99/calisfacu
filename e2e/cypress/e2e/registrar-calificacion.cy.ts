@@ -1,6 +1,7 @@
-// US-01, criterios 1 y 2: el profesor registra las notas de una actividad; una nota fuera de la escala se rechaza.
-// Cada ejecución crea su propia actividad por la API, así la prueba se puede repetir en staging sin
-// reiniciar la base. Usa la materia 1, el trimestre 1 y la dimensión 1 del seed sintético.
+// US-01, criterios 1 y 2 (T-021): el profesor llega a la planilla navegando (Mis materias → materia → dimensión →
+// actividad), una nota fuera de la escala se rechaza junto al campo y la planilla completa se guarda.
+// Cada ejecución crea su propia actividad por la API, así la prueba se repite en staging sin reiniciar la base.
+// Usa la materia 1 (Matemática), el trimestre 1 y la dimensión 1 (Ser) del seed sintético.
 interface Sesion {
   token: string;
 }
@@ -21,32 +22,38 @@ function crearActividad() {
         body: { materiaId: 1, trimestreId: 1, dimensionId: 1, nombre },
       }),
     )
-    .then(({ body }) => ({ id: body.id, nombre }));
+    .then(() => nombre);
 }
 
 describe('Registrar calificación (US-01)', () => {
   beforeEach(() => {
-    crearActividad().then(({ id, nombre }) => {
+    crearActividad().then((nombre) => {
       cy.ingresar(Cypress.env('profesorEmail') as string);
-      // {selectall} reemplaza el valor de una vez: con clear() el campo numérico vuelve a 0 y el número se concatena.
-      cy.get('label').contains('Actividad').find('input').type(`{selectall}${id}`);
-      cy.contains('h2', nombre).should('be.visible');
+      cy.contains('[data-cy=materia-item]', 'Matemática').click();
+      cy.get('[data-cy=trimestre-1]').click();
+      cy.get('[data-cy=tab-ser]').click();
+      cy.contains('[data-cy=actividad-item]', nombre).click();
+      cy.get('[data-cy=planilla-titulo]').should('have.text', nombre);
     });
   });
 
-  it('debe rechazar una nota fuera de 1 a 100 junto al campo', () => {
-    cy.get('[data-cy^=nota-]').first().clear().type('120');
-    cy.get('[data-cy=guardar-planilla]').click();
-    cy.contains('La nota debe estar entre 1 y 100').should('be.visible');
+  it('debe rechazar una nota fuera de 1 a 100 junto al campo y no guardar nada', () => {
+    cy.get('[data-cy=nota-input]').first().type('120');
+    cy.get('[data-cy=btn-guardar-notas]').click();
+    cy.get('[data-cy=nota-error]').first().should('contain', 'La nota debe estar entre 1 y 100');
+    cy.get('[data-cy=planilla-error-validacion]').should('contain', 'No se guardó ninguna nota');
   });
 
-  it('debe guardar la planilla completa', () => {
-    cy.get('[data-cy^=nota-]').each(($campo, i) => {
-      cy.wrap($campo)
-        .clear()
-        .type(String(60 + (i % 40)));
+  it('debe guardar la planilla completa y mostrar las notas como registradas', () => {
+    cy.get('[data-cy=nota-input]').each(($campo, i) => {
+      cy.wrap($campo).type(String(60 + (i % 40)));
     });
-    cy.get('[data-cy=guardar-planilla]').click();
-    cy.get('[role=status]').should('contain', 'Se guardaron');
+    cy.get('[data-cy=btn-guardar-notas]').click();
+    cy.get('[data-cy=planilla-exito]').should('contain', 'Se guardaron');
+    cy.get('[data-cy=nota-input]').should('not.exist');
+    cy.get('[data-cy=planilla-pendientes]').should(
+      'have.text',
+      'Todas las notas están registradas',
+    );
   });
 });

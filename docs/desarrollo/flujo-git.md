@@ -46,6 +46,10 @@ Refs: US-01
 - **Ámbitos:** `auth`, `academico`, `notas`, `calculo`, `auditoria`, `asistencia`, `importacion`, `boletin`, `panel`,
   `centralizacion`, `notificaciones`, `salud`, `api`, `web`, `e2e`, `perf`, `ci`, `deps`, `docs`, `sqap`, `repo`.
 - **Referencia obligatoria** (commitlint la exige): `Refs: US-NN`, `Refs: CAL-NNN`, `Refs: T-NNN` o `Closes #23`.
+- **Issues:** cada tarea del backlog tiene su issue en GitHub, con el mismo número (T-016 es #16; la tabla está en
+  `docs/backlog/issues-github.md`). Cite los dos: `Refs: US-18, T-016, #16`. No use `Closes`: una tarea se cierra
+  cuando el revisor la aprueba y se muestra en la demo (DoD), no cuando se sube el commit. El estado se cambia en el
+  Excel del backlog y se sincroniza con `python3 docs/herramientas/subir_issues.py`.
 - Un cambio que rompe compatibilidad lleva `!` (`feat(api)!: ...`) y `BREAKING CHANGE:` en el cuerpo.
 
 Ejemplos:

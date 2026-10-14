@@ -31,7 +31,7 @@ Depende de US-01 y US-18. Módulo crítico del SQAP (TDD, cobertura ≥ 90 %). S
 | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ----------- | ------- | ----- | ---------------------- |
 | T-022 | TDD: servicio de cálculo (puntos por dimensión, nota trimestral, redondeo, aprobación con 51) con aritmética decimal; casos de la tabla firmada | Backend (crítico) | Lujan       | Galvan  | 5     | US-02 CA 1–6, M01, M06 |
 | T-023 | Umbral de cobertura ≥ 90 % para el módulo de cálculo en coverageThreshold de Jest                                                               | Calidad           | Lujan       | Galvan  | 1     | M06                    |
-| T-024 | Mostrar la nota trimestral y el estado (aprueba / reprueba) en la planilla                                                                      | Frontend          | Galvan      | Lujan   | 2     | US-02                  |
+| T-024 | Mostrar la nota trimestral y el estado (aprueba / reprueba) en la planilla                                                                      | Frontend          | Lujan       | Galvan  | 2     | US-02                  |
 
 ## Antes de empezar
 

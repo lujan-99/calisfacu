@@ -28,8 +28,8 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). Base de todas
 | T-009 | Entidad Usuario y Rol con migración de TypeORM; seed de usuarios sintéticos                            | Backend  | Lujan       | Galvan  | 2     | R07              |
 | T-010 | Autenticación JWT con Passport, contraseñas con argon2, bloqueo tras 5 intentos y expiración de sesión | Backend  | Lujan       | Galvan  | 4     | US-17 CA 1, 3, 4 |
 | T-011 | Guard de roles y pruebas que exigen HTTP 403 en rutas de escritura de notas                            | Backend  | Lujan       | Galvan  | 3     | M09              |
-| T-012 | Pantalla de inicio de sesión y menú por rol                                                            | Frontend | Galvan      | Lujan   | 3     | US-17 CA 1       |
-| T-013 | E2E Cypress: inicio de sesión de cada rol                                                              | Prueba   | Galvan      | Lujan   | 2     | M02              |
+| T-012 | Pantalla de inicio de sesión y menú por rol                                                            | Frontend | Lujan       | Galvan  | 3     | US-17 CA 1       |
+| T-013 | E2E Cypress: inicio de sesión de cada rol                                                              | Prueba   | Lujan       | Galvan  | 2     | M02              |
 
 ## Antes de empezar
 

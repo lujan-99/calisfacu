@@ -27,8 +27,8 @@ Depende de US-17 y US-18. Módulo crítico del SQAP (TDD obligatorio).
 | ----- | ------------------------------------------------------------------------------------ | ----------------- | ----------- | ------- | ----- | ----------------- |
 | T-018 | TDD: validación de notas (1 a 100) y guardado de la planilla en una sola transacción | Backend (crítico) | Lujan       | Galvan  | 4     | US-01 CA 2–3, M01 |
 | T-019 | Endpoint para registrar notas por actividad y dimensión                              | Backend (crítico) | Lujan       | Galvan  | 3     | US-01 CA 1        |
-| T-020 | Planilla de registro de notas por dimensión                                          | Frontend          | Galvan      | Lujan   | 4     | US-01 CA 1        |
-| T-021 | E2E Cypress: Registrar calificación                                                  | Prueba            | Galvan      | Lujan   | 2     | M02               |
+| T-020 | Planilla de registro de notas por dimensión                                          | Frontend          | Lujan       | Galvan  | 4     | US-01 CA 1        |
+| T-021 | E2E Cypress: Registrar calificación                                                  | Prueba            | Lujan       | Galvan  | 2     | M02               |
 
 ## Antes de empezar
 

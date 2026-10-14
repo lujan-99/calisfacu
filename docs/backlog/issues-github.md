@@ -1,0 +1,76 @@
+# Issues de GitHub de cada tarea
+
+> Generado con `python3 docs/herramientas/subir_issues.py` desde `backlog_v2_4sprints.xlsx`. El Excel es la
+> fuente: cambie el estado ahí, regenere el Markdown del backlog y vuelva a ejecutar el script.
+
+| Tarea | Issue                                                  | Sprint   | Historia | Responsable | Revisor | Estado      |
+| ----- | ------------------------------------------------------ | -------- | -------- | ----------- | ------- | ----------- |
+| T-001 | [#1](https://github.com/lujan-99/calisfacu/issues/1)   | Sprint 1 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-002 | [#2](https://github.com/lujan-99/calisfacu/issues/2)   | Sprint 1 | Calidad  | Lujan       | Galvan  | En revisión |
+| T-003 | [#3](https://github.com/lujan-99/calisfacu/issues/3)   | Sprint 1 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-004 | [#4](https://github.com/lujan-99/calisfacu/issues/4)   | Sprint 1 | Calidad  | Lujan       | Galvan  | En proceso  |
+| T-005 | [#5](https://github.com/lujan-99/calisfacu/issues/5)   | Sprint 1 | Infra    | Galvan      | Lujan   | En revisión |
+| T-006 | [#6](https://github.com/lujan-99/calisfacu/issues/6)   | Sprint 1 | Infra    | Galvan      | Lujan   | En revisión |
+| T-007 | [#7](https://github.com/lujan-99/calisfacu/issues/7)   | Sprint 1 | Infra    | Galvan      | Lujan   | En revisión |
+| T-008 | [#8](https://github.com/lujan-99/calisfacu/issues/8)   | Sprint 1 | Infra    | Galvan      | Lujan   | Por hacer   |
+| T-009 | [#9](https://github.com/lujan-99/calisfacu/issues/9)   | Sprint 1 | US-17    | Lujan       | Galvan  | En revisión |
+| T-010 | [#10](https://github.com/lujan-99/calisfacu/issues/10) | Sprint 1 | US-17    | Lujan       | Galvan  | En revisión |
+| T-011 | [#11](https://github.com/lujan-99/calisfacu/issues/11) | Sprint 1 | US-17    | Lujan       | Galvan  | En revisión |
+| T-012 | [#12](https://github.com/lujan-99/calisfacu/issues/12) | Sprint 1 | US-17    | Lujan       | Galvan  | En proceso  |
+| T-013 | [#13](https://github.com/lujan-99/calisfacu/issues/13) | Sprint 1 | US-17    | Lujan       | Galvan  | En proceso  |
+| T-014 | [#14](https://github.com/lujan-99/calisfacu/issues/14) | Sprint 1 | US-18    | Lujan       | Galvan  | En revisión |
+| T-015 | [#15](https://github.com/lujan-99/calisfacu/issues/15) | Sprint 1 | US-18    | Lujan       | Galvan  | En revisión |
+| T-016 | [#16](https://github.com/lujan-99/calisfacu/issues/16) | Sprint 1 | US-18    | Lujan       | Galvan  | En revisión |
+| T-017 | [#17](https://github.com/lujan-99/calisfacu/issues/17) | Sprint 1 | US-18    | Lujan       | Galvan  | Por hacer   |
+| T-018 | [#18](https://github.com/lujan-99/calisfacu/issues/18) | Sprint 1 | US-01    | Lujan       | Galvan  | En revisión |
+| T-019 | [#19](https://github.com/lujan-99/calisfacu/issues/19) | Sprint 1 | US-01    | Lujan       | Galvan  | En revisión |
+| T-020 | [#20](https://github.com/lujan-99/calisfacu/issues/20) | Sprint 1 | US-01    | Lujan       | Galvan  | En proceso  |
+| T-021 | [#21](https://github.com/lujan-99/calisfacu/issues/21) | Sprint 1 | US-01    | Lujan       | Galvan  | En proceso  |
+| T-022 | [#22](https://github.com/lujan-99/calisfacu/issues/22) | Sprint 1 | US-02    | Lujan       | Galvan  | En revisión |
+| T-023 | [#23](https://github.com/lujan-99/calisfacu/issues/23) | Sprint 1 | US-02    | Lujan       | Galvan  | En revisión |
+| T-024 | [#24](https://github.com/lujan-99/calisfacu/issues/24) | Sprint 1 | US-02    | Lujan       | Galvan  | Por hacer   |
+| T-025 | [#25](https://github.com/lujan-99/calisfacu/issues/25) | Sprint 1 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-026 | [#26](https://github.com/lujan-99/calisfacu/issues/26) | Sprint 1 | Calidad  | Lujan       | Galvan  | Por hacer   |
+| T-027 | [#27](https://github.com/lujan-99/calisfacu/issues/27) | Sprint 2 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-028 | [#28](https://github.com/lujan-99/calisfacu/issues/28) | Sprint 1 | Infra    | Galvan      | Lujan   | En revisión |
+| T-029 | [#29](https://github.com/lujan-99/calisfacu/issues/29) | Sprint 1 | Infra    | Galvan      | Lujan   | En revisión |
+| T-030 | [#30](https://github.com/lujan-99/calisfacu/issues/30) | Sprint 2 | Infra    | Galvan      | Lujan   | Por hacer   |
+| T-031 | [#31](https://github.com/lujan-99/calisfacu/issues/31) | Sprint 2 | US-04    | Lujan       | Galvan  | En revisión |
+| T-032 | [#32](https://github.com/lujan-99/calisfacu/issues/32) | Sprint 2 | US-04    | Galvan      | Lujan   | Por hacer   |
+| T-033 | [#33](https://github.com/lujan-99/calisfacu/issues/33) | Sprint 2 | US-04    | Galvan      | Lujan   | Por hacer   |
+| T-034 | [#34](https://github.com/lujan-99/calisfacu/issues/34) | Sprint 2 | US-03    | Lujan       | Galvan  | Por hacer   |
+| T-035 | [#35](https://github.com/lujan-99/calisfacu/issues/35) | Sprint 2 | US-03    | Galvan      | Lujan   | Por hacer   |
+| T-036 | [#36](https://github.com/lujan-99/calisfacu/issues/36) | Sprint 2 | US-19    | Lujan       | Galvan  | En revisión |
+| T-037 | [#37](https://github.com/lujan-99/calisfacu/issues/37) | Sprint 2 | US-19    | Galvan      | Lujan   | Por hacer   |
+| T-038 | [#38](https://github.com/lujan-99/calisfacu/issues/38) | Sprint 2 | US-05    | Lujan       | Galvan  | Por hacer   |
+| T-039 | [#39](https://github.com/lujan-99/calisfacu/issues/39) | Sprint 2 | US-05    | Galvan      | Lujan   | Por hacer   |
+| T-040 | [#40](https://github.com/lujan-99/calisfacu/issues/40) | Sprint 2 | US-10    | Galvan      | Lujan   | Por hacer   |
+| T-041 | [#41](https://github.com/lujan-99/calisfacu/issues/41) | Sprint 2 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-042 | [#42](https://github.com/lujan-99/calisfacu/issues/42) | Sprint 2 | Calidad  | Lujan       | Galvan  | Por hacer   |
+| T-043 | [#43](https://github.com/lujan-99/calisfacu/issues/43) | Sprint 3 | US-06    | Lujan       | Galvan  | Por hacer   |
+| T-044 | [#44](https://github.com/lujan-99/calisfacu/issues/44) | Sprint 3 | US-06    | Galvan      | Lujan   | Por hacer   |
+| T-045 | [#45](https://github.com/lujan-99/calisfacu/issues/45) | Sprint 3 | US-07    | Lujan       | Galvan  | Por hacer   |
+| T-046 | [#46](https://github.com/lujan-99/calisfacu/issues/46) | Sprint 3 | US-07    | Lujan       | Galvan  | Por hacer   |
+| T-047 | [#47](https://github.com/lujan-99/calisfacu/issues/47) | Sprint 3 | US-07    | Galvan      | Lujan   | Por hacer   |
+| T-048 | [#48](https://github.com/lujan-99/calisfacu/issues/48) | Sprint 3 | US-20    | Lujan       | Galvan  | Por hacer   |
+| T-049 | [#49](https://github.com/lujan-99/calisfacu/issues/49) | Sprint 3 | US-20    | Galvan      | Lujan   | Por hacer   |
+| T-050 | [#50](https://github.com/lujan-99/calisfacu/issues/50) | Sprint 3 | US-11    | Lujan       | Galvan  | Por hacer   |
+| T-051 | [#51](https://github.com/lujan-99/calisfacu/issues/51) | Sprint 3 | US-11    | Galvan      | Lujan   | Por hacer   |
+| T-052 | [#52](https://github.com/lujan-99/calisfacu/issues/52) | Sprint 3 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-053 | [#53](https://github.com/lujan-99/calisfacu/issues/53) | Sprint 3 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-054 | [#54](https://github.com/lujan-99/calisfacu/issues/54) | Sprint 3 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-055 | [#55](https://github.com/lujan-99/calisfacu/issues/55) | Sprint 3 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-056 | [#56](https://github.com/lujan-99/calisfacu/issues/56) | Sprint 3 | Calidad  | Lujan       | Galvan  | Por hacer   |
+| T-057 | [#57](https://github.com/lujan-99/calisfacu/issues/57) | Sprint 4 | US-09    | Lujan       | Galvan  | Por hacer   |
+| T-058 | [#58](https://github.com/lujan-99/calisfacu/issues/58) | Sprint 4 | US-09    | Lujan       | Galvan  | Por hacer   |
+| T-059 | [#59](https://github.com/lujan-99/calisfacu/issues/59) | Sprint 4 | US-09    | Galvan      | Lujan   | Por hacer   |
+| T-060 | [#60](https://github.com/lujan-99/calisfacu/issues/60) | Sprint 4 | US-08    | Lujan       | Galvan  | Por hacer   |
+| T-061 | [#61](https://github.com/lujan-99/calisfacu/issues/61) | Sprint 4 | US-08    | Galvan      | Lujan   | Por hacer   |
+| T-062 | [#62](https://github.com/lujan-99/calisfacu/issues/62) | Sprint 4 | US-12    | Galvan      | Lujan   | Por hacer   |
+| T-063 | [#63](https://github.com/lujan-99/calisfacu/issues/63) | Sprint 4 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-064 | [#64](https://github.com/lujan-99/calisfacu/issues/64) | Sprint 4 | Calidad  | Lujan       | Galvan  | Por hacer   |
+| T-065 | [#65](https://github.com/lujan-99/calisfacu/issues/65) | Sprint 4 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-066 | [#66](https://github.com/lujan-99/calisfacu/issues/66) | Sprint 4 | Calidad  | Lujan       | Galvan  | Por hacer   |
+| T-067 | [#67](https://github.com/lujan-99/calisfacu/issues/67) | Sprint 4 | Calidad  | Galvan      | Lujan   | Por hacer   |
+| T-068 | [#68](https://github.com/lujan-99/calisfacu/issues/68) | Sprint 4 | Calidad  | Lujan       | Galvan  | Por hacer   |
+| T-069 | [#69](https://github.com/lujan-99/calisfacu/issues/69) | Sprint 4 | Calidad  | Lujan       | Galvan  | Por hacer   |

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { opcionesBaseDeDatos } from './database/typeorm.config';
+import { AcademicoModule } from './modules/academico/academico.module';
 import { AsistenciaModule } from './modules/asistencia/asistencia.module';
 import { AuditoriaModule } from './modules/auditoria/auditoria.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -15,6 +16,7 @@ import { SaludModule } from './modules/salud/salud.module';
     TypeOrmModule.forRootAsync({ useFactory: () => opcionesBaseDeDatos() }),
     SaludModule,
     AuthModule,
+    AcademicoModule,
     NotasModule,
     AuditoriaModule,
     CalculoModule,

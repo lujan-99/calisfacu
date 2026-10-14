@@ -67,3 +67,18 @@ export class CrearActividadDto {
   @MaxLength(120)
   nombre: string;
 }
+
+/** Actividades de una materia en un trimestre (pantalla "Materia y actividades"). */
+export class FiltroActividadesDto {
+  @ApiProperty()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  materiaId: number;
+
+  @ApiProperty()
+  @Type(() => Number)
+  @IsInt()
+  @IsPositive()
+  trimestreId: number;
+}

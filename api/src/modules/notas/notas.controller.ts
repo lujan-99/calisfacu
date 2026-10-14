@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles, UsuarioActual, type UsuarioToken } from '../../common/decoradores';
 import { Rol } from '../../database/entities';
-import { CrearActividadDto, RegistrarPlanillaDto } from './notas.dto';
+import { CrearActividadDto, FiltroActividadesDto, RegistrarPlanillaDto } from './notas.dto';
 import { NotasService } from './notas.service';
 
 @ApiTags('notas')
@@ -10,6 +10,13 @@ import { NotasService } from './notas.service';
 @Controller('notas')
 export class NotasController {
   constructor(private readonly notas: NotasService) {}
+
+  /** Actividades con cuántas notas tienen, agrupables por dimensión (pantalla "Materia y actividades"). */
+  @Roles(Rol.PROFESOR, Rol.ADMINISTRADOR)
+  @Get('actividades')
+  actividades(@Query() filtro: FiltroActividadesDto, @UsuarioActual() usuario: UsuarioToken) {
+    return this.notas.actividades(filtro.materiaId, filtro.trimestreId, usuario);
+  }
 
   @Roles(Rol.PROFESOR, Rol.ADMINISTRADOR)
   @Get('actividades/:id')

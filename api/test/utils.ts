@@ -75,13 +75,17 @@ export async function escenario(ds: DataSource) {
     { materia: lenguaje, profesor: otroProfesor },
   ]);
   const estudiantes = await ds.getRepository(Estudiante).save([
-    { nombres: 'Ana', apellidos: 'Quispe', curso },
-    { nombres: 'Luis', apellidos: 'Mamani', curso },
-    { nombres: 'Eva', apellidos: 'Condori', curso },
+    { codigoRude: 'RUDE000001', nombres: 'Ana', apellidos: 'Quispe', curso, gestion },
+    { codigoRude: 'RUDE000002', nombres: 'Luis', apellidos: 'Mamani', curso, gestion },
+    { codigoRude: 'RUDE000003', nombres: 'Eva', apellidos: 'Condori', curso, gestion },
   ]);
-  const ajeno = await ds
-    .getRepository(Estudiante)
-    .save({ nombres: 'Otro', apellidos: 'Curso', curso: otroCurso });
+  const ajeno = await ds.getRepository(Estudiante).save({
+    codigoRude: 'RUDE000004',
+    nombres: 'Otro',
+    apellidos: 'Curso',
+    curso: otroCurso,
+    gestion,
+  });
   await ds.getRepository(VinculoPadre).save({ padreId: padre.id, estudianteId: estudiantes[0].id });
 
   const act = (nombre: string, codigo: string, trimestre = t1, materia = matematica) =>

@@ -148,6 +148,92 @@ describe('Autorización de las rutas de notas (M09, RNF-04)', () => {
   });
 });
 
+/**
+ * M09 en la gestión académica (T-016) y las consultas de las pantallas: cada ruta rechaza con 401 sin token y con
+ * 403 a cada rol que no está autorizado. Los guards actúan antes de validar el cuerpo, así que no cambia ningún dato.
+ */
+describe('Autorización de la gestión académica (M09, RNF-04)', () => {
+  let app: INestApplication;
+  let ds: DataSource;
+  let e: Escenario;
+  const tk: Record<string, string> = {};
+
+  beforeAll(async () => {
+    ({ app, ds } = await crearApp());
+    await limpiar(ds);
+    e = await escenario(ds);
+    for (const [k, email] of Object.entries({
+      profesor: 'profe@ue.test',
+      otro: 'otro@ue.test',
+      secretaria: 'secre@ue.test',
+      padre: 'padre@ue.test',
+      admin: 'admin@ue.test',
+    })) {
+      tk[k] = await token(app, email);
+    }
+  });
+
+  afterAll(() => app.close());
+
+  type Metodo = 'get' | 'post' | 'put' | 'delete';
+  const secretariaYAdmin = ['profesor', 'otro', 'padre'];
+  const soloAdmin = ['profesor', 'secretaria', 'padre'];
+  const rutas = (): { metodo: Metodo; url: string; noPermitidos: string[] }[] => [
+    { metodo: 'get', url: '/api/gestiones', noPermitidos: ['padre'] },
+    { metodo: 'get', url: `/api/gestiones/${e.t1.gestion.id}/trimestres`, noPermitidos: ['padre'] },
+    { metodo: 'get', url: '/api/cursos', noPermitidos: secretariaYAdmin },
+    { metodo: 'post', url: '/api/cursos', noPermitidos: secretariaYAdmin },
+    { metodo: 'put', url: `/api/cursos/${e.ajeno.curso.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'delete', url: `/api/cursos/${e.ajeno.curso.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/estudiantes', noPermitidos: secretariaYAdmin },
+    { metodo: 'post', url: '/api/estudiantes', noPermitidos: secretariaYAdmin },
+    { metodo: 'put', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'delete', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/materias', noPermitidos: secretariaYAdmin },
+    { metodo: 'post', url: '/api/materias', noPermitidos: secretariaYAdmin },
+    { metodo: 'put', url: `/api/materias/${e.lenguaje.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'delete', url: `/api/materias/${e.lenguaje.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/materias/mias', noPermitidos: ['secretaria', 'admin', 'padre'] },
+    { metodo: 'get', url: `/api/materias/${e.matematica.id}`, noPermitidos: ['otro', 'padre'] },
+    { metodo: 'get', url: '/api/profesores', noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/unidad-educativa', noPermitidos: secretariaYAdmin },
+    { metodo: 'put', url: '/api/unidad-educativa', noPermitidos: secretariaYAdmin },
+    { metodo: 'put', url: '/api/unidad-educativa/colores', noPermitidos: soloAdmin },
+    { metodo: 'put', url: '/api/unidad-educativa/logo', noPermitidos: soloAdmin },
+    { metodo: 'delete', url: '/api/unidad-educativa/logo', noPermitidos: soloAdmin },
+    {
+      metodo: 'get',
+      url: `/api/notas/actividades?materiaId=${e.matematica.id}&trimestreId=${e.t1.id}`,
+      noPermitidos: ['otro', 'secretaria', 'padre'],
+    },
+  ];
+
+  it('debe responder 401 a todas las rutas sin token', async () => {
+    for (const r of [...rutas(), { metodo: 'post' as const, url: '/api/auth/renovar' }]) {
+      await request(app.getHttpServer())[r.metodo](r.url).expect(401);
+    }
+  });
+
+  it('debe responder 403 a cada rol sin permiso, ruta por ruta', async () => {
+    for (const r of rutas()) {
+      for (const quien of r.noPermitidos) {
+        const res = await request(app.getHttpServer())
+          [r.metodo](r.url)
+          .set('Authorization', `Bearer ${tk[quien]}`);
+        expect({ ruta: `${r.metodo} ${r.url}`, quien, estado: res.status }).toEqual({
+          ruta: `${r.metodo} ${r.url}`,
+          quien,
+          estado: 403,
+        });
+      }
+    }
+  });
+
+  it('debe dejar públicos los datos de la institución para la pantalla de ingreso', async () => {
+    await request(app.getHttpServer()).get('/api/institucion').expect(200);
+  });
+});
+
 describe('Inicio de sesión (US-17)', () => {
   let app: INestApplication;
   let ds: DataSource;

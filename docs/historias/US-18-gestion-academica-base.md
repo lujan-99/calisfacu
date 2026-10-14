@@ -33,7 +33,7 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-01 necesit
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- | ----------- | ------- | ----- | -------------------- |
 | T-014 | Modelo académico: gestión, trimestre, unidad educativa (código SIE, nivel, año, paralelo), curso, materia, estudiante, asignación profesor–materia; migraciones y seed | Backend           | Lujan       | Galvan  | 4     | US-18 CA 1–5         |
 | T-015 | Configuración de dimensiones por gestión (suman 100; bloqueadas si hay notas) — TDD                                                                                    | Backend (crítico) | Lujan       | Galvan  | 3     | US-18 CA 6–7, RNF-01 |
-| T-016 | API CRUD de la secretaria: cursos, materias, estudiantes y asignaciones                                                                                                | Backend           | Galvan      | Lujan   | 4     | US-18 CA 1–3         |
+| T-016 | API CRUD de la secretaria: cursos, materias, estudiantes y asignaciones                                                                                                | Backend           | Lujan       | Galvan  | 4     | US-18 CA 1–3         |
 | T-017 | Pantallas de la secretaria para la gestión académica                                                                                                                   | Frontend          | Galvan      | Lujan   | 4     | US-18                |
 
 ## Antes de empezar

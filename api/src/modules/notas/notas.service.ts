@@ -59,6 +59,60 @@ export class NotasService {
     return { id: actividad.id, nombre: actividad.nombre };
   }
 
+  /**
+   * Actividades de la materia en el trimestre, en el orden de las dimensiones, con cuántas notas tienen sobre el
+   * total de estudiantes del curso (la pantalla muestra "28/30 notas").
+   */
+  async actividades(materiaId: number, trimestreId: number, usuario: UsuarioToken) {
+    await this.acceso.verificarMateria(materiaId, usuario);
+    const [materia, trimestre] = await Promise.all([
+      this.db
+        .getRepository(Materia)
+        .findOne({ where: { id: materiaId }, relations: { curso: { gestion: true } } }),
+      this.db
+        .getRepository(Trimestre)
+        .findOne({ where: { id: trimestreId }, relations: { gestion: true } }),
+    ]);
+    if (!materia || !trimestre || trimestre.gestion.id !== materia.curso.gestion.id) {
+      throw new NotFoundException('La materia o el trimestre no existen en la misma gestión');
+    }
+    const [filas, estudiantes] = await Promise.all([
+      this.db
+        .getRepository(Actividad)
+        .createQueryBuilder('a')
+        .innerJoin('a.dimension', 'd')
+        .leftJoin(Nota, 'n', 'n.actividad_id = a.id')
+        .select(['a.id AS id', 'a.nombre AS nombre'])
+        .addSelect(['d.id AS "dimensionId"', 'd.codigo AS codigo', 'd.nombre AS "dimensionNombre"'])
+        .addSelect('count(n.id)::int', 'notasRegistradas')
+        .where('a.materia_id = :materiaId AND a.trimestre_id = :trimestreId', {
+          materiaId,
+          trimestreId,
+        })
+        .groupBy('a.id, d.id')
+        .orderBy('d.orden', 'ASC')
+        .addOrderBy('a.id', 'ASC')
+        .getRawMany<{
+          id: number;
+          nombre: string;
+          dimensionId: number;
+          codigo: string;
+          dimensionNombre: string;
+          notasRegistradas: number;
+        }>(),
+      this.estudiantes.countBy({ curso: { id: materia.curso.id } }),
+    ]);
+    return {
+      estudiantes,
+      actividades: filas.map((f) => ({
+        id: f.id,
+        nombre: f.nombre,
+        dimension: { id: f.dimensionId, codigo: f.codigo, nombre: f.dimensionNombre },
+        notasRegistradas: f.notasRegistradas,
+      })),
+    };
+  }
+
   /** Planilla de una actividad: todos los estudiantes del curso con su nota, si ya la tienen. */
   async planilla(actividadId: number, usuario: UsuarioToken) {
     const actividad = await this.acceso.actividadDelProfesor(actividadId, usuario, false);

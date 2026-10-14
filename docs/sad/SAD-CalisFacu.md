@@ -1,6 +1,6 @@
 ---
 title: 'CalisFacu v1.0 — Documento de Arquitectura de Software (SAD)'
-subtitle: 'Equipo L-001 · COM450 Calidad de Software · Gestión II/2026 · Versión 1.1'
+subtitle: 'Equipo L-001 · COM450 Calidad de Software · Gestión II/2026 · Versión 1.2'
 lang: es
 ---
 
@@ -46,6 +46,7 @@ flowchart LR
 api/src/
   main.ts · app.module.ts · app.setup.ts     arranque y configuración común (también la usan las pruebas)
   common/decoradores.ts                      @Publico, @Roles, @UsuarioActual
+  common/transformaciones.ts                 recorte y mayúsculas en DTO, duplicados (23505), LIKE seguro
   database/
     entities/                                entidades TypeORM (Sección 5)
     migrations/                              migraciones versionadas
@@ -54,14 +55,17 @@ api/src/
     seed.ts · reiniciar.ts                   datos sintéticos y reinicio (solo desarrollo)
   modules/
     salud/        GET /api/salud
-    auth/         [crítico] login, JWT, bloqueo, guards de rol           US-17
+    auth/         [crítico] login, JWT, bloqueo, renovación, guards       US-17
     notas/        [crítico] actividades, planilla, acceso por asignación  US-01
     calculo/      [crítico] nota trimestral según la RM 001/2026          US-02
                   [crítico] dimensiones por gestión: suman 100; bloqueadas  US-18 (T-015)
                   si la gestión tiene notas (GET/PUT /api/gestiones/:id/dimensiones)
     auditoria/    [crítico] corrección con motivo e historial             US-04
     asistencia/   asistencia por clase y porcentaje por estudiante        US-19 (T-036)
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, esquema) y fixtures
+    academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
+                  gestiones y trimestres, "mis materias", unidad educativa
+                  y su apariencia: colores y logo (ADR-0010)
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, academico, esquema) y fixtures
 web/src/         App, pages/, lib/ (cliente de la API y validación)
 e2e/             Cypress
 perf/            planes de JMeter
@@ -118,24 +122,30 @@ Decisiones del modelo:
 
 - `notas.valor` es `numeric(5,2)` y el cálculo usa `decimal.js`: un 50,5 nunca se convierte en 50,4999… (ADR-0004).
 - `registros_auditoria` es de **solo inserción**: un trigger de PostgreSQL rechaza `UPDATE` y `DELETE` (ADR-0005).
-- Restricciones en la base, además de la validación de la API: nota entre 0 y 100, puntaje de dimensión positivo, número
+- Restricciones en la base, además de la validación de la API: nota entre 1 y 100 (D1), puntaje de dimensión positivo, número
   de trimestre entre 1 y 3, una nota por estudiante y actividad, un profesor por materia.
 - La nota trimestral **no se guarda**: se calcula al consultarla, así que una corrección se refleja de inmediato.
+- `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos
+  de la misma gestión (US-18, criterio 3; D10). La fila guarda también la gestión del curso para que la base lo exija.
+- `unidades_educativas` guarda los colores de la web (`CHECK` de formato `#RRGGBB`) y el logo (`bytea`, máximo 256 KB):
+  la apariencia cambia sin tocar el código (ADR-0010).
 
 # 6. Seguridad (RNF-04)
 
-| Amenaza                          | Control                                                                                              | Verificación                     |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Acceso sin sesión                | `JwtAuthGuard` global; solo `/api/salud` y `/api/auth/login` son públicas                            | `autorizacion.e2e-spec.ts` (401) |
-| Rol sin permiso                  | `@Roles()` + `RolesGuard`                                                                            | M09 (403)                        |
-| Profesor de otra materia         | `AccesoNotasService` comprueba la asignación profesor–materia                                        | M09 (403)                        |
-| Padre que cambia el ID en la URL | Guard de vínculo padre–estudiante (US-20, semana 3)                                                  | M09 (403)                        |
-| Fuerza bruta                     | Bloqueo de 15 minutos tras 5 intentos; mismo mensaje para correo inexistente y contraseña incorrecta | e2e de inicio de sesión          |
-| Contraseñas                      | Hash argon2; la columna no se selecciona por defecto                                                 | Revisión de código               |
-| Repudio de cambios               | Auditoría inmutable (ADR-0005)                                                                       | M15                              |
-| Entrada maliciosa                | `ValidationPipe` con `whitelist` y `forbidNonWhitelisted`; consultas parametrizadas de TypeORM       | e2e (400)                        |
-| Secretos                         | Solo en Jenkins Credentials, GitHub Secrets y el panel de cada plataforma                            | Auditoría de cierre              |
-| Dependencias vulnerables         | `npm audit --audit-level=high`, Dependabot, SonarQube Cloud                                          | M08                              |
+| Amenaza                          | Control                                                                                                                | Verificación                     |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Acceso sin sesión                | `JwtAuthGuard` global; solo son públicas `/api/salud`, `/api/auth/login` y `/api/institucion` (nombre, colores y logo) | `autorizacion.e2e-spec.ts` (401) |
+| Rol sin permiso                  | `@Roles()` + `RolesGuard`                                                                                              | M09 (403)                        |
+| Profesor de otra materia         | `AccesoNotasService` comprueba la asignación profesor–materia                                                          | M09 (403)                        |
+| Padre que cambia el ID en la URL | Guard de vínculo padre–estudiante (US-20, semana 3)                                                                    | M09 (403)                        |
+| Fuerza bruta                     | Bloqueo de 15 minutos tras 5 intentos; mismo mensaje para correo inexistente y contraseña incorrecta                   | e2e de inicio de sesión          |
+| Sesión abandonada                | Token de 30 minutos que la web renueva (`POST /api/auth/renovar`) solo mientras hay actividad (D11)                    | e2e de expiración de sesión      |
+| Archivo malicioso (logo)         | Solo PNG, JPEG o WebP, reconocidos por su contenido (sin SVG); 256 KB; `X-Content-Type-Options: nosniff`               | `academico.e2e-spec.ts`          |
+| Contraseñas                      | Hash argon2; la columna no se selecciona por defecto                                                                   | Revisión de código               |
+| Repudio de cambios               | Auditoría inmutable (ADR-0005)                                                                                         | M15                              |
+| Entrada maliciosa                | `ValidationPipe` con `whitelist` y `forbidNonWhitelisted`; consultas parametrizadas de TypeORM                         | e2e (400)                        |
+| Secretos                         | Solo en Jenkins Credentials, GitHub Secrets y el panel de cada plataforma                                              | Auditoría de cierre              |
+| Dependencias vulnerables         | `npm audit --audit-level=high`, Dependabot, SonarQube Cloud                                                            | M08                              |
 
 # 7. Despliegue
 
@@ -164,15 +174,18 @@ La API en Render se construye con su Dockerfile (`api/Dockerfile`) y aplica las 
 
 # 9. Decisiones de arquitectura (ADR)
 
-| ADR                                                 | Decisión                                                               |
-| --------------------------------------------------- | ---------------------------------------------------------------------- |
-| [0001](../adr/0001-monorepo-nestjs-react.md)        | Monorepo con NestJS (API) y React + Vite (web) en TypeScript           |
-| [0002](../adr/0002-typeorm-postgresql.md)           | TypeORM sobre PostgreSQL 16                                            |
-| [0003](../adr/0003-jenkins-multibranch.md)          | Jenkins Multibranch como CI/CD; respaldos en GitHub Actions            |
-| [0004](../adr/0004-calculo-decimal-configurable.md) | Cálculo con aritmética decimal y dimensiones configurables por gestión |
-| [0005](../adr/0005-auditoria-inmutable.md)          | Auditoría de solo inserción con trigger de PostgreSQL                  |
-| [0006](../adr/0006-cola-boletines.md)               | Cola BullMQ + Redis para los boletines                                 |
-| [0007](../adr/0007-git-flow.md)                     | Git Flow con `develop` y `main` protegidas                             |
+| ADR                                                          | Decisión                                                                               |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| [0001](../adr/0001-monorepo-nestjs-react.md)                 | Monorepo con NestJS (API) y React + Vite (web) en TypeScript                           |
+| [0002](../adr/0002-typeorm-postgresql.md)                    | TypeORM sobre PostgreSQL 16                                                            |
+| [0003](../adr/0003-jenkins-multibranch.md)                   | Jenkins Multibranch como CI/CD; respaldos en GitHub Actions                            |
+| [0004](../adr/0004-calculo-decimal-configurable.md)          | Cálculo con aritmética decimal y dimensiones configurables por gestión                 |
+| [0005](../adr/0005-auditoria-inmutable.md)                   | Auditoría de solo inserción con trigger de PostgreSQL                                  |
+| [0006](../adr/0006-cola-boletines.md)                        | Cola BullMQ + Redis para los boletines                                                 |
+| [0007](../adr/0007-git-flow.md)                              | Git Flow con `develop` y `main` protegidas                                             |
+| [0008](../adr/0008-desarrollo-directo-en-develop.md)         | Desarrollo directo en `develop` con revisión de commits; `main` solo por PR de release |
+| [0009](../adr/0009-despliegue-continuo-en-render.md)         | Despliegue continuo a staging en Render (API y web) desde el Sprint 1                  |
+| [0010](../adr/0010-apariencia-institucional-configurable.md) | Colores y logo de la institución configurables desde la API, con contraste WCAG AA     |
 
 # 10. Historial
 
@@ -180,3 +193,4 @@ La API en Render se construye con su Dockerfile (`api/Dockerfile`) y aplica las 
 | ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | ------- |
 | 1.0     | 13/10/2026 | Versión inicial: arquitectura del repositorio base.                                                                                                                      | Lujan | Galvan  |
 | 1.1     | 13/10/2026 | La web se despliega en Render y no en Vercel (ADR-0009); módulos de dimensiones por gestión (T-015) y de asistencia (T-036); arranque con migraciones y seed de staging. | Lujan | Galvan  |
+| 1.2     | 13/10/2026 | Módulo académico (T-016): cursos, estudiantes con código RUDE (D10), materias, unidad educativa y su apariencia (ADR-0010); renovación de la sesión (D11).               | Lujan | Galvan  |

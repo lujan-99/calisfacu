@@ -36,6 +36,8 @@ const MATERIAS = [
   'Ciencias Sociales',
 ];
 
+let siguienteRude = 0;
+
 async function crearCurso(
   tx: EntityManager,
   gestion: Gestion,
@@ -55,9 +57,12 @@ async function crearCurso(
   const estudiantes = await tx.save(
     Estudiante,
     Array.from({ length: cantidad }, () => ({
+      // RUDE sintético: el prefijo 9 no lo usa el registro real del Ministerio.
+      codigoRude: `9${String(++siguienteRude).padStart(11, '0')}`,
       nombres: faker.person.firstName(),
       apellidos: faker.person.lastName(),
       curso,
+      gestion,
     })),
   );
   for (const nombre of MATERIAS) {

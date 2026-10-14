@@ -9,10 +9,19 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { COLORES_PREDETERMINADOS } from '../../modules/academico/apariencia';
 import { Nivel } from './enums';
 import { Usuario } from './usuario.entity';
 
+/**
+ * Datos de la institución que salen en boletines y centralizadores (US-18, criterio 5) y su apariencia en la web:
+ * colores y logo, configurables sin tocar el código (ADR-0010).
+ */
 @Entity('unidades_educativas')
+@Check(
+  'unidades_colores_hex',
+  `color_marca ~ '^#[0-9A-F]{6}$' AND color_primario ~ '^#[0-9A-F]{6}$' AND color_acento ~ '^#[0-9A-F]{6}$'`,
+)
 export class UnidadEducativa {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,6 +31,26 @@ export class UnidadEducativa {
 
   @Column({ unique: true })
   codigoSie: string;
+
+  @Column({ length: 7, default: COLORES_PREDETERMINADOS.marca })
+  colorMarca: string;
+
+  @Column({ length: 7, default: COLORES_PREDETERMINADOS.primario })
+  colorPrimario: string;
+
+  @Column({ length: 7, default: COLORES_PREDETERMINADOS.acento })
+  colorAcento: string;
+
+  /** PNG, JPEG o WebP de hasta 256 KB. No se lee salvo que se pida (select: false). */
+  @Column({ type: 'bytea', nullable: true, select: false })
+  logo: Buffer | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  logoTipo: string | null;
+
+  /** Cambia con cada logo nuevo: la web lo usa en la URL para que el navegador no muestre el anterior. */
+  @Column({ type: 'timestamptz', nullable: true })
+  logoActualizadoEn: Date | null;
 }
 
 @Entity('gestiones')
@@ -127,10 +156,19 @@ export class AsignacionMateria {
   profesor: Usuario;
 }
 
+/**
+ * Un estudiante inscrito en un curso de una gestión. El código RUDE (Registro Único de Estudiantes del Ministerio)
+ * lo identifica: no puede repetirse en la misma gestión, así nadie queda inscrito en dos cursos a la vez
+ * (US-18, criterio 3; decisión D10). La gestión es siempre la del curso (EstudiantesService la copia del curso).
+ */
 @Entity('estudiantes')
+@Unique('estudiantes_rude_por_gestion', ['gestion', 'codigoRude'])
 export class Estudiante {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ length: 20 })
+  codigoRude: string;
 
   @Column()
   nombres: string;
@@ -140,6 +178,9 @@ export class Estudiante {
 
   @ManyToOne(() => Curso, { nullable: false })
   curso: Curso;
+
+  @ManyToOne(() => Gestion, { nullable: false })
+  gestion: Gestion;
 }
 
 /** Vínculo padre–estudiante (US-20): un padre solo ve a sus hijos vinculados. */

@@ -99,6 +99,8 @@ pipeline {
     stage('E2E') {                                         // M02
       when { branch 'develop' }
       steps {
+        // El espacio de trabajo se reutiliza: sin borrar, el informe junit-[hash].xml de un build anterior se sumaría a este.
+        sh 'rm -rf e2e/reports e2e/cypress/screenshots e2e/cypress/videos'
         sh '''npx cypress run --project e2e --config baseUrl="$STAGING_WEB_URL" --env apiUrl="$STAGING_API_URL" \
               --reporter junit --reporter-options "mochaFile=reports/junit-[hash].xml"'''
       }

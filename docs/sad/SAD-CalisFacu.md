@@ -66,7 +66,9 @@ api/src/
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
 api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, academico, esquema) y fixtures
-web/src/         App, pages/, lib/ (cliente de la API y validación)
+web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
+                 pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
+                 estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)
 e2e/             Cypress
 perf/            planes de JMeter
 ```
@@ -189,8 +191,8 @@ La API en Render se construye con su Dockerfile (`api/Dockerfile`) y aplica las 
 
 # 10. Historial
 
-| Versión | Fecha      | Cambio                                                                                                                                                                   | Autor | Revisor |
-| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | ------- |
-| 1.0     | 13/10/2026 | Versión inicial: arquitectura del repositorio base.                                                                                                                      | Lujan | Galvan  |
-| 1.1     | 13/10/2026 | La web se despliega en Render y no en Vercel (ADR-0009); módulos de dimensiones por gestión (T-015) y de asistencia (T-036); arranque con migraciones y seed de staging. | Lujan | Galvan  |
-| 1.2     | 13/10/2026 | Módulo académico (T-016): cursos, estudiantes con código RUDE (D10), materias, unidad educativa y su apariencia (ADR-0010); renovación de la sesión (D11).               | Lujan | Galvan  |
+| Versión | Fecha      | Cambio                                                                                                                                                                                                                   | Autor | Revisor |
+| ------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----- | ------- |
+| 1.0     | 13/10/2026 | Versión inicial: arquitectura del repositorio base.                                                                                                                                                                      | Lujan | Galvan  |
+| 1.1     | 13/10/2026 | La web se despliega en Render y no en Vercel (ADR-0009); módulos de dimensiones por gestión (T-015) y de asistencia (T-036); arranque con migraciones y seed de staging.                                                 | Lujan | Galvan  |
+| 1.2     | 13/10/2026 | Módulo académico (T-016): cursos, estudiantes con código RUDE (D10), materias, unidad educativa y su apariencia (ADR-0010); renovación de la sesión (D11); web con las pantallas de cada rol, para escritorio y celular. | Lujan | Galvan  |

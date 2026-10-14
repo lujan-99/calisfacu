@@ -30,10 +30,14 @@ describe('Registro de notas (US-01) y cálculo trimestral (US-02)', () => {
       .get(`/api/notas/actividades/${e.actividades.ser.id}`)
       .set('Authorization', `Bearer ${tk}`)
       .expect(200);
-    expect(r.body.actividad).toMatchObject({
+    expect(r.body.actividad).toEqual({
+      id: e.actividades.ser.id,
       nombre: 'Participación',
       dimension: 'Ser',
       materia: 'Matemática',
+      materiaId: e.matematica.id,
+      curso: 'Secundaria 3.º «A»',
+      trimestre: { id: e.t1.id, numero: 1, cerrado: false },
     });
     expect((r.body as { filas: { estudiante: string }[] }).filas.map((f) => f.estudiante)).toEqual([
       'Condori, Eva',

@@ -12,6 +12,7 @@ import {
   RegistroAuditoria,
   Trimestre,
 } from '../../database/entities';
+import { nombreCurso } from '../academico/formato';
 import { AccesoNotasService } from './acceso.service';
 import type { CrearActividadDto, RegistrarPlanillaDto } from './notas.dto';
 
@@ -133,6 +134,14 @@ export class NotasService {
         nombre: actividad.nombre,
         dimension: actividad.dimension.nombre,
         materia: actividad.materia.nombre,
+        materiaId: actividad.materia.id,
+        curso: nombreCurso(actividad.materia.curso),
+        // La web desactiva la planilla de un trimestre cerrado (la API igual lo rechaza con 422).
+        trimestre: {
+          id: actividad.trimestre.id,
+          numero: actividad.trimestre.numero,
+          cerrado: actividad.trimestre.cerrado,
+        },
       },
       filas: estudiantes.map((e) => ({
         estudianteId: e.id,

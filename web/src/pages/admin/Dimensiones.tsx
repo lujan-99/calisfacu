@@ -88,6 +88,35 @@ export function Dimensiones() {
 
   return (
     <>
+      {/* Banner de bienvenida del administrador */}
+      <section className="hero-rol hero-admin" aria-label="Resumen del administrador">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="ajustes" tam={16} />
+            <span>Panel de Normativa y Gobierno · Administrador</span>
+          </div>
+          <h2>Configuración Curricular y Ponderaciones</h2>
+          <p>
+            Parámetros oficiales de evaluación según la RM 001/2026. Los puntajes de las dimensiones
+            deben totalizar exactamente 100 puntos y quedan bloqueados ante notas registradas.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">100</span>
+            <span className="hero-metrica-etiqueta">Puntaje total exigido</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{filas.length}</span>
+            <span className="hero-metrica-etiqueta">Dimensiones activas</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{bloqueada ? 'Protegida' : 'Editable'}</span>
+            <span className="hero-metrica-etiqueta">Estado de edición</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <h1>Dimensiones de evaluación</h1>

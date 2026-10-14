@@ -90,6 +90,37 @@ export function Cursos() {
 
   return (
     <>
+      {/* Banner de bienvenida de secretaría */}
+      <section className="hero-rol hero-secretaria" aria-label="Resumen de secretaría">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="edificio" tam={16} />
+            <span>Panel de Gestión Académica · Secretaría</span>
+          </div>
+          <h2>Administración de Cursos y Estudiantes</h2>
+          <p>
+            Configuración de la estructura escolar, control de paralelos, materias y asignaciones
+            docentes de la gestión educativa.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">
+              {carga.estado === 'datos' ? carga.datos.length : '—'}
+            </span>
+            <span className="hero-metrica-etiqueta">Cursos en gestión</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">3</span>
+            <span className="hero-metrica-etiqueta">Niveles educativos</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">RUDE</span>
+            <span className="hero-metrica-etiqueta">Inscripción única</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <h1>Cursos</h1>

@@ -2,10 +2,19 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { obtenerInstitucion, urlLogo, type Institucion } from './api';
 
+/** Colores oficiales del colegio: guindo institucional y plomo plateado. */
+export const COLORES_COLEGIO: Institucion['colores'] = {
+  marca: '#54121E',
+  primario: '#78192A',
+  acento: '#94A3B8',
+};
+
+const COLOR_PROVISIONAL_BASE = '#13283F';
+
 export const INSTITUCION_PREDETERMINADA: Institucion = {
   nombre: null,
   codigoSie: null,
-  colores: { marca: '#13283F', primario: '#1D4E89', acento: '#F2B33D' },
+  colores: COLORES_COLEGIO,
   logoVersion: null,
 };
 
@@ -50,8 +59,11 @@ export function InstitucionProvider({ children }: { children: ReactNode }) {
     obtenerInstitucion()
       .then((i) => {
         if (!vigente) return;
-        setDatos(i);
-        aplicarColores(i.colores);
+        const colores =
+          i.colores.marca.toUpperCase() === COLOR_PROVISIONAL_BASE ? COLORES_COLEGIO : i.colores;
+        const res = { ...i, colores };
+        setDatos(res);
+        aplicarColores(colores);
       })
       .catch(() => undefined);
     return () => {

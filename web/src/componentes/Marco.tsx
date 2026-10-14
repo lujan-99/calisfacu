@@ -74,16 +74,32 @@ export function Logo({ tam = 36 }: { tam?: number }) {
 
 export function Marco() {
   const { usuario, salir } = useSesion();
+  const { nombre, codigoSie } = useInstitucion();
   const ubicacion = useLocation();
   // Sin sesión (nunca inició, salió o expiró), al ingreso; después vuelve a la pantalla que pedía.
   if (!usuario) return <Navigate to="/ingresar" replace state={{ desde: ubicacion.pathname }} />;
+
   return (
     <div className="marco">
-      <header className="encabezado">
-        <Logo />
-        <span className="encabezado-titulo ocultar-celular">Sistema de calificaciones</span>
-        <div className="encabezado-usuario">
-          <div className="usuario">
+      {/* Panel lateral elegante a la izquierda */}
+      <aside className="panel-lateral" aria-label="Panel de navegación lateral">
+        <div className="panel-lateral-cabecera">
+          <Logo tam={40} />
+          <div className="panel-lateral-institucion">
+            <span className="panel-lateral-nombre" title={nombre ?? 'Unidad Educativa'}>
+              {nombre ?? 'Unidad Educativa'}
+            </span>
+            <span className="panel-lateral-badge">
+              {codigoSie ? `SIE ${codigoSie}` : 'Gestión 2026'}
+            </span>
+          </div>
+        </div>
+
+        <div className="panel-lateral-perfil">
+          <div className="perfil-avatar" aria-hidden="true">
+            {usuario.nombre.charAt(0).toUpperCase()}
+          </div>
+          <div className="perfil-info">
             <span className="usuario-nombre" data-cy="usuario-nombre">
               {usuario.nombre}
             </span>
@@ -91,30 +107,58 @@ export function Marco() {
               {NOMBRE_ROL[usuario.rol]}
             </span>
           </div>
-          <button type="button" className="boton-salir" data-cy="btn-salir" onClick={() => salir()}>
-            <Icono nombre="salir" tam={18} />
-            Salir
-          </button>
+          <span className="indicador-enlinea" title="Sesión activa" />
         </div>
-      </header>
-      <div className="cuerpo">
+
+        <div className="menu-etiqueta">Menú de opciones</div>
+
         <nav className="menu" aria-label={NOMBRE_MENU[usuario.rol]}>
           <ul className="menu-lista">
             {MENU_POR_ROL[usuario.rol].map((o) => (
               <li key={o.a}>
                 <NavLink to={o.a} className="menu-enlace" data-cy={o.cy}>
-                  <Icono nombre={o.icono} />
+                  <Icono nombre={o.icono} tam={18} />
                   {o.texto}
                 </NavLink>
               </li>
             ))}
           </ul>
         </nav>
+
+        <div className="panel-lateral-pie">
+          <div className="panel-lateral-normativa">
+            <Icono nombre="escudo" tam={14} />
+            <span>RM 001/2026 MinEdu</span>
+          </div>
+          <button type="button" className="boton-salir" data-cy="btn-salir" onClick={() => salir()}>
+            <Icono nombre="salir" tam={18} />
+            Salir
+          </button>
+        </div>
+      </aside>
+
+      {/* Área principal de trabajo */}
+      <div className="area-principal">
+        <header className="barra-superior">
+          <div className="barra-superior-izq">
+            <span className="barra-superior-subtitulo ocultar-celular">
+              Subsistema de Educación Regular · Bolivia
+            </span>
+          </div>
+          <div className="barra-superior-der">
+            <span className="insignia insignia-trimestre">
+              <Icono nombre="reloj" tam={14} />
+              1.er Trimestre 2026
+            </span>
+          </div>
+        </header>
+
         <main className="contenido">
           <Outlet />
         </main>
+
+        <footer className="pie">CalisFacu · versión {__GIT_COMMIT__.slice(0, 7)}</footer>
       </div>
-      <footer className="pie">CalisFacu · versión {__GIT_COMMIT__.slice(0, 7)}</footer>
     </div>
   );
 }

@@ -26,31 +26,102 @@ interface ContextoSesion {
 
 const Contexto = createContext<ContextoSesion | null>(null);
 
+export const CLAVE_SESION_STORAGE = 'calisfacu_sesion_v1';
+
+export interface SesionGuardada extends Sesion {
+  emitido: number;
+  ultimaActividad: number;
+}
+
+export function guardarSesion(sesion: Sesion, emitido: number, ultimaActividad: number) {
+  try {
+    const datos: SesionGuardada = { ...sesion, emitido, ultimaActividad };
+    window.localStorage.setItem(CLAVE_SESION_STORAGE, JSON.stringify(datos));
+  } catch {
+    // Si localStorage no está disponible (modo privado estricto), se mantiene en memoria
+  }
+}
+
+export function borrarSesionGuardada() {
+  try {
+    window.localStorage.removeItem(CLAVE_SESION_STORAGE);
+  } catch {
+    // ignorar
+  }
+}
+
+export function cargarSesionGuardada(ahora: () => number): SesionGuardada | null {
+  try {
+    const raw = window.localStorage.getItem(CLAVE_SESION_STORAGE);
+    if (!raw) return null;
+    const datos = JSON.parse(raw) as SesionGuardada;
+    if (!datos?.token || !datos?.usuario?.id || !datos?.usuario?.rol) {
+      borrarSesionGuardada();
+      return null;
+    }
+    const t = ahora();
+    // Vence a los 30 minutos desde la emisión (US-17, criterio 4)
+    if (t - datos.emitido >= DURACION_TOKEN_MS) {
+      borrarSesionGuardada();
+      return null;
+    }
+    return datos;
+  } catch {
+    borrarSesionGuardada();
+    return null;
+  }
+}
+
 /**
- * Sesión en memoria (US-17). Decisión D11: la sesión vence a los 30 minutos sin actividad. Mientras el usuario
- * toca o escribe, el token se renueva cada 10 minutos; si no hubo actividad, se deja vencer y la primera respuesta
- * 401 de la API lleva al ingreso con el aviso "Su sesión expiró".
+ * Sesión con persistencia local de 30 minutos (US-17). Decisión D11: la sesión vence a los 30 minutos sin actividad.
+ * Mientras el usuario toca o escribe, el token se renueva cada 10 minutos; si se recarga la página dentro de los 30 min,
+ * la sesión se restaura automáticamente. Si no hubo actividad, se deja vencer y la API lleva al ingreso con "Su sesión expiró".
  */
 export function SesionProvider({
   children,
   ahora = Date.now,
-  inicial = null,
+  inicial,
 }: {
   children: ReactNode;
   ahora?: () => number;
-  /** Solo para pruebas: una sesión ya iniciada. */
+  /** Solo para pruebas: una sesión ya iniciada (o null para forzar sin sesión). */
   inicial?: Sesion | null;
 }) {
   const [sesion, setSesion] = useState<Sesion | null>(() => {
-    if (inicial) configurarSesion(inicial.token);
-    return inicial;
+    if (inicial !== undefined) {
+      if (inicial) configurarSesion(inicial.token);
+      return inicial;
+    }
+    const guardada = cargarSesionGuardada(ahora);
+    if (guardada) {
+      configurarSesion(guardada.token, () => salir('expirada'));
+      return { token: guardada.token, usuario: guardada.usuario };
+    }
+    return null;
   });
+
   const [motivoSalida, setMotivoSalida] = useState<MotivoSalida | null>(null);
-  const emitido = useRef(inicial ? ahora() : 0);
-  const ultimaActividad = useRef(emitido.current);
+
+  const emitido = useRef<number>(0);
+  const ultimaActividad = useRef<number>(0);
   const renovando = useRef(false);
 
+  // Inicializar timestamps en el primer render
+  if (emitido.current === 0) {
+    if (inicial !== undefined) {
+      emitido.current = inicial ? ahora() : 0;
+      ultimaActividad.current = emitido.current;
+    } else {
+      const guardada = cargarSesionGuardada(ahora);
+      if (guardada) {
+        emitido.current = guardada.emitido;
+        ultimaActividad.current = guardada.ultimaActividad;
+      }
+    }
+  }
+
   const salir = useCallback((motivo: MotivoSalida = 'manual') => {
+    borrarSesionGuardada();
     configurarSesion(null);
     setSesion(null);
     setMotivoSalida(motivo);
@@ -60,6 +131,7 @@ export function SesionProvider({
     (nueva: Sesion) => {
       emitido.current = ahora();
       ultimaActividad.current = emitido.current;
+      guardarSesion(nueva, emitido.current, ultimaActividad.current);
       configurarSesion(nueva.token, () => salir('expirada'));
       setSesion(nueva);
       setMotivoSalida(null);
@@ -78,8 +150,10 @@ export function SesionProvider({
 
   useEffect(() => {
     if (!sesion) return;
+
     const marcar = () => {
       ultimaActividad.current = ahora();
+      guardarSesion(sesion, emitido.current, ultimaActividad.current);
     };
     const revisar = () => {
       const t = ahora();

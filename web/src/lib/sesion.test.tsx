@@ -17,10 +17,12 @@ describe('Sesión (US-17, criterio 4)', () => {
   const inicial = { token: 'primero', usuario: { id: 1, nombre: 'Ana', rol: 'PROFESOR' as const } };
 
   beforeEach(() => {
+    localStorage.clear();
     vi.useFakeTimers();
     reloj = 1_000_000;
   });
   afterEach(() => {
+    localStorage.clear();
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -74,6 +76,33 @@ describe('Sesión (US-17, criterio 4)', () => {
     act(() => void window.dispatchEvent(new Event('pointerdown')));
     await avanzar(RENOVAR_DESPUES_MS);
     expect(screen.getByText('sin sesión (expirada)')).toBeInTheDocument();
+  });
+
+  it('debe restaurar la sesión guardada si pasaron menos de 30 minutos', () => {
+    localStorage.setItem(
+      'calisfacu_sesion_v1',
+      JSON.stringify({ ...inicial, emitido: reloj - 10 * 60_000, ultimaActividad: reloj }),
+    );
+    render(
+      <SesionProvider ahora={ahora}>
+        <Estado />
+      </SesionProvider>,
+    );
+    expect(screen.getByText('con sesión de Ana')).toBeInTheDocument();
+  });
+
+  it('no debe restaurar la sesión guardada si ya pasaron 30 minutos', () => {
+    localStorage.setItem(
+      'calisfacu_sesion_v1',
+      JSON.stringify({ ...inicial, emitido: reloj - 31 * 60_000, ultimaActividad: reloj }),
+    );
+    render(
+      <SesionProvider ahora={ahora}>
+        <Estado />
+      </SesionProvider>,
+    );
+    expect(screen.getByText('sin sesión (null)')).toBeInTheDocument();
+    expect(localStorage.getItem('calisfacu_sesion_v1')).toBeNull();
   });
 
   it('debe exigir el proveedor', () => {

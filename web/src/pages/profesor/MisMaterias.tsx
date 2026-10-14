@@ -11,6 +11,37 @@ export function MisMaterias() {
 
   return (
     <>
+      {/* Banner de bienvenida del profesor */}
+      <section className="hero-rol hero-profesor" aria-label="Resumen del docente">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="birrete" tam={16} />
+            <span>Panel del Docente · Subsistema Regular</span>
+          </div>
+          <h2>Portal de Calificaciones y Seguimiento</h2>
+          <p>
+            Registro de actividades evaluativas y cálculo automático de promedios según la
+            Resolución Ministerial 001/2026.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">
+              {carga.estado === 'datos' ? carga.datos.length : '—'}
+            </span>
+            <span className="hero-metrica-etiqueta">Materias a cargo</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">1.er</span>
+            <span className="hero-metrica-etiqueta">Trimestre activo</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">51</span>
+            <span className="hero-metrica-etiqueta">Nota mín. aprobación</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <h1>Mis materias</h1>

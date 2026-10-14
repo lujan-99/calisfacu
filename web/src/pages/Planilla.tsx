@@ -7,7 +7,10 @@ interface Props {
   actividadId: number;
 }
 
-// US-01: planilla de registro de notas de una actividad (se guardan todas o ninguna).
+/**
+ * Planilla de notas para registro de calificaciones por actividad (US-01).
+ * Implementa la escala ministerial 1 a 100 con guardado transaccional.
+ */
 export function Planilla({ token, actividadId }: Props) {
   const [planilla, setPlanilla] = useState<TPlanilla | null>(null);
   const [valores, setValores] = useState<Record<number, string>>({});
@@ -15,7 +18,6 @@ export function Planilla({ token, actividadId }: Props) {
   const [errores, setErrores] = useState<Record<number, string>>({});
 
   useEffect(() => {
-    // Si cambia la actividad antes de que llegue la respuesta, la respuesta vieja se descarta.
     let vigente = true;
     obtenerPlanilla(actividadId, token)
       .then((p) => {
@@ -52,43 +54,104 @@ export function Planilla({ token, actividadId }: Props) {
     }
   }
 
-  if (!planilla) return <p>{mensaje ?? 'Cargando…'}</p>;
+  if (!planilla) {
+    return (
+      <div className="planilla-cargando">
+        <span className="spinner" aria-hidden="true" />
+        <p>{mensaje ?? 'Cargando…'}</p>
+      </div>
+    );
+  }
+
   return (
-    <main>
-      <h2>
-        {planilla.actividad.materia} · {planilla.actividad.dimension} · {planilla.actividad.nombre}
-      </h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Estudiante</th>
-            <th>Nota (1 a 100)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {planilla.filas.map((f) => (
-            <tr key={f.estudianteId}>
-              <td>{f.estudiante}</td>
-              <td>
-                <input
-                  aria-label={`Nota de ${f.estudiante}`}
-                  value={valores[f.estudianteId] ?? ''}
-                  disabled={f.valor !== null}
-                  onChange={(e) => setValores({ ...valores, [f.estudianteId]: e.target.value })}
-                  data-cy={`nota-${f.estudianteId}`}
-                />
-                {errores[f.estudianteId] && (
-                  <span className="error">{errores[f.estudianteId]}</span>
-                )}
-              </td>
+    <main className="planilla-principal">
+      <div className="planilla-encabezado-detalle">
+        <div className="planilla-titulos">
+          <h2>
+            {planilla.actividad.materia} · {planilla.actividad.dimension} ·{' '}
+            {planilla.actividad.nombre}
+          </h2>
+          <span className="etiqueta-dimension">{planilla.actividad.dimension}</span>
+        </div>
+        <div className="planilla-meta-info">
+          <span className="meta-item">
+            <strong>Total estudiantes:</strong> {planilla.filas.length}
+          </span>
+        </div>
+      </div>
+
+      <div className="tabla-envoltorio">
+        <table className="tabla-calificaciones">
+          <thead>
+            <tr>
+              <th scope="col" style={{ width: '60%' }}>
+                Estudiante
+              </th>
+              <th scope="col" style={{ width: '40%' }}>
+                Nota (1 a 100)
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={() => void guardar()} data-cy="guardar-planilla">
-        Guardar planilla
-      </button>
-      {mensaje && <p role="status">{mensaje}</p>}
+          </thead>
+          <tbody>
+            {planilla.filas.map((f) => {
+              const valorActual = Number(valores[f.estudianteId]);
+              const yaRegistrada = f.valor !== null;
+              return (
+                <tr key={f.estudianteId} className={yaRegistrada ? 'fila-registrada' : ''}>
+                  <td className="celda-estudiante">
+                    <span className="estudiante-icono" aria-hidden="true">
+                      👤
+                    </span>
+                    <span className="estudiante-nombre">{f.estudiante}</span>
+                  </td>
+                  <td className="celda-nota">
+                    <div className="nota-control-grupo">
+                      <input
+                        aria-label={`Nota de ${f.estudiante}`}
+                        value={valores[f.estudianteId] ?? ''}
+                        disabled={yaRegistrada}
+                        onChange={(e) =>
+                          setValores({ ...valores, [f.estudianteId]: e.target.value })
+                        }
+                        data-cy={`nota-${f.estudianteId}`}
+                        className="campo-control-nota"
+                        placeholder="1 - 100"
+                      />
+                      {yaRegistrada && (
+                        <span className="nota-badge-estado" title="Nota guardada en sistema">
+                          ✓ Registrada
+                        </span>
+                      )}
+                      {!yaRegistrada && !Number.isNaN(valorActual) && valorActual >= 51 && (
+                        <span className="nota-indicador-aprobado">Aprobado</span>
+                      )}
+                    </div>
+                    {errores[f.estudianteId] && (
+                      <span className="error">{errores[f.estudianteId]}</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="planilla-barra-acciones">
+        <button
+          type="button"
+          onClick={() => void guardar()}
+          data-cy="guardar-planilla"
+          className="btn btn-guardar"
+        >
+          <span aria-hidden="true">💾</span> Guardar planilla
+        </button>
+        {mensaje && (
+          <p role="status" className="alerta-estado">
+            {mensaje}
+          </p>
+        )}
+      </div>
     </main>
   );
 }

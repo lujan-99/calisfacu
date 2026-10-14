@@ -1,43 +1,41 @@
-import { useState } from 'react';
-import type { Sesion } from './lib/api';
+import { useEffect } from 'react';
 import { Login } from './pages/Login';
-import { Planilla } from './pages/Planilla';
+import { PantallaRol } from './pages/PantallaRol';
+import { ProfesorHome } from './pages/ProfesorHome';
+import { ROL } from './lib/constantes';
+import { useSesion } from './lib/sesion';
 
+/**
+ * Raíz de la aplicación — CalisFacu Web (US-17 CA 1).
+ *
+ * Responsabilidades:
+ * - Gestionar el ciclo de vida y expiración de la sesión mediante `useSesion`.
+ * - Limpiar hash residual (#auditoria, etc.) al cerrar sesión para volver a la raíz `/`.
+ * - Enrutar dinámicamente al espacio de trabajo autorizado según el rol del usuario.
+ * - Desacoplamiento total: cada pantalla gestiona su propio contexto sin código repetido.
+ */
 export function App() {
-  const [sesion, setSesion] = useState<Sesion | null>(null);
-  const [actividadId, setActividadId] = useState<number>(1);
+  const { sesion, iniciar, cerrar } = useSesion();
 
-  return (
-    <>
-      {!sesion ? (
-        <Login alIniciar={setSesion} />
-      ) : (
-        <div>
-          <header>
-            <span data-cy="usuario">
-              {sesion.usuario.nombre} · {sesion.usuario.rol}
-            </span>
-            <button onClick={() => setSesion(null)}>Salir</button>
-          </header>
-          {sesion.usuario.rol === 'PROFESOR' ? (
-            <>
-              <label>
-                Actividad
-                <input
-                  type="number"
-                  min={1}
-                  value={actividadId}
-                  onChange={(e) => setActividadId(Number(e.target.value))}
-                />
-              </label>
-              <Planilla token={sesion.token} actividadId={actividadId} />
-            </>
-          ) : (
-            <p>Las pantallas de este rol se construyen en los sprints siguientes.</p>
-          )}
-        </div>
-      )}
-      <footer>CalisFacu · versión {__GIT_COMMIT__.slice(0, 7)}</footer>
-    </>
-  );
+  // Si no hay sesión (pantalla de login), limpiar cualquier hash residual de la URL
+  useEffect(() => {
+    if (sesion === null && typeof window !== 'undefined' && window.location.hash) {
+      try {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      } catch {
+        // Ignorar en entornos sin soporte de history
+      }
+    }
+  }, [sesion]);
+
+  if (sesion === null) {
+    return <Login alIniciar={iniciar} />;
+  }
+
+  if (sesion.usuario.rol === ROL.PROFESOR) {
+    return <ProfesorHome sesion={sesion} onSalir={cerrar} />;
+  }
+
+  // ADMINISTRADOR, SECRETARIA, PADRE → panel exclusivo por rol (US-17 CA 1)
+  return <PantallaRol sesion={sesion} onSalir={cerrar} />;
 }

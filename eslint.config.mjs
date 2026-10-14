@@ -48,5 +48,11 @@ export default tseslint.config(
       '@typescript-eslint/unbound-method': 'off',
     },
   },
+  {
+    // Scripts de consola en JavaScript (fuera de los tsconfig): sin reglas de tipos y con console permitido.
+    files: ['scripts/**/*.mjs'],
+    ...tseslint.configs.disableTypeChecked,
+    rules: { ...tseslint.configs.disableTypeChecked.rules, 'no-console': 'off' },
+  },
   prettier,
 );

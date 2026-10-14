@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Campo } from '../../componentes/Campo';
 import { Aviso, Cargando, ErrorCarga } from '../../componentes/Estados';
+import { Icono } from '../../componentes/Icono';
 import { ErrorApi, guardarUnidadEducativa, obtenerUnidadEducativa } from '../../lib/api';
 import { useInstitucion } from '../../lib/institucion';
 import { useCarga } from '../../lib/useCarga';
@@ -56,6 +57,31 @@ export function UnidadEducativa() {
 
   return (
     <>
+      {/* Banner Hero Institucional de Unidad Educativa (US-18) */}
+      <section className="hero-rol hero-secretaria" aria-label="Resumen de la institución">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="edificio" tam={16} />
+            <span>Datos Maestros · Ministerio de Educación</span>
+          </div>
+          <h2>Identidad Institucional y Acreditación SIE</h2>
+          <p>
+            Parámetros oficiales del establecimiento que encabezan boletines trimestrales,
+            centralizadores y certificaciones académicas.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{codigoSie || '—'}</span>
+            <span className="hero-metrica-etiqueta">Código SIE Oficial</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">MinEdu</span>
+            <span className="hero-metrica-etiqueta">Acreditación Regular</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <h1>Unidad educativa</h1>
@@ -77,11 +103,11 @@ export function UnidadEducativa() {
         />
       )}
       {carga.estado === 'datos' && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
           <form
-            className="tarjeta panel"
+            className="tarjeta panel form-unidad-educativa"
             data-cy="form-unidad-educativa"
-            style={{ flex: '1 1 340px', maxWidth: 560 }}
+            style={{ flex: '1 1 360px', maxWidth: 560 }}
             onSubmit={(e) => void guardar(e)}
             noValidate
           >
@@ -97,6 +123,7 @@ export function UnidadEducativa() {
                 data-cy="ue-nombre"
                 value={nombre}
                 maxLength={120}
+                placeholder="Nombre oficial del colegio"
                 aria-invalid={!!errores.nombre}
                 onChange={(e) => setNombre(e.target.value)}
               />
@@ -104,13 +131,14 @@ export function UnidadEducativa() {
             <Campo
               etiqueta="Código SIE"
               error={errores.codigoSie}
-              ayuda="8 dígitos, asignado por el Ministerio"
+              ayuda="8 dígitos, asignado por el Ministerio de Educación"
             >
               <input
                 data-cy="ue-codigo-sie"
                 value={codigoSie}
                 inputMode="numeric"
                 maxLength={8}
+                placeholder="80980123"
                 aria-invalid={!!errores.codigoSie}
                 onChange={(e) => setCodigoSie(e.target.value.replace(/\D/g, ''))}
               />
@@ -126,39 +154,27 @@ export function UnidadEducativa() {
               </button>
             </div>
           </form>
+
           <section
             aria-label="Vista previa del boletín"
-            style={{ flex: '1 1 300px', maxWidth: 460 }}
+            className="vista-previa-boletin-contenedor"
+            style={{ flex: '1 1 320px', maxWidth: 480 }}
           >
-            <span
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                color: 'var(--texto-3)',
-              }}
-            >
-              ASÍ SE VERÁ EN EL BOLETÍN
-            </span>
-            <div
-              className="tarjeta"
-              style={{
-                marginTop: 8,
-                padding: 20,
-                textAlign: 'center',
-                fontFamily: 'Georgia, serif',
-              }}
-            >
-              <div style={{ fontSize: 20, fontWeight: 700 }}>
-                {nombre || 'Nombre de la unidad educativa'}
+            <span className="vista-previa-etiqueta">VISTA PREVIA DEL ENCABEZADO OFICIAL</span>
+            <div className="tarjeta vista-previa-documento">
+              <div className="documento-franja-guindo" />
+              <div className="documento-cuerpo-previa">
+                <div className="documento-emblema">
+                  <Icono nombre="escudo" tam={28} />
+                </div>
+                <div className="documento-titulo">{nombre || 'Nombre de la unidad educativa'}</div>
+                <div className="documento-sie">Código SIE: {codigoSie || '________'}</div>
+                <div className="documento-separador" />
+                <div className="documento-subtitulo">Boletín de calificaciones</div>
+                <span className="documento-norma-pie">
+                  Subsistema de Educación Regular · Gestión 2026
+                </span>
               </div>
-              <div style={{ fontSize: 14, color: 'var(--texto-3)', marginTop: 4 }}>
-                Código SIE: {codigoSie || '________'}
-              </div>
-              <hr
-                style={{ border: 0, borderTop: '1px solid var(--borde)', margin: '14px 0 10px' }}
-              />
-              <div style={{ fontSize: 13, color: 'var(--texto-3)' }}>Boletín de calificaciones</div>
             </div>
           </section>
         </div>

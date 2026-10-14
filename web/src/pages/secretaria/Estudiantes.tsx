@@ -106,6 +106,37 @@ export function Estudiantes() {
 
   return (
     <>
+      {/* Banner Hero Institucional de Estudiantes (US-18) */}
+      <section className="hero-rol hero-secretaria" aria-label="Resumen de estudiantes">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="personas" tam={16} />
+            <span>Padrón Estudiantil · RUDE Oficial</span>
+          </div>
+          <h2>Control de Inscripciones y Registro Único</h2>
+          <p>
+            Registro centralizado de estudiantes con validación de código RUDE único por gestión y
+            curso asignado.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">
+              {carga.estado === 'datos' ? carga.datos.length : '—'}
+            </span>
+            <span className="hero-metrica-etiqueta">Estudiantes listados</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{listaCursos.length}</span>
+            <span className="hero-metrica-etiqueta">Cursos habilitados</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">RUDE</span>
+            <span className="hero-metrica-etiqueta">Identificador único</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <h1>Estudiantes</h1>
@@ -203,9 +234,11 @@ export function Estudiantes() {
                     </th>
                     <td>{e.nombres}</td>
                     <td className="ocultar-celular" style={{ fontVariantNumeric: 'tabular-nums' }}>
-                      {e.codigoRude}
+                      <span className="insignia insignia-plomo">{e.codigoRude}</span>
                     </td>
-                    <td>{e.curso.nombre}</td>
+                    <td>
+                      <span className="insignia insignia-curso">{e.curso.nombre}</span>
+                    </td>
                     <td className="acciones">
                       <button
                         type="button"

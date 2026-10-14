@@ -93,6 +93,37 @@ export function Materias() {
 
   return (
     <>
+      {/* Banner Hero Institucional de Materias y Asignaciones (US-18) */}
+      <section className="hero-rol hero-secretaria" aria-label="Resumen de materias">
+        <div className="hero-rol-contenido">
+          <div className="hero-rol-insignia">
+            <Icono nombre="portapapeles" tam={16} />
+            <span>Malla Curricular · Asignaciones Docentes</span>
+          </div>
+          <h2>Plan de Estudios y Plantel Docente</h2>
+          <p>
+            Asignación de profesores por curso y materia para la gestión lectiva según la RM
+            001/2026.
+          </p>
+        </div>
+        <div className="hero-rol-metricas">
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">
+              {carga.estado === 'datos' ? carga.datos.length : '—'}
+            </span>
+            <span className="hero-metrica-etiqueta">Materias activas</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">{listaProfesores.length}</span>
+            <span className="hero-metrica-etiqueta">Profesores disponibles</span>
+          </div>
+          <div className="hero-metrica-tarjeta">
+            <span className="hero-metrica-numero">1:1</span>
+            <span className="hero-metrica-etiqueta">Docente por materia</span>
+          </div>
+        </div>
+      </section>
+
       <div className="titulo-pagina">
         <div>
           <h1>Materias y asignaciones</h1>

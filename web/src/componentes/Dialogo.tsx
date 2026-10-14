@@ -18,6 +18,8 @@ export function Dialogo({
   cy?: string;
 }) {
   const caja = useRef<HTMLDivElement>(null);
+  const alCerrarRef = useRef(alCerrar);
+  alCerrarRef.current = alCerrar;
   const idTitulo = `dialogo-${titulo.replace(/\W+/g, '-').toLowerCase()}`;
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export function Dialogo({
       );
     (caja.current?.querySelector<HTMLElement>('input, select') ?? enfocables()[0])?.focus();
     const teclas = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') alCerrar();
+      if (e.key === 'Escape') alCerrarRef.current();
       if (e.key !== 'Tab') return;
       const lista = enfocables();
       if (lista.length === 0) return;
@@ -48,7 +50,7 @@ export function Dialogo({
       document.removeEventListener('keydown', teclas);
       anterior?.focus();
     };
-  }, [alCerrar]);
+  }, []);
 
   return (
     <div className="velo" onMouseDown={(e) => e.target === e.currentTarget && alCerrar()}>

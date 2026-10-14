@@ -46,17 +46,19 @@ Promedio de cada dimensión (escala 1 a 100), puntos que aporta y nota final.
 
 Las tomó el equipo porque el reglamento no las define o el SRS las dejó abiertas. El cliente marca cada una.
 
-| N.º | Pregunta                                           | Decisión                                                                                              | De acuerdo | Cambiar (observación) |
-| --- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------- | --------------------- |
-| D1  | ¿Se admite 0 en una actividad no presentada?       | No. La escala es de 1 a 100; una actividad no presentada se registra con 1.                           | ☐          |                       |
-| D2  | ¿Cómo se redondea?                                 | Al entero más cercano, 0,5 hacia arriba (ROUND_HALF_UP), solo al final de la suma.                    | ☐          |                       |
-| D3  | ¿La nota anual es el promedio de los 3 trimestres? | Sí, redondeado con la regla D2.                                                                       | ☐          |                       |
-| D4  | Dimensión sin notas: ¿"pendiente" o 0?             | Pendiente: no hay nota trimestral hasta que las cuatro dimensiones tengan al menos una nota.          | ☐          |                       |
-| D5  | ¿Una licencia cuenta como asistencia?              | Sí: porcentaje = (presentes + licencias) / clases dictadas × 100, con un decimal.                     | ☐          |                       |
-| D6  | Umbral de asistencia para "en riesgo"              | Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 o asistencia < 80 %.                  | ☐          |                       |
-| D7  | Canal de notificación                              | Aviso dentro del sistema y correo electrónico.                                                        | ☐          |                       |
-| D8  | ¿Qué es una "fecha futura" en la asistencia?       | Posterior a hoy en Bolivia (America/La_Paz), no a la fecha del servidor (UTC).                        | ☐          |                       |
-| D9  | ¿Se puede tomar asistencia a una parte del curso?  | No: cada clase registra a todos los estudiantes del curso, así "clases dictadas" es igual para todos. | ☐          |                       |
+| N.º | Pregunta                                                        | Decisión                                                                                                                                     | De acuerdo | Cambiar (observación) |
+| --- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------------------- |
+| D1  | ¿Se admite 0 en una actividad no presentada?                    | No. La escala es de 1 a 100; una actividad no presentada se registra con 1.                                                                  | ☐          |                       |
+| D2  | ¿Cómo se redondea?                                              | Al entero más cercano, 0,5 hacia arriba (ROUND_HALF_UP), solo al final de la suma.                                                           | ☐          |                       |
+| D3  | ¿La nota anual es el promedio de los 3 trimestres?              | Sí, redondeado con la regla D2.                                                                                                              | ☐          |                       |
+| D4  | Dimensión sin notas: ¿"pendiente" o 0?                          | Pendiente: no hay nota trimestral hasta que las cuatro dimensiones tengan al menos una nota.                                                 | ☐          |                       |
+| D5  | ¿Una licencia cuenta como asistencia?                           | Sí: porcentaje = (presentes + licencias) / clases dictadas × 100, con un decimal.                                                            | ☐          |                       |
+| D6  | Umbral de asistencia para "en riesgo"                           | Menos de 80 %, configurable por gestión. Riesgo = promedio < 51 o asistencia < 80 %.                                                         | ☐          |                       |
+| D7  | Canal de notificación                                           | Aviso dentro del sistema y correo electrónico.                                                                                               | ☐          |                       |
+| D8  | ¿Qué es una "fecha futura" en la asistencia?                    | Posterior a hoy en Bolivia (America/La_Paz), no a la fecha del servidor (UTC).                                                               | ☐          |                       |
+| D9  | ¿Se puede tomar asistencia a una parte del curso?               | No: cada clase registra a todos los estudiantes del curso, así "clases dictadas" es igual para todos.                                        | ☐          |                       |
+| D10 | ¿Cómo se sabe que un estudiante ya está inscrito en la gestión? | Por su código RUDE (Registro Único de Estudiantes): no se repite en una gestión; en otra gestión vuelve a inscribirse.                       | ☐          |                       |
+| D11 | ¿Qué es "30 minutos sin actividad" en la sesión?                | El token dura 30 minutos y la web lo renueva (POST /api/auth/renovar) mientras el usuario trabaja; sin peticiones durante 30 minutos, vence. | ☐          |                       |
 
 ## 5. Observaciones del cliente
 

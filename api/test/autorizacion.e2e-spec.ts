@@ -1,6 +1,8 @@
 import type { INestApplication } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import request from 'supertest';
 import type { DataSource } from 'typeorm';
+import { Usuario } from '../src/database/entities';
 import { crearApp, escenario, limpiar, token, type Escenario } from './utils';
 
 /**
@@ -223,5 +225,73 @@ describe('Inicio de sesión (US-17)', () => {
       .post('/api/auth/login')
       .send({ email: 'no-es-correo' })
       .expect(400);
+  });
+});
+
+/**
+ * US-17, criterio 4 (decisión D11): la sesión expira a los 30 minutos sin actividad. El token dura 30 minutos y la
+ * web lo renueva con POST /api/auth/renovar mientras el usuario trabaja; si pasan 30 minutos sin peticiones, vence.
+ */
+describe('Expiración de la sesión (US-17, criterio 4)', () => {
+  let app: INestApplication;
+  let ds: DataSource;
+  let jwt: JwtService;
+  let e: Escenario;
+  const http = () => request(app.getHttpServer());
+
+  beforeAll(async () => {
+    ({ app, ds } = await crearApp());
+    await limpiar(ds);
+    e = await escenario(ds);
+    jwt = app.get(JwtService);
+  });
+
+  afterAll(() => app.close());
+
+  const decodificar = (t: string) => jwt.decode<{ iat: number; exp: number; sub: number }>(t);
+
+  it('debe emitir un token que vence a los 30 minutos', async () => {
+    const { iat, exp } = decodificar(await token(app, 'profe@ue.test'));
+    expect(exp - iat).toBe(30 * 60);
+  });
+
+  it('debe rechazar con 401 una petición con el token vencido', async () => {
+    const vencido = jwt.sign({ sub: e.profesor.id, rol: 'PROFESOR' }, { expiresIn: -60 });
+    await http()
+      .get(`/api/notas/actividades/${e.actividades.ser.id}`)
+      .set('Authorization', `Bearer ${vencido}`)
+      .expect(401);
+  });
+
+  it('debe renovar la sesión de un usuario activo con un token nuevo de 30 minutos', async () => {
+    const anterior = await token(app, 'profe@ue.test');
+    const r = await http()
+      .post('/api/auth/renovar')
+      .set('Authorization', `Bearer ${anterior}`)
+      .expect(200);
+    expect(r.body.usuario).toEqual({ id: e.profesor.id, nombre: 'Ana Profesora', rol: 'PROFESOR' });
+    const nuevo = decodificar(r.body.token as string);
+    expect(nuevo.sub).toBe(e.profesor.id);
+    expect(nuevo.exp - nuevo.iat).toBe(30 * 60);
+    await http()
+      .get(`/api/notas/actividades/${e.actividades.ser.id}`)
+      .set('Authorization', `Bearer ${r.body.token}`)
+      .expect(200);
+  });
+
+  it('debe negar la renovación sin token o con el token vencido', async () => {
+    await http().post('/api/auth/renovar').expect(401);
+    const vencido = jwt.sign({ sub: e.profesor.id, rol: 'PROFESOR' }, { expiresIn: -60 });
+    await http().post('/api/auth/renovar').set('Authorization', `Bearer ${vencido}`).expect(401);
+  });
+
+  it('debe negar la renovación a un usuario desactivado', async () => {
+    const vigente = await token(app, 'otro@ue.test');
+    await ds.getRepository(Usuario).update(e.otroProfesor.id, { activo: false });
+    const r = await http()
+      .post('/api/auth/renovar')
+      .set('Authorization', `Bearer ${vigente}`)
+      .expect(401);
+    expect(r.body.message).toBe('Su sesión expiró; vuelva a ingresar');
   });
 });

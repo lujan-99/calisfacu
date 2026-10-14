@@ -96,6 +96,12 @@ DECISIONES = [
         ['D9', '¿Se puede tomar asistencia a una parte del curso?',
          'No: cada clase registra a todos los estudiantes del curso, así "clases dictadas" es igual para todos.',
          '`AsistenciaService.registrar` (US-19)'],
+        ['D10', '¿Cómo se sabe que un estudiante ya está inscrito en la gestión?',
+         'Por su código RUDE (Registro Único de Estudiantes): no se repite en una gestión; en otra gestión vuelve a inscribirse.',
+         '`UNIQUE estudiantes_rude_por_gestion`, `EstudiantesService` (US-18, criterio 3)'],
+        ['D11', '¿Qué es "30 minutos sin actividad" en la sesión?',
+         'El token dura 30 minutos y la web lo renueva (`POST /api/auth/renovar`) mientras el usuario trabaja; sin peticiones durante 30 minutos, vence.',
+         '`AuthService.renovar` (US-17, criterio 4)'],
     ]), '',
 ]
 

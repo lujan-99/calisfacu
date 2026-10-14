@@ -9,6 +9,7 @@ export const MAX_INTENTOS = 5;
 export const MINUTOS_BLOQUEO = 15;
 /** Único mensaje de error del login: no revela si el correo existe ni si la cuenta está bloqueada. */
 export const CREDENCIALES_INVALIDAS = 'Credenciales inválidas';
+export const SESION_EXPIRADA = 'Su sesión expiró; vuelva a ingresar';
 
 /** Módulo crítico: autenticación (US-17). El mensaje de error no revela si el correo existe. */
 @Injectable()
@@ -59,6 +60,20 @@ export class AuthService {
     if (usuario.intentosFallidos > 0 || usuario.bloqueadoHasta) {
       await this.usuarios.update(usuario.id, { intentosFallidos: 0, bloqueadoHasta: null });
     }
+    return this.sesion(usuario);
+  }
+
+  /**
+   * US-17, criterio 4 (D11): la web renueva el token mientras el usuario trabaja; la sesión vence a los 30 minutos
+   * sin peticiones. Se vuelve a leer el usuario para que una cuenta desactivada no pueda seguir renovando.
+   */
+  async renovar(usuarioId: number) {
+    const usuario = await this.usuarios.findOneBy({ id: usuarioId });
+    if (!usuario || !usuario.activo) throw new UnauthorizedException(SESION_EXPIRADA);
+    return this.sesion(usuario);
+  }
+
+  private async sesion(usuario: Pick<Usuario, 'id' | 'nombre' | 'rol'>) {
     const token = await this.jwt.signAsync({ sub: usuario.id, rol: usuario.rol });
     return { token, usuario: { id: usuario.id, nombre: usuario.nombre, rol: usuario.rol } };
   }

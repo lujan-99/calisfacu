@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="76" failures="0" errors="0" time="3.2974112">
+    <testsuite name="src/lib/api.test.ts" timestamp="2026-10-19T04:30:01.160Z" hostname="DESKTOP-4709AGA" tests="8" failures="0" errors="0" skipped="0" time="0.0175106">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe iniciar sesión con POST /auth/login sin enviar token" time="0.0083845">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe enviar el token de la sesión en las peticiones autenticadas" time="0.0005686">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe avisar que la sesión expiró cuando la API responde 401 con una sesión abierta" time="0.0013341">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; no debe avisar expiración por un 401 del inicio de sesión" time="0.0015367">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe unir los mensajes de validación de la API" time="0.000719">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe usar un mensaje genérico si la respuesta no trae mensaje" time="0.0007371">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe aceptar respuestas 204 sin cuerpo" time="0.0006136">
+        </testcase>
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe armar la consulta solo con los filtros indicados" time="0.0013225">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/institucion.test.tsx" timestamp="2026-10-19T04:30:01.163Z" hostname="DESKTOP-4709AGA" tests="9" failures="0" errors="0" skipped="0" time="0.0601557">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Unidad Educativa Juana Azurduy" time="0.0018633">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de U. E. San Simón" time="0.0002911">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Colegio Nacional de La Plata" time="0.0002302">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Unidad Educativa de Prueba" time="0.0002622">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de null" time="0.0001347">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de " time="0.0001297">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe aplicar los colores como variables CSS" time="0.0069182">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe cargar la institución de la API, con su logo versionado" time="0.0431995">
+        </testcase>
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe seguir con la apariencia predeterminada si la API no responde" time="0.005575">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/notas.test.ts" timestamp="2026-10-19T04:30:01.166Z" hostname="DESKTOP-4709AGA" tests="8" failures="0" errors="0" skipped="0" time="0.0061401">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe aceptar una nota dentro de la escala de 1 a 100" time="0.0023964">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe aceptar coma decimal" time="0.0003269">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar 0 por estar fuera de la escala" time="0.0002718">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar 101 por estar fuera de la escala" time="0.0001944">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar -3 por estar fuera de la escala" time="0.0002553">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar texto vacío o no numérico" time="0.0002044">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar más de dos decimales" time="0.0001357">
+        </testcase>
+        <testcase classname="src/lib/notas.test.ts" name="estadoAprobacion &gt; debe aprobar con 51 y reprobar con 50" time="0.0002577">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/lib/sesion.test.tsx" timestamp="2026-10-19T04:30:01.168Z" hostname="DESKTOP-4709AGA" tests="6" failures="0" errors="0" skipped="0" time="0.0524547">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe renovar el token si el usuario trabajó y pasaron 10 minutos" time="0.0321161">
+        </testcase>
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; no debe renovar si no hubo actividad, y debe cerrar la sesión a los 30 minutos" time="0.0047646">
+        </testcase>
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe cerrar la sesión si la renovación falla" time="0.0037985">
+        </testcase>
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe restaurar la sesión guardada si pasaron menos de 30 minutos" time="0.0024872">
+        </testcase>
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; no debe restaurar la sesión guardada si ya pasaron 30 minutos" time="0.0023533">
+        </testcase>
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe exigir el proveedor" time="0.0051171">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/Login.test.tsx" timestamp="2026-10-19T04:30:01.169Z" hostname="DESKTOP-4709AGA" tests="11" failures="0" errors="0" skipped="0" time="0.5692191">
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar el nombre de la institución en la pantalla de ingreso" time="0.0757297">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe llevar al profesor a Mis materias con su menú" time="0.1581226">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a SECRETARIA solo sus opciones" time="0.038624">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a ADMINISTRADOR solo sus opciones" time="0.0246749">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a PADRE solo sus opciones" time="0.0223864">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar el error de la API sin revelar si el usuario existe" time="0.0826925">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe pedir el ingreso a quien abre una pantalla sin sesión" time="0.0170346">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe devolver a su inicio al profesor que escribe la dirección de otro rol" time="0.0282956">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe cerrar la sesión con Salir" time="0.0386889">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe avisar que la sesión expiró cuando la API responde 401" time="0.0670496">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar una página de no encontrada dentro del marco" time="0.0137082">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/admin/admin.test.tsx" timestamp="2026-10-19T04:30:01.171Z" hostname="DESKTOP-4709AGA" tests="4" failures="0" errors="0" skipped="0" time="0.4557861">
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe decir cuántos puntos faltan o sobran" time="0.0024603">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe permitir guardar solo cuando las dimensiones suman 100" time="0.2354802">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe bloquear la tabla si la gestión ya tiene notas" time="0.1942401">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Boletín del padre (US-11, Sprint 3) &gt; debe avisar que el boletín todavía no está disponible" time="0.021739">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/profesor/profesor.test.tsx" timestamp="2026-10-19T04:30:01.172Z" hostname="DESKTOP-4709AGA" tests="16" failures="0" errors="0" skipped="0" time="0.9043724">
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe mostrar solo las materias del profesor, cada una con su curso" time="0.1377196">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe avisar si no tiene materias asignadas" time="0.0195263">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe mostrar el error y permitir reintentar" time="0.0697058">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe elegir por defecto el trimestre en curso: el primero abierto" time="0.0015976">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe listar las actividades de la dimensión elegida con su avance" time="0.0880996">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe avisar que el trimestre está cerrado y no dejar crear actividades (US-18, criterio 4)" time="0.0369374">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe exigir el nombre y crear la actividad en el trimestre y la dimensión elegidos" time="0.1311182">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar las notas registradas con coma y sin poder cambiarlas" time="0.0323876">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe marcar una nota fuera de 1 a 100 junto al campo y no guardar nada" time="0.0537015">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe guardar todas las notas pendientes juntas y mostrarlas como registradas" time="0.0721131">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar el rechazo de la API sin perder lo escrito" time="0.0495035">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe pasar al siguiente estudiante con Enter" time="0.0363355">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe desactivar la planilla de un trimestre cerrado" time="0.0306389">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe preguntar antes de salir con notas sin guardar" time="0.078702">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Notas del trimestre (US-02, T-024) &gt; debe nombrar las dimensiones que faltan (decisión D4)" time="0.0004878">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Notas del trimestre (US-02, T-024) &gt; debe mostrar los puntos que calcula la API, la nota y el estado de cada estudiante" time="0.0631465">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/secretaria/secretaria.test.tsx" timestamp="2026-10-19T04:30:01.174Z" hostname="DESKTOP-4709AGA" tests="14" failures="0" errors="0" skipped="0" time="1.2317725">
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe listar los cursos de la gestión y filtrar por nivel" time="0.1585379">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe registrar un curso y mostrar el mensaje de éxito" time="0.118137">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe mostrar en el formulario el rechazo de un curso repetido" time="0.0674373">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe limitar los años al nivel elegido (Inicial tiene 2)" time="0.0630203">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe pedir confirmación antes de eliminar y mostrar si la API lo impide" time="0.0938709">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe editar un curso sin cambiar su gestión" time="0.0900455">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe buscar por apellido después de que el usuario deja de escribir" time="0.3542654">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe validar el RUDE, los nombres y el curso antes de enviar" time="0.0396112">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe mostrar en qué curso ya está inscrito el estudiante" time="0.0428638">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe avisar si ningún estudiante coincide con el filtro" time="0.0311292">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Materias y asignaciones &gt; debe listar las materias con su profesor" time="0.0378604">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Materias y asignaciones &gt; debe exigir el profesor y crear la materia con su asignación" time="0.0459794">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Unidad educativa (US-18, criterio 5) &gt; debe validar el código SIE y guardar los datos" time="0.0605795">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Unidad educativa (US-18, criterio 5) &gt; debe ofrecer el formulario vacío si todavía no hay datos" time="0.0263748">
+        </testcase>
+    </testsuite>
+</testsuites>

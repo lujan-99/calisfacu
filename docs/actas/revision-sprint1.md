@@ -4,9 +4,9 @@
 > renombra con la fecha: `AAAA-MM-DD-revision-sprint1.md`. Una historia se acepta solo si todos sus criterios del
 > sprint se ven funcionando en staging; las tareas aceptadas pasan de "En revisión" a "Hecho" en el backlog.
 
-- **Fecha y duración:** \_\_\_\_/\_\_\_\_/2026, \_\_\_\_:\_\_\_\_–\_\_\_\_:\_\_\_\_
-- **Incremento:** staging en Render, commit \_\_\_\_\_\_\_ (`GET /api/salud`), build de Jenkins N.º \_\_\_\_ en SUCCESS
-- **Participantes:** cliente (profesor y secretaria): \_\_\_\_\_\_\_\_\_\_\_\_ · Lujan · Galvan
+- **Fecha y duración:** 19/10/2026, 15:00–16:00
+- **Incremento:** staging en Render, commit `316a430` (`GET /api/salud`), build de Jenkins N.º 12 en SUCCESS
+- **Participantes:** cliente (profesor y secretaria): Profr. Ramiro / Lic. Ana · Lujan · Galvan
 
 ## Preparación (30 minutos antes)
 

@@ -1,12 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
+import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
 import {
   listarDimensiones,
   listarTrimestres,
+  marcarEntregaMateria,
   notasTrimestrales,
+  obtenerEstadoEntregaMateria,
   obtenerMateria,
   type Dimension,
+  type EstadoEntrega,
   type NotaTrimestral,
 } from '../../lib/api';
 import { formatoNumero, nombreTrimestre } from '../../lib/formato';
@@ -71,6 +75,27 @@ export function NotasTrimestre() {
     [materiaId, trimestre?.id],
   );
 
+  const [entregaEstado, setEntregaEstado] = useState<EstadoEntrega>('PENDIENTE');
+  const [entregando, setEntregando] = useState(false);
+  const [mensajeEntrega, setMensajeEntrega] = useState<{
+    tipo: 'exito' | 'error';
+    texto: string;
+  } | null>(null);
+
+  useEffect(() => {
+    setMensajeEntrega(null);
+    if (!trimestre) return;
+    obtenerEstadoEntregaMateria(materiaId, trimestre.id)
+      .then((res) => {
+        if (res?.estado) {
+          setEntregaEstado(res.estado);
+        }
+      })
+      .catch(() => {
+        setEntregaEstado('PENDIENTE');
+      });
+  }, [materiaId, trimestre?.id]);
+
   if (base.estado === 'cargando') return <Cargando texto="Cargando…" />;
   if (base.estado === 'error')
     return <ErrorCarga mensaje={base.mensaje} reintentar={recargarBase} />;
@@ -79,6 +104,35 @@ export function NotasTrimestre() {
   const aprobados = listaNotas.filter((n) => n.aprobado === true).length;
   const reprobados = listaNotas.filter((n) => n.aprobado === false).length;
   const pendientes = listaNotas.filter((n) => n.nota === null).length;
+
+  async function alEntregar() {
+    if (!trimestre) return;
+    if (pendientes > 0 || listaNotas.length === 0) {
+      setMensajeEntrega({
+        tipo: 'error',
+        texto:
+          'No se puede marcar como entregada: faltan notas por registrar. Todos los estudiantes deben tener nota en todas las actividades.',
+      });
+      return;
+    }
+    setEntregando(true);
+    setMensajeEntrega(null);
+    try {
+      const res = await marcarEntregaMateria(materiaId, trimestre.id);
+      setEntregaEstado(res.entrega?.estado ?? 'ENTREGADO');
+      setMensajeEntrega({
+        tipo: 'exito',
+        texto: res.mensaje || 'Se marcaron y entregaron correctamente las notas del trimestre.',
+      });
+    } catch (err) {
+      setMensajeEntrega({
+        tipo: 'error',
+        texto: err instanceof Error ? err.message : 'No se pudo marcar como entregada la materia.',
+      });
+    } finally {
+      setEntregando(false);
+    }
+  }
 
   return (
     <>
@@ -126,26 +180,63 @@ export function NotasTrimestre() {
             <Icono nombre="flechaIzq" tam={16} />
             {materia.nombre} · actividades
           </Link>
-          <h1>Notas del trimestre</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <h1 style={{ margin: 0 }}>Notas del trimestre</h1>
+            {entregaEstado === 'ENTREGADO' ? (
+              <span className="insignia insignia-exito" data-cy="badge-entrega-materia">
+                <Icono nombre="check" tam={14} />
+                Trimestre Entregado
+              </span>
+            ) : (
+              <span className="insignia insignia-advertencia" data-cy="badge-entrega-materia">
+                <Icono nombre="reloj" tam={14} />
+                Entrega Pendiente
+              </span>
+            )}
+          </div>
           <span className="subtitulo">
             {materia.nombre} · {materia.curso.nombre} · Gestión {materia.gestion.anio}
           </span>
         </div>
-        <label className="campo" style={{ minWidth: 200 }}>
-          Trimestre
-          <select
-            data-cy="select-trimestre"
-            value={trimestre?.id ?? ''}
-            onChange={(e) => setParametros({ trimestre: e.target.value }, { replace: true })}
-          >
-            {trimestres.map((t) => (
-              <option key={t.id} value={t.id}>
-                {nombreTrimestre(t.numero)}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <label className="campo" style={{ minWidth: 180, marginBottom: 0 }}>
+            Trimestre
+            <select
+              data-cy="select-trimestre"
+              value={trimestre?.id ?? ''}
+              onChange={(e) => setParametros({ trimestre: e.target.value }, { replace: true })}
+            >
+              {trimestres.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {nombreTrimestre(t.numero)}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {entregaEstado !== 'ENTREGADO' && (
+            <button
+              type="button"
+              className="boton boton-primario"
+              data-cy="btn-marcar-entregado"
+              disabled={entregando || notas.estado !== 'datos'}
+              onClick={() => {
+                void alEntregar();
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              <Icono nombre="check" tam={16} />
+              {entregando ? 'Entregando…' : 'Marcar trimestre como entregado'}
+            </button>
+          )}
+        </div>
       </div>
+
+      {mensajeEntrega && (
+        <Aviso tipo={mensajeEntrega.tipo} cy={`aviso-entrega-${mensajeEntrega.tipo}`}>
+          {mensajeEntrega.texto}
+        </Aviso>
+      )}
       <p className="ayuda">
         Puntos de cada dimensión calculados por el sistema con las actividades registradas. Se
         aprueba con 51 o más.

@@ -32,6 +32,12 @@ export const MENU_POR_ROL: Record<Rol, OpcionMenu[]> = {
       cy: 'menu-materias',
     },
     {
+      a: '/secretaria/control-entregas',
+      texto: 'Control de entregas',
+      icono: 'portapapeles',
+      cy: 'menu-control-entregas',
+    },
+    {
       a: '/secretaria/unidad-educativa',
       texto: 'Unidad educativa',
       icono: 'edificio',

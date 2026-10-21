@@ -374,3 +374,42 @@ export const obtenerPorcentajesAsistencia = (materiaId: number, desde?: string, 
     `/asistencias/materias/${materiaId}/porcentajes${qs ? `?${qs}` : ''}`,
   );
 };
+
+// --- Control de Entrega de Notas (US-10, T-040) ---
+
+export type EstadoEntrega = 'ENTREGADO' | 'PENDIENTE';
+
+export interface EntregaMateria {
+  materiaId: number;
+  materia: string;
+  cursoId: number;
+  curso: string;
+  profesorId: number;
+  profesor: string;
+  trimestreId: number;
+  trimestreNumero: number;
+  estado: EstadoEntrega;
+  fechaEntrega?: string | null;
+  totalActividades: number;
+  totalEstudiantes: number;
+  totalNotasRegistradas: number;
+  totalNotasRequeridas: number;
+  notasFaltantes: number;
+}
+
+export const obtenerControlEntregas = (gestionId?: number, trimestreId?: number) => {
+  const params = new URLSearchParams();
+  if (gestionId) params.set('gestionId', String(gestionId));
+  if (trimestreId) params.set('trimestreId', String(trimestreId));
+  const qs = params.toString();
+  return solicitar<EntregaMateria[]>(`/entregas${qs ? `?${qs}` : ''}`);
+};
+
+export const obtenerEstadoEntregaMateria = (materiaId: number, trimestreId: number) =>
+  solicitar<EntregaMateria>(`/entregas/materias/${materiaId}?trimestreId=${trimestreId}`);
+
+export const marcarEntregaMateria = (materiaId: number, trimestreId: number) =>
+  solicitar<{ exito: boolean; mensaje: string; entrega: EntregaMateria }>(
+    `/entregas/materias/${materiaId}/entregar`,
+    enviar('POST', { trimestreId }),
+  );

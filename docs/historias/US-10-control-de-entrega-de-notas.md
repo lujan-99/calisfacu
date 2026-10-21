@@ -25,6 +25,6 @@ Depende de US-01 y US-18. (Valores estimados: validar con el dueño del producto
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

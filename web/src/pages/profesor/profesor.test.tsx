@@ -775,3 +775,134 @@ describe('Registro de asistencia por clase (US-19, T-037)', () => {
     expect(screen.getByText('En riesgo (<70%)')).toBeInTheDocument();
   });
 });
+
+describe('Entrega de notas por materia (US-10, criterio 2)', () => {
+  const notasIncompletas: api.NotaTrimestral[] = [
+    {
+      estudianteId: 1,
+      estudiante: 'Apaza Condori, Miguel',
+      dimensiones: [{ codigo: 'SER', puntos: 8.0 }],
+      nota: 74,
+      aprobado: true,
+      pendientes: [],
+    },
+    {
+      estudianteId: 2,
+      estudiante: 'Choque Huanca, Rosa',
+      dimensiones: [],
+      nota: null,
+      aprobado: null,
+      pendientes: ['SABER', 'HACER'],
+    },
+  ];
+
+  const notasCompletas: api.NotaTrimestral[] = [
+    {
+      estudianteId: 1,
+      estudiante: 'Apaza Condori, Miguel',
+      dimensiones: [{ codigo: 'SER', puntos: 8.0 }],
+      nota: 74,
+      aprobado: true,
+      pendientes: [],
+    },
+    {
+      estudianteId: 2,
+      estudiante: 'Choque Huanca, Rosa',
+      dimensiones: [{ codigo: 'SER', puntos: 9.0 }],
+      nota: 85,
+      aprobado: true,
+      pendientes: [],
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'obtenerMateria').mockResolvedValue(MATERIA);
+    vi.spyOn(api, 'listarTrimestres').mockResolvedValue(TRIMESTRES);
+    vi.spyOn(api, 'listarDimensiones').mockResolvedValue(DIMENSIONES);
+    vi.spyOn(api, 'obtenerEstadoEntregaMateria').mockResolvedValue({
+      materiaId: 7,
+      materia: 'Matemática',
+      cursoId: 1,
+      curso: 'Secundaria 4.º «A»',
+      profesorId: 3,
+      profesor: 'Rosa Mamani Condori',
+      trimestreId: 21,
+      trimestreNumero: 1,
+      estado: 'PENDIENTE',
+      fechaEntrega: null,
+      totalActividades: 2,
+      totalEstudiantes: 2,
+      totalNotasRegistradas: 2,
+      totalNotasRequeridas: 4,
+      notasFaltantes: 2,
+    });
+  });
+
+  it('debe rechazar la entrega de notas si faltan estudiantes por calificar (US-10, criterio 2)', async () => {
+    vi.spyOn(api, 'notasTrimestrales').mockResolvedValue(notasIncompletas);
+    const marcarSpy = vi.spyOn(api, 'marcarEntregaMateria');
+
+    abrir('/profesor/materias/7/notas?trimestre=21', 'PROFESOR');
+    expect(
+      await screen.findByRole('heading', { name: /Notas del Trimestre/i }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Apaza Condori, Miguel')).toBeInTheDocument();
+    expect(screen.getByText(/Entrega Pendiente/i)).toBeInTheDocument();
+
+    const btnEntregar = screen.getByRole('button', { name: /Marcar trimestre como entregado/i });
+    fireEvent.click(btnEntregar);
+
+    expect(
+      await screen.findByText(
+        /No se puede marcar como entregada: faltan notas por registrar. Todos los estudiantes deben tener nota en todas las actividades./i,
+      ),
+    ).toBeInTheDocument();
+    expect(marcarSpy).not.toHaveBeenCalled();
+  });
+
+  it('debe aceptar la entrega y actualizar el estado cuando todas las notas están completas (US-10, criterio 2)', async () => {
+    vi.spyOn(api, 'notasTrimestrales').mockResolvedValue(notasCompletas);
+    const marcarSpy = vi.spyOn(api, 'marcarEntregaMateria').mockResolvedValue({
+      exito: true,
+      mensaje: 'Se marcaron y entregaron correctamente las notas del trimestre.',
+      entrega: {
+        materiaId: 7,
+        materia: 'Matemática',
+        cursoId: 1,
+        curso: 'Secundaria 4.º «A»',
+        profesorId: 3,
+        profesor: 'Rosa Mamani Condori',
+        trimestreId: 21,
+        trimestreNumero: 1,
+        estado: 'ENTREGADO',
+        fechaEntrega: '2026-04-15T15:00:00Z',
+        totalActividades: 2,
+        totalEstudiantes: 2,
+        totalNotasRegistradas: 4,
+        totalNotasRequeridas: 4,
+        notasFaltantes: 0,
+      },
+    });
+
+    abrir('/profesor/materias/7/notas?trimestre=21', 'PROFESOR');
+    expect(
+      await screen.findByRole('heading', { name: /Notas del Trimestre/i }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Apaza Condori, Miguel')).toBeInTheDocument();
+
+    const btnEntregar = screen.getByRole('button', { name: /Marcar trimestre como entregado/i });
+    fireEvent.click(btnEntregar);
+
+    await waitFor(() => {
+      expect(marcarSpy).toHaveBeenCalledWith(7, 21);
+    });
+
+    expect(
+      await screen.findByText(/Se marcaron y entregaron correctamente las notas del trimestre./i),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(/Trimestre Entregado/i)).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Marcar trimestre como entregado/i }),
+    ).not.toBeInTheDocument();
+  });
+});

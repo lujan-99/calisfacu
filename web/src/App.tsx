@@ -16,6 +16,7 @@ import { MateriaActividades } from './pages/profesor/MateriaActividades';
 import { MisMaterias } from './pages/profesor/MisMaterias';
 import { NotasTrimestre } from './pages/profesor/NotasTrimestre';
 import { Planilla } from './pages/profesor/Planilla';
+import { ControlEntregas } from './pages/secretaria/ControlEntregas';
 import { Cursos } from './pages/secretaria/Cursos';
 import { Estudiantes } from './pages/secretaria/Estudiantes';
 import { Materias } from './pages/secretaria/Materias';
@@ -57,6 +58,7 @@ export const rutas = [
           { path: '/secretaria/cursos', element: <Cursos /> },
           { path: '/secretaria/estudiantes', element: <Estudiantes /> },
           { path: '/secretaria/materias', element: <Materias /> },
+          { path: '/secretaria/control-entregas', element: <ControlEntregas /> },
           { path: '/secretaria/unidad-educativa', element: <UnidadEducativa /> },
         ],
       },

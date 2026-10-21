@@ -24,6 +24,22 @@ export function formatoNumero(n: number): string {
   return String(n).replace('.', ',');
 }
 
+/** Formatea una fecha ISO o corta al formato legible boliviano (DD/MM/AAAA). */
+export function formatoFecha(cadena: string): string {
+  try {
+    const d = new Date(cadena);
+    return isNaN(d.getTime())
+      ? cadena
+      : d.toLocaleDateString('es-BO', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        });
+  } catch {
+    return cadena;
+  }
+}
+
 /** Pantalla de inicio de cada rol (US-17, criterio 1). */
 export const INICIO_POR_ROL: Record<Rol, string> = {
   PROFESOR: '/profesor/materias',

@@ -36,7 +36,13 @@ describe('Inicio de sesión y menú por rol (US-17)', () => {
     [
       'SECRETARIA',
       'Menú de la secretaria',
-      ['Cursos', 'Estudiantes', 'Materias y asignaciones', 'Unidad educativa'],
+      [
+        'Cursos',
+        'Estudiantes',
+        'Materias y asignaciones',
+        'Control de entregas',
+        'Unidad educativa',
+      ],
     ],
     ['ADMINISTRADOR', 'Menú del administrador', ['Dimensiones de evaluación']],
     ['PADRE', 'Menú del padre de familia', ['Boletín de mi hijo']],

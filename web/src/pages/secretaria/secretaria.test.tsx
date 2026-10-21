@@ -300,3 +300,112 @@ describe('Unidad educativa (US-18, criterio 5)', () => {
     ).toBeInTheDocument();
   });
 });
+
+describe('Control de entrega de notas (US-10, criterio 1)', () => {
+  const entregasMock: api.EntregaMateria[] = [
+    {
+      materiaId: 1,
+      materia: 'Matemática',
+      cursoId: 1,
+      curso: 'Secundaria 4.º «A»',
+      profesorId: 10,
+      profesor: 'Rosa Mamani Condori',
+      trimestreId: 1,
+      trimestreNumero: 1,
+      estado: 'ENTREGADO',
+      fechaEntrega: '2026-04-10T12:00:00Z',
+      totalActividades: 3,
+      totalEstudiantes: 30,
+      totalNotasRegistradas: 90,
+      totalNotasRequeridas: 90,
+      notasFaltantes: 0,
+    },
+    {
+      materiaId: 2,
+      materia: 'Física',
+      cursoId: 1,
+      curso: 'Secundaria 4.º «A»',
+      profesorId: 11,
+      profesor: 'Carlos Lujan',
+      trimestreId: 1,
+      trimestreNumero: 1,
+      estado: 'PENDIENTE',
+      fechaEntrega: null,
+      totalActividades: 2,
+      totalEstudiantes: 30,
+      totalNotasRegistradas: 45,
+      totalNotasRequeridas: 60,
+      notasFaltantes: 15,
+    },
+    {
+      materiaId: 3,
+      materia: 'Lenguaje',
+      cursoId: 2,
+      curso: 'Primaria 1.º «B»',
+      profesorId: 12,
+      profesor: 'Elena Galvan',
+      trimestreId: 1,
+      trimestreNumero: 1,
+      estado: 'PENDIENTE',
+      fechaEntrega: null,
+      totalActividades: 1,
+      totalEstudiantes: 20,
+      totalNotasRegistradas: 10,
+      totalNotasRequeridas: 20,
+      notasFaltantes: 10,
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'listarTrimestres').mockResolvedValue([
+      { id: 1, numero: 1, gestionId: 1, cerrado: false },
+      { id: 2, numero: 2, gestionId: 1, cerrado: false },
+    ]);
+    vi.spyOn(api, 'obtenerControlEntregas').mockResolvedValue(entregasMock);
+  });
+
+  it('debe listar por curso cada materia con su profesor y su estado Entregado o Pendiente (US-10, criterio 1)', async () => {
+    abrir('/secretaria/control-entregas', 'SECRETARIA');
+    expect(
+      await screen.findByRole('heading', { name: /Control de Entrega de Notas por Curso/i }),
+    ).toBeInTheDocument();
+
+    // Comprobar cursos agrupados
+    expect(
+      screen.getByRole('heading', { level: 3, name: 'Secundaria 4.º «A»' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Primaria 1.º «B»' })).toBeInTheDocument();
+
+    // Comprobar materias y profesores
+    expect(screen.getByText('Matemática')).toBeInTheDocument();
+    expect(screen.getByText('Rosa Mamani Condori')).toBeInTheDocument();
+    expect(screen.getByText('Física')).toBeInTheDocument();
+    expect(screen.getByText('Carlos Lujan')).toBeInTheDocument();
+
+    // Estados
+    const entregados = screen.getAllByText(/Entregado/i);
+    expect(entregados.length).toBeGreaterThan(0);
+    const pendientes = screen.getAllByText(/Pendiente/i);
+    expect(pendientes.length).toBeGreaterThan(0);
+  });
+
+  it('debe filtrar materias por estado y buscar por profesor (US-10, criterio 1)', async () => {
+    abrir('/secretaria/control-entregas', 'SECRETARIA');
+    await screen.findByRole('heading', { name: /Control de Entrega de Notas por Curso/i });
+
+    // Filtrar solo pendientes
+    fireEvent.change(screen.getByLabelText(/Filtrar por estado/i), {
+      target: { value: 'PENDIENTE' },
+    });
+    expect(screen.queryByText('Matemática')).not.toBeInTheDocument();
+    expect(screen.getByText('Física')).toBeInTheDocument();
+    expect(screen.getByText('Lenguaje')).toBeInTheDocument();
+
+    // Buscar profesor
+    fireEvent.change(screen.getByPlaceholderText(/Ej: Matemática, Carlos Lujan…/i), {
+      target: { value: 'Lujan' },
+    });
+    expect(screen.getByText('Física')).toBeInTheDocument();
+    expect(screen.queryByText('Lenguaje')).not.toBeInTheDocument();
+  });
+});

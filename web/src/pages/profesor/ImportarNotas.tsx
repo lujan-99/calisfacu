@@ -1,34 +1,31 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
-import { obtenerPlanilla } from '../../lib/api';
-import { formatoNumero, nombreTrimestre } from '../../lib/formato';
 import {
-  confirmarImportacionNotas,
-  generarPlantillaCsv,
-  procesarTextoImportacion,
+  confirmarImportacion,
+  descargarPlantillaImportacion,
+  obtenerPlanilla,
+  vistaPreviaImportacion,
   type VistaPreviaImportacion,
-} from '../../lib/importacionExcel';
-import { useSesion } from '../../lib/sesion';
+} from '../../lib/api';
+import { formatoNumero, nombreTrimestre } from '../../lib/formato';
 import { useCarga } from '../../lib/useCarga';
 
 /**
  * Pantalla de Carga y Vista Previa de la Importación desde Excel (US-05, T-039).
- * Permite al profesor subir o pegar su planilla de calificaciones, previsualizar
- * las filas válidas y las filas con error, y confirmar el guardado con auditoría
- * de origen "IMPORTACION".
+ * El profesor descarga la plantilla .xlsx, la sube con las notas y ve qué filas son válidas y cuáles tienen error.
+ * La API lee y valida el archivo (T-038); al confirmar, vuelve a validarlo y guarda las filas válidas con auditoría
+ * de origen "IMPORTACION" en la misma transacción.
  */
 export function ImportarNotas() {
   const { materiaId, actividadId } = useParams();
   const id = Number(actividadId);
   const navigate = useNavigate();
-  const { usuario } = useSesion();
 
   const { carga, recargar } = useCarga(() => obtenerPlanilla(id), [id]);
 
-  const [textoPegado, setTextoPegado] = useState('');
-  const [nombreArchivo, setNombreArchivo] = useState<string | null>(null);
+  const [archivo, setArchivo] = useState<File | null>(null);
   const [vistaPrevia, setVistaPrevia] = useState<VistaPreviaImportacion | null>(null);
   const [tabVista, setTabVista] = useState<'validas' | 'errores'>('validas');
   const [procesando, setProcesando] = useState(false);
@@ -51,71 +48,58 @@ export function ImportarNotas() {
   const planilla = carga.datos;
   const volverA = `/profesor/materias/${materiaId}/actividades/${id}`;
 
-  const descargarPlantilla = () => {
-    const csv = generarPlantillaCsv(planilla);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement('a');
-    enlace.href = url;
-    enlace.setAttribute(
-      'download',
-      `Plantilla_${planilla.actividad.materia}_${planilla.actividad.nombre}.csv`,
-    );
-    document.body.appendChild(enlace);
-    enlace.click();
-    document.body.removeChild(enlace);
-  };
+  const mensajeDe = (e: unknown, porDefecto: string) =>
+    e instanceof Error ? e.message : porDefecto;
 
-  const alSeleccionarArchivo = (e: ChangeEvent<HTMLInputElement>) => {
-    const archivo = e.target.files?.[0];
-    if (!archivo) return;
-    setNombreArchivo(archivo.name);
+  const descargarPlantilla = async () => {
     setErrorProceso(null);
-    setProcesando(true);
-
-    const lector = new FileReader();
-    lector.onload = (evento) => {
-      const contenido = evento.target?.result as string;
-      const resultado = procesarTextoImportacion(contenido, planilla);
-      setVistaPrevia(resultado);
-      setProcesando(false);
-      setTabVista(resultado.filasValidas.length > 0 ? 'validas' : 'errores');
-    };
-    lector.onerror = () => {
-      setErrorProceso('No se pudo leer el archivo seleccionado.');
-      setProcesando(false);
-    };
-    lector.readAsText(archivo);
-  };
-
-  const alProcesarTextoPegado = (e?: FormEvent | React.MouseEvent) => {
-    e?.preventDefault();
-    if (!textoPegado.trim()) {
-      setErrorProceso('Pegue el contenido copiado de su planilla Excel.');
-      return;
+    try {
+      const datos = await descargarPlantillaImportacion(id);
+      const url = URL.createObjectURL(datos);
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.download = `Plantilla_${planilla.actividad.materia}_${planilla.actividad.nombre}.xlsx`;
+      document.body.appendChild(enlace);
+      enlace.click();
+      document.body.removeChild(enlace);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setErrorProceso(mensajeDe(e, 'No se pudo descargar la plantilla.'));
     }
+  };
+
+  const alSeleccionarArchivo = async (e: ChangeEvent<HTMLInputElement>) => {
+    const elegido = e.target.files?.[0];
+    e.target.value = '';
+    if (!elegido) return;
+    setArchivo(elegido);
+    setVistaPrevia(null);
     setErrorProceso(null);
     setProcesando(true);
-    const resultado = procesarTextoImportacion(textoPegado, planilla);
-    setVistaPrevia(resultado);
-    setProcesando(false);
-    setTabVista(resultado.filasValidas.length > 0 ? 'validas' : 'errores');
+    try {
+      const resultado = await vistaPreviaImportacion(id, elegido);
+      setVistaPrevia(resultado);
+      setTabVista(resultado.filasValidas.length > 0 ? 'validas' : 'errores');
+    } catch (err) {
+      setErrorProceso(mensajeDe(err, 'No se pudo leer el archivo seleccionado.'));
+    } finally {
+      setProcesando(false);
+    }
   };
 
   const confirmar = async () => {
-    if (!vistaPrevia || vistaPrevia.filasValidas.length === 0 || !usuario) return;
+    if (!archivo || !vistaPrevia || vistaPrevia.filasValidas.length === 0) return;
     setImportando(true);
     setErrorProceso(null);
-
     try {
-      await confirmarImportacionNotas(id, vistaPrevia.filasValidas, usuario.nombre);
+      const { guardadas } = await confirmarImportacion(id, archivo);
       void navigate(volverA, {
         state: {
-          mensajeExito: `Se importaron ${vistaPrevia.filasValidas.length} calificaciones con auditoría de origen importación.`,
+          mensajeExito: `Se importaron ${guardadas} calificaciones con auditoría de origen importación.`,
         },
       });
     } catch (e) {
-      setErrorProceso(e instanceof Error ? e.message : 'Error al confirmar la importación');
+      setErrorProceso(mensajeDe(e, 'Error al confirmar la importación'));
     } finally {
       setImportando(false);
     }
@@ -132,7 +116,7 @@ export function ImportarNotas() {
           </div>
           <h2>Importar Notas desde Excel</h2>
           <p>
-            Cargue su planilla Excel o pegue las notas directamente para migrarlas al sistema en un
+            Descargue la plantilla, complete la columna Nota y súbala para migrar las notas en un
             solo paso. Cada nota importada quedará registrada en auditoría con origen oficial
             "IMPORTACIÓN".
           </p>
@@ -177,11 +161,11 @@ export function ImportarNotas() {
             type="button"
             className="boton boton-secundario"
             data-cy="btn-descargar-plantilla"
-            onClick={descargarPlantilla}
+            onClick={() => void descargarPlantilla()}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
             <Icono nombre="tabla" tam={16} />
-            Descargar plantilla Excel (CSV)
+            Descargar plantilla Excel
           </button>
         </div>
       </div>
@@ -192,100 +176,52 @@ export function ImportarNotas() {
         </Aviso>
       )}
 
-      {/* Selector de Método de Carga */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 20,
-          marginBottom: 24,
-        }}
-      >
-        {/* Opción 1: Archivo */}
-        <div className="tarjeta" style={{ padding: 20 }}>
-          <h3
-            style={{ fontSize: 15, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <Icono nombre="documento" tam={18} />
-            Opción 1: Subir archivo Excel o CSV
-          </h3>
-          <p style={{ fontSize: 13, color: 'var(--texto-2)', marginBottom: 16 }}>
-            Seleccione el archivo exportado o la plantilla prellenada con las notas.
-          </p>
+      {/* Carga del archivo (US-05, criterio 1) */}
+      <div className="tarjeta" style={{ padding: 20, marginBottom: 24 }}>
+        <h3
+          style={{ fontSize: 15, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}
+        >
+          <Icono nombre="documento" tam={18} />
+          Subir la planilla Excel
+        </h3>
+        <p style={{ fontSize: 13, color: 'var(--texto-2)', marginBottom: 16 }}>
+          Use la plantilla descargada: cada fila lleva el código RUDE del estudiante y su nota de 1
+          a 100. Las notas que ya están registradas no se reemplazan: se corrigen con motivo.
+        </p>
 
-          <label
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '24px 16px',
-              border: '2px dashed var(--borde)',
-              borderRadius: 8,
-              backgroundColor: '#fafafa',
-              cursor: 'pointer',
-              textAlign: 'center',
-            }}
-          >
-            <Icono nombre="portapapeles" tam={28} />
-            <span style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>
-              {nombreArchivo ?? 'Haga clic para buscar su archivo (.csv, .xlsx, .txt)'}
-            </span>
-            <span style={{ fontSize: 11, color: 'var(--texto-3)', marginTop: 4 }}>
-              Formatos soportados: CSV delimitado por comas, puntos y comas o tabulaciones
-            </span>
-            <input
-              type="file"
-              data-cy="input-archivo-excel"
-              accept=".csv,.txt,.xlsx,.xls"
-              onChange={alSeleccionarArchivo}
-              style={{ display: 'none' }}
-            />
-          </label>
-        </div>
-
-        {/* Opción 2: Pegar texto directo */}
-        <div className="tarjeta" style={{ padding: 20 }}>
-          <h3
-            style={{ fontSize: 15, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <Icono nombre="tabla" tam={18} />
-            Opción 2: Pegar directamente desde Excel
-          </h3>
-          <p style={{ fontSize: 13, color: 'var(--texto-2)', marginBottom: 8 }}>
-            Copie las filas en Excel (Ctrl + C) y péguelas aquí directamente:
-          </p>
-
-          <form onSubmit={alProcesarTextoPegado}>
-            <textarea
-              data-cy="textarea-pegar-excel"
-              aria-label="Pegar celdas copiadas desde Excel"
-              rows={4}
-              style={{
-                width: '100%',
-                padding: 10,
-                borderRadius: 6,
-                border: '1px solid var(--borde)',
-                fontSize: 12,
-                fontFamily: 'monospace',
-              }}
-              placeholder={`Apaza Condori, Miguel\t85\nChoque Huanca, Rosa\t90\nFlores Quispe, Daniela\t78.5`}
-              value={textoPegado}
-              onChange={(e) => setTextoPegado(e.target.value)}
-            />
-            <div style={{ marginTop: 8, textAlign: 'right' }}>
-              <button
-                type="submit"
-                className="boton boton-secundario"
-                data-cy="btn-analizar-texto"
-                onClick={alProcesarTextoPegado}
-                disabled={procesando}
-              >
-                Analizar filas copiadas
-              </button>
-            </div>
-          </form>
-        </div>
+        <label
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px 16px',
+            border: '2px dashed var(--borde)',
+            borderRadius: 8,
+            backgroundColor: '#fafafa',
+            cursor: 'pointer',
+            textAlign: 'center',
+          }}
+        >
+          <Icono nombre="portapapeles" tam={28} />
+          <span style={{ fontSize: 13, fontWeight: 600, marginTop: 8 }}>
+            {procesando
+              ? 'Analizando la planilla…'
+              : (archivo?.name ?? 'Haga clic para buscar su archivo (.xlsx)')}
+          </span>
+          <span style={{ fontSize: 11, color: 'var(--texto-3)', marginTop: 4 }}>
+            Formato: Excel .xlsx, hasta 1 MB y 1000 filas
+          </span>
+          <input
+            type="file"
+            data-cy="input-archivo-excel"
+            aria-label="Planilla Excel con las notas"
+            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            onChange={(e) => void alSeleccionarArchivo(e)}
+            disabled={procesando || importando}
+            style={{ display: 'none' }}
+          />
+        </label>
       </div>
 
       {/* Sección de Vista Previa (US-05, Criterio 1 y 2) */}

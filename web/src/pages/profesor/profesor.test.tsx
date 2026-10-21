@@ -563,98 +563,100 @@ describe('Importación desde Excel (US-05, T-039)', () => {
     filas: [
       { estudianteId: 1, estudiante: 'Apaza Condori, Miguel', valor: null },
       { estudianteId: 2, estudiante: 'Choque Huanca, Rosa', valor: null },
-      { estudianteId: 3, estudiante: 'Flores Quispe, Daniela', valor: null },
     ],
   };
 
-  const estudiantesCatalogo: api.Estudiante[] = [
-    {
-      id: 1,
-      rude: '809800012026001',
-      ci: '12345678',
-      nombres: 'Miguel',
-      apellidos: 'Apaza Condori',
-      cursoId: 1,
-    },
-    {
-      id: 2,
-      rude: '809800012026002',
-      ci: '87654321',
-      nombres: 'Rosa',
-      apellidos: 'Choque Huanca',
-      cursoId: 1,
-    },
-    {
-      id: 3,
-      rude: '809800012026003',
-      ci: '11223344',
-      nombres: 'Daniela',
-      apellidos: 'Flores Quispe',
-      cursoId: 1,
-    },
-  ];
+  const vista: api.VistaPreviaImportacion = {
+    totalFilas: 3,
+    filasValidas: [
+      {
+        estudianteId: 1,
+        codigoRude: '809800012026001',
+        estudiante: 'Apaza Condori, Miguel',
+        valor: 88,
+        valida: true,
+      },
+    ],
+    filasObservadas: [
+      {
+        linea: 3,
+        identificador: '999999999999999',
+        valorIngresado: '75',
+        motivo: 'El estudiante no existe en este curso',
+        valida: false,
+      },
+      {
+        linea: 4,
+        identificador: '809800012026002',
+        valorIngresado: '105',
+        motivo: 'La nota debe ser un número entre 1 y 100, con hasta dos decimales',
+        valida: false,
+      },
+    ],
+    resumen: { total: 3, validas: 1, errores: 2 },
+  };
+
+  const archivo = new File(['xlsx'], 'notas.xlsx', {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+
+  async function subirArchivo() {
+    abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
+    await screen.findByRole('heading', { name: /Importar Notas desde Excel/i });
+    fireEvent.change(screen.getByLabelText('Planilla Excel con las notas'), {
+      target: { files: [archivo] },
+    });
+  }
 
   beforeEach(() => {
     vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaImportacion);
-    vi.spyOn(api, 'listarEstudiantes').mockResolvedValue(estudiantesCatalogo);
   });
 
-  it('debe mostrar la pantalla de importación con instrucciones y opción de descarga de plantilla (US-05, criterio 1)', async () => {
+  it('debe mostrar la pantalla de importación con la descarga de la plantilla (US-05, criterio 1)', async () => {
     abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
     expect(
       await screen.findByRole('heading', { name: /Importar Notas desde Excel/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Descargar plantilla Excel/i })).toBeInTheDocument();
-    expect(screen.getByLabelText('Pegar celdas copiadas desde Excel')).toBeInTheDocument();
+    expect(screen.getByLabelText('Planilla Excel con las notas')).toHaveAttribute(
+      'accept',
+      expect.stringContaining('.xlsx'),
+    );
   });
 
-  it('debe procesar texto pegado de Excel, generar vista previa separando válidas y errores (US-05, criterio 1 y 2)', async () => {
-    abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
-    await screen.findByRole('heading', { name: /Importar Notas desde Excel/i });
+  it('debe enviar el archivo a la API y mostrar la vista previa con filas válidas y con error (US-05, criterios 1 y 2)', async () => {
+    const previa = vi.spyOn(api, 'vistaPreviaImportacion').mockResolvedValue(vista);
+    await subirArchivo();
 
-    const textoPegado = `RUDE\tEstudiante\tNota\n809800012026001\tApaza Condori, Miguel\t88\n999999999999999\tDesconocido\t75\n809800012026002\tChoque Huanca, Rosa\t105`;
-
-    const areaTexto = screen.getByLabelText('Pegar celdas copiadas desde Excel');
-    fireEvent.change(areaTexto, { target: { value: textoPegado } });
-    fireEvent.click(screen.getByRole('button', { name: /Analizar filas copiadas/i }));
-
-    // Ver métricas y pestañas
     expect(await screen.findByRole('button', { name: /Válidas \(1\)/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Observadas \(2\)/i })).toBeInTheDocument();
-
-    // Fila válida visible
+    expect(previa).toHaveBeenCalledWith(5, archivo);
     expect(screen.getByText('Apaza Condori, Miguel')).toBeInTheDocument();
     expect(screen.getByText('88')).toBeInTheDocument();
 
-    // Cambiar a pestaña de observaciones
     fireEvent.click(screen.getByRole('button', { name: /Observadas \(2\)/i }));
     expect(screen.getByText('999999999999999')).toBeInTheDocument();
-    expect(screen.getByText(/no existe o no pertenece a este curso/i)).toBeInTheDocument();
-    expect(screen.getByText(/La nota debe estar entre 1 y 100/i)).toBeInTheDocument();
+    expect(screen.getByText('El estudiante no existe en este curso')).toBeInTheDocument();
   });
 
-  it('debe confirmar la importación con origen IMPORTACION y registrar planilla (US-05, criterio 3)', async () => {
-    const registrarSpy = vi.spyOn(api, 'guardarPlanilla').mockResolvedValue({
-      guardadas: 1,
-    });
+  it('debe mostrar el error de la API si el archivo no es una planilla válida', async () => {
+    vi.spyOn(api, 'vistaPreviaImportacion').mockRejectedValue(
+      new api.ErrorApi(400, 'El archivo no es una planilla Excel (.xlsx) válida'),
+    );
+    await subirArchivo();
+    expect(
+      await screen.findByText('El archivo no es una planilla Excel (.xlsx) válida'),
+    ).toBeInTheDocument();
+  });
 
-    abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
-    await screen.findByRole('heading', { name: /Importar Notas desde Excel/i });
+  it('debe confirmar la importación enviando el mismo archivo a la API (US-05, criterio 3)', async () => {
+    vi.spyOn(api, 'vistaPreviaImportacion').mockResolvedValue(vista);
+    const confirmar = vi
+      .spyOn(api, 'confirmarImportacion')
+      .mockResolvedValue({ guardadas: 1, rechazadas: 2 });
+    await subirArchivo();
 
-    const textoPegado = `RUDE\tEstudiante\tNota\n809800012026001\tApaza Condori, Miguel\t88`;
-
-    const areaTexto = screen.getByLabelText('Pegar celdas copiadas desde Excel');
-    fireEvent.change(areaTexto, { target: { value: textoPegado } });
-    fireEvent.click(screen.getByRole('button', { name: /Analizar filas copiadas/i }));
-
-    const btnConfirmar = await screen.findByRole('button', {
-      name: /Confirmar e Importar/i,
-    });
-    fireEvent.click(btnConfirmar);
-
-    await waitFor(() => {
-      expect(registrarSpy).toHaveBeenCalledWith(5, [{ estudianteId: 1, valor: 88 }]);
-    });
+    fireEvent.click(await screen.findByRole('button', { name: /Confirmar e Importar/i }));
+    await waitFor(() => expect(confirmar).toHaveBeenCalledWith(5, archivo));
   });
 });
 

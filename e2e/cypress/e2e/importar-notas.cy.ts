@@ -1,5 +1,6 @@
 // US-05, criterios 1 y 2 (T-039): importación de notas desde Excel.
-// El profesor pega o sube su planilla y previsualiza filas válidas y observadas antes de confirmar.
+// El profesor sube su planilla .xlsx y previsualiza filas válidas y observadas antes de confirmar.
+// fixtures/importacion-notas.xlsx: un RUDE del seed con 85, un RUDE que no existe y uno con 120 (fuera de escala).
 
 interface Sesion {
   token: string;
@@ -38,33 +39,30 @@ describe('Importación de calificaciones desde Excel (US-05, T-039)', () => {
     });
   });
 
-  it('debe previsualizar y discriminar filas válidas de filas con error antes de confirmar', () => {
-    // Pegar contenido simulado de Excel con filas válidas y una fila con error (> 100)
-    const contenidoExcel =
-      'Apaza Condori, Miguel\t85\nEstudiante Ficticio Inexistente\t90\nFlores Quispe, Daniela\t120';
-    cy.get('[data-cy=textarea-pegar-excel]').type(contenidoExcel);
-    cy.get('[data-cy=btn-analizar-texto]').click();
+  const subir = () =>
+    cy
+      .get('[data-cy=input-archivo-excel]')
+      .selectFile('cypress/fixtures/importacion-notas.xlsx', { force: true });
 
-    // Comprobar que se muestra la sección de vista previa
+  it('debe previsualizar y discriminar filas válidas de filas con error antes de confirmar', () => {
+    subir();
     cy.get('[data-cy=seccion-vista-previa]').should('be.visible');
 
-    // Comprobar filas válidas
     cy.get('[data-cy=tab-ver-validas]').click();
     cy.get('[data-cy=tabla-filas-validas]').should('be.visible');
-    cy.get('[data-cy=fila-valida]').should('have.length.at.least', 1);
+    cy.get('[data-cy=fila-valida]').should('have.length', 1);
 
-    // Comprobar filas observadas con motivo de rechazo (criterio 2)
+    // Filas observadas con su motivo de rechazo (criterio 2)
     cy.get('[data-cy=tab-ver-errores]').click();
-    cy.get('[data-cy=tabla-filas-errores]').should('be.visible');
-    cy.get('[data-cy=fila-error]').should('have.length.at.least', 1);
+    cy.get('[data-cy=fila-error]').should('have.length', 2);
+    cy.get('[data-cy=tabla-filas-errores]').should(
+      'contain',
+      'El estudiante no existe en este curso',
+    );
   });
 
   it('debe confirmar la importación y redirigir con aviso de éxito', () => {
-    const contenidoValido = 'Apaza Condori, Miguel\t95';
-    cy.get('[data-cy=textarea-pegar-excel]').type(contenidoValido);
-    cy.get('[data-cy=btn-analizar-texto]').click();
-
-    // Confirmar importación
+    subir();
     cy.get('[data-cy=btn-confirmar-importacion]').should('be.enabled').click();
 
     // Debe volver a la planilla y mostrar aviso de notas importadas

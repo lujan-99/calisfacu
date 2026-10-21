@@ -111,6 +111,10 @@ DECISIONES = [
          'El profesor asignado la entrega una sola vez por trimestre, cuando no falta ninguna nota del curso, y no se puede deshacer; no se entrega en un trimestre cerrado. '
          'Después de entregar, las correcciones siguen por US-04 con su auditoría. Si la secretaria no indica el trimestre, el control muestra el primero abierto de la última gestión.',
          '`requisitosEntrega`, `EntregasService` (US-10)'],
+        ['D14', '¿Cómo se importan notas desde Excel?',
+         'Con la plantilla .xlsx del sistema (Código RUDE, Estudiante, Nota), una actividad por archivo, hasta 1 MB y 1000 filas. Se identifica al estudiante por su RUDE en el curso. '
+         'Una nota que ya existe no se reemplaza: la fila se rechaza y se corrige con motivo (US-04). Al confirmar, la API vuelve a validar el mismo archivo y guarda las filas válidas en una transacción.',
+         '`validarFilas`, `ImportacionService` (US-05)'],
     ]), '',
 ]
 

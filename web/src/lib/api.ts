@@ -31,7 +31,7 @@ export function configurarSesion(token: string | null, expirada: (() => void) | 
   alExpirar = expirada;
 }
 
-async function solicitar<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
+async function pedir(ruta: string, opciones: RequestInit = {}): Promise<Response> {
   const esFormulario = opciones.body instanceof FormData;
   const respuesta = await fetch(`${BASE}${ruta}`, {
     ...opciones,
@@ -47,8 +47,18 @@ async function solicitar<T>(ruta: string, opciones: RequestInit = {}): Promise<T
     const mensaje = Array.isArray(cuerpo.message) ? cuerpo.message.join('. ') : cuerpo.message;
     throw new ErrorApi(respuesta.status, mensaje ?? 'Error de comunicación con el servidor');
   }
+  return respuesta;
+}
+
+async function solicitar<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
+  const respuesta = await pedir(ruta, opciones);
   if (respuesta.status === 204) return undefined as T;
   return (await respuesta.json()) as T;
+}
+
+/** Descarga un archivo de la API (por ejemplo, la plantilla de importación) con el token de la sesión. */
+async function solicitarArchivo(ruta: string): Promise<Blob> {
+  return (await pedir(ruta)).blob();
 }
 
 const enviar = (metodo: string, cuerpo?: unknown): RequestInit => ({
@@ -412,4 +422,52 @@ export const marcarEntregaMateria = (materiaId: number, trimestreId: number) =>
   solicitar<{ exito: boolean; mensaje: string; entrega: EntregaMateria }>(
     `/entregas/materias/${materiaId}/entregar`,
     enviar('POST', { trimestreId }),
+  );
+
+// ---------- Importación desde Excel (US-05, T-038, T-039) ----------
+
+export interface FilaImportacionValida {
+  estudianteId: number;
+  codigoRude: string;
+  estudiante: string;
+  valor: number;
+  valida: true;
+}
+
+export interface FilaImportacionObservada {
+  linea: number;
+  identificador: string;
+  valorIngresado: string;
+  motivo: string;
+  valida: false;
+}
+
+export interface VistaPreviaImportacion {
+  totalFilas: number;
+  filasValidas: FilaImportacionValida[];
+  filasObservadas: FilaImportacionObservada[];
+  resumen: { total: number; validas: number; errores: number };
+}
+
+const conArchivo = (archivo: File): RequestInit => {
+  const datos = new FormData();
+  datos.append('archivo', archivo);
+  return { method: 'POST', body: datos };
+};
+
+export const descargarPlantillaImportacion = (actividadId: number) =>
+  solicitarArchivo(`/importaciones/actividades/${actividadId}/plantilla`);
+
+/** Criterio 1: la API lee el .xlsx y dice qué filas se guardarían; no guarda nada. */
+export const vistaPreviaImportacion = (actividadId: number, archivo: File) =>
+  solicitar<VistaPreviaImportacion>(
+    `/importaciones/actividades/${actividadId}/vista-previa`,
+    conArchivo(archivo),
+  );
+
+/** Criterios 2 y 3: la API vuelve a validar el archivo y guarda las filas válidas con auditoría "importación". */
+export const confirmarImportacion = (actividadId: number, archivo: File) =>
+  solicitar<{ guardadas: number; rechazadas: number }>(
+    `/importaciones/actividades/${actividadId}/confirmar`,
+    conArchivo(archivo),
   );

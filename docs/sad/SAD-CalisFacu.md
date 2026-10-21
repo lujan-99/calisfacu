@@ -65,10 +65,12 @@ api/src/
     asistencia/   asistencia por clase y porcentaje por estudiante        US-19 (T-036)
     entregas/     control de entrega de notas por materia y trimestre     US-10 (T-040)
                   (GET /api/entregas, POST /api/entregas/materias/:id/entregar, D13)
+    importacion/  [crítico] importación .xlsx con exceljs: plantilla, vista    US-05 (T-038)
+                  previa y confirmación con auditoría de origen IMPORTACION (D14)
     academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, academico, esquema) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, academico, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)

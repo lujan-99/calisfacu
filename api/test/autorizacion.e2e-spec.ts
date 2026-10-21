@@ -94,6 +94,21 @@ describe('Autorización de las rutas de notas (M09, RNF-04)', () => {
       url: `/api/entregas/materias/${e.matematica.id}?trimestreId=${e.t1.id}`,
     },
     {
+      nombre: 'descargar la plantilla de importación',
+      metodo: 'get' as const,
+      url: `/api/importaciones/actividades/${e.actividades.saber1.id}/plantilla`,
+    },
+    {
+      nombre: 'vista previa de la importación',
+      metodo: 'post' as const,
+      url: `/api/importaciones/actividades/${e.actividades.saber1.id}/vista-previa`,
+    },
+    {
+      nombre: 'confirmar la importación',
+      metodo: 'post' as const,
+      url: `/api/importaciones/actividades/${e.actividades.saber1.id}/confirmar`,
+    },
+    {
       nombre: 'configurar dimensiones (solo administrador)',
       metodo: 'put' as const,
       url: `/api/gestiones/${e.t1.gestion.id}/dimensiones`,

@@ -1,6 +1,6 @@
 # US-05 · Importación desde Excel
 
-- **Sprint:** Sprint 2 · **Prioridad:** MEDIA · **Puntos:** valor 8, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 2 · **Prioridad:** MEDIA · **Puntos:** valor 8, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 

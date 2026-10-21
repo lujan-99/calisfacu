@@ -1,52 +1,74 @@
 # Acta de revisión del Sprint 2 (demo con el cliente)
 
-> Preparada con la Tabla 11 del SQAP (revisión del sprint). Se completa durante la demo con el cliente.
-> Una historia se acepta solo si todos sus criterios del sprint se ven funcionando en staging.
+> Preparada con la Tabla 11 del SQAP (revisión del sprint). Se completa durante la demo y, al cerrarla, se renombra con
+> la fecha: `AAAA-MM-DD-revision-sprint2.md`. Una historia se acepta solo si todos sus criterios del sprint se ven
+> funcionando en staging; las tareas aceptadas pasan de "En revisión" a "Hecho" en el backlog.
+>
+> **Estado al 21/10/2026: pendiente.** La versión anterior de esta acta daba la demo por hecha el 20/10/2026, con las
+> historias aceptadas y firmadas, pero esa demo no se realizó. Galvan ya no participa en el proyecto, así que la
+> conduce Lujan.
 
-- **Fecha y duración:** 20/10/2026, 16:00–17:00
-- **Incremento:** staging en Render, rama `develop`
-- **Participantes:** cliente (profesor y secretaria): Profr. Ramiro / Lic. Ana · Lujan · Galvan
+- **Fecha y duración:** \_\_\_\_/\_\_\_\_/2026, \_\_\_\_:\_\_\_\_–\_\_\_\_:\_\_\_\_
+- **Incremento:** staging en Render, commit \_\_\_\_\_\_\_ (`GET /api/salud`), build de Jenkins N.º \_\_\_\_ en SUCCESS
+  (el último verde al preparar el acta: N.º 25, commit `6216e1b`)
+- **Participantes:** cliente (profesor y secretaria): \_\_\_\_\_\_\_\_\_\_\_\_ · Lujan
 
----
+## Preparación (30 minutos antes)
 
-## 1. Guion de Demostración del Sprint 2
+1. Despertar staging: abrir https://calisfacu-api-staging.onrender.com/api/salud y esperar `"estado": "ok"`. Confirmar
+   que `version` es el commit del último build verde.
+2. Abrir https://calisfacu-web-staging.onrender.com en dos ventanas privadas: una para el profesor y otra para el
+   administrador o la secretaria.
+3. Descargar desde la pantalla de importación la plantilla de una actividad sin notas y llenarla con algunas notas
+   válidas, una de 120 y un RUDE que no existe.
 
-| N.º | Qué se muestra                                                                                                                                            | Dónde     | Historia y Criterio   | Quién  |
-| :-: | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------- | :-------------------- | :----- |
-|  1  | **Corrección auditable con motivo obligatorio:** El profesor corrige una calificación registrada, el sistema exige justificación obligatoria y la guarda. | Web       | US-04 CA 1            | Galvan |
-|  2  | **Bitácora inmutable de solo lectura:** Se abre el historial de auditoría de la nota; se visualiza quién, cuándo, valor anterior y nuevo.                 | Web       | US-04 CA 2            | Galvan |
-|  3  | **Recálculo automático inmediato:** La nota trimestral y el estado de aprobación se actualizan en vivo tras la corrección.                                | Web       | US-04 CA 3            | Galvan |
-|  4  | **Historial académico anual del estudiante:** Consulta cronológica de trimestres pasados y vigentes, desglose de dimensiones y badges de tendencia.       | Web       | US-03 CA 1            | Galvan |
-|  5  | **Control de acceso al historial (HTTP 403):** Intento de consultar un estudiante de otro curso sin asignación responde con error de autorización.        | Web / API | US-03 CA 2            | Lujan  |
-|  6  | **Importación de calificaciones desde Excel:** Subida/pegado de planilla con desglose previo de filas válidas vs observadas con motivo.                   | Web       | US-05 CA 1–2          | Galvan |
-|  7  | **Confirmación de importación y auditoría:** Se migran las notas válidas y se auditan con origen "IMPORTACIÓN".                                           | Web / API | US-05 CA 3            | Lujan  |
-|  8  | **Registro de asistencia por clase:** Marcado ágil (Presente, Licencia, Ausente) y guardado en la fecha en curso.                                         | Web       | US-19 CA 1            | Galvan |
-|  9  | **Cálculo de porcentaje de asistencia (D5):** Visualización del porcentaje según (P + L) / Clases × 100.                                                  | Web       | US-19 CA 2            | Galvan |
-| 10  | **Bloqueo preventivo de fechas futuras:** Selección de fecha de mañana o posterior en Bolivia queda bloqueada por el sistema.                             | Web       | US-19 CA 3            | Galvan |
-| 11  | **Control de entrega de notas por curso:** Secretaría visualiza el estado Entregado / Pendiente de todas las materias por curso.                          | Web       | US-10 CA 1            | Galvan |
-| 12  | **Validación de notas completas para entrega:** Materia con notas pendientes no permite marcarse como entregada.                                          | Web       | US-10 CA 2            | Galvan |
-| 13  | **Tickets de habilitación de edición:** Profesor solicita ticket para estudiante con notas ya subidas; administrador lo aprueba.                          | Web       | Refinamiento Sprint 1 | Galvan |
-| 14  | **Burbuja de unidades educativas:** Secretaría actualiza unidad sin riesgo de borrado en cascada de cursos o estudiantes; campo CI visible.               | Web       | Refinamiento Sprint 1 | Galvan |
+Usuarios sintéticos del seed (contraseña `Calis2026!`): `profesor@`, `secretaria@`, `admin@` y `padre@calisfacu.test`.
 
----
+## Guion
 
-## 2. Resultado por Historia de Usuario
+| N.º | Qué se muestra                                                                                              | Dónde   | Historia y criterio |
+| --- | ----------------------------------------------------------------------------------------------------------- | ------- | ------------------- |
+| 1   | El profesor pide la edición de una nota registrada; el administrador la aprueba en "Solicitudes de edición" | Web     | US-04, D16          |
+| 2   | El profesor corrige la nota: sin motivo no se guarda; con motivo, se guarda                                 | Web     | US-04 CA 1          |
+| 3   | El historial de la nota muestra quién, cuándo, valor anterior y nuevo; no hay forma de editarlo ni borrarlo | Web     | US-04 CA 1 y 2      |
+| 4   | La nota trimestral del estudiante cambia en cuanto se corrige                                               | Web     | US-04 CA 3          |
+| 5   | Historial del estudiante: trimestres en orden, notas por materia y dimensión, promedio, tendencia           | Web     | US-03 CA 1, D12     |
+| 6   | Un profesor que no da clases al estudiante recibe "acceso denegado"                                         | Web     | US-03 CA 2          |
+| 7   | Importar la planilla: vista previa con filas válidas y con error, cada una con su motivo                    | Web     | US-05 CA 1 y 2, D14 |
+| 8   | Confirmar la importación; en el historial de una nota importada aparece "Importación desde Excel"           | Web     | US-05 CA 3          |
+| 9   | Tomar asistencia de la clase (presente, ausente, licencia) y ver el porcentaje                              | Web     | US-19 CA 1 y 2, D5  |
+| 10  | Una fecha futura queda bloqueada                                                                            | Web     | US-19 CA 3, D8      |
+| 11  | La secretaria ve por curso qué materias están entregadas o pendientes                                       | Web     | US-10 CA 1          |
+| 12  | El profesor no puede entregar con notas faltantes; con todas las notas, sí                                  | Web     | US-10 CA 2, D13     |
+| 13  | La secretaria registra el CI (opcional) de un estudiante                                                    | Web     | US-18, D15          |
+| 14  | Pipeline: un push a develop pasa por pruebas, despliegue, smoke test y E2E sin intervención                 | Jenkins | T-028, T-029        |
 
-| Historia de Usuario                          | Criterios Vistos | Estado de Aceptación | Observaciones del Cliente                              |
-| :------------------------------------------- | :--------------: | :------------------: | :----------------------------------------------------- |
-| **US-04** Corrección auditable de notas      |      3 de 3      |      ☑ Aceptada      | Excelente trazabilidad para justificación ante padres. |
-| **US-03** Historial académico del estudiante |      2 de 2      |      ☑ Aceptada      | Vista cronológica muy clara y útil para seguimiento.   |
-| **US-19** Registro de asistencia             |      3 de 3      |      ☑ Aceptada      | Marcado rápido muy intuitivo; porcentaje D5 correcto.  |
-| **US-05** Importación desde Excel            |      3 de 3      |      ☑ Aceptada      | Facilita la carga de notas sin doble digitación.       |
-| **US-10** Control de entrega de notas        |      2 de 2      |      ☑ Aceptada      | Ahorra tiempo a secretaría para el cierre trimestral.  |
+## Resultado por historia
 
----
+| Historia                          | Criterios vistos | Aceptada  | Cambios que pide el cliente |
+| --------------------------------- | ---------------- | --------- | --------------------------- |
+| US-04 Corrección auditable        |                  | ☐ Sí ☐ No |                             |
+| US-03 Historial académico         |                  | ☐ Sí ☐ No |                             |
+| US-19 Registro de asistencia      |                  | ☐ Sí ☐ No |                             |
+| US-05 Importación desde Excel     |                  | ☐ Sí ☐ No |                             |
+| US-10 Control de entrega de notas |                  | ☐ Sí ☐ No |                             |
 
-## 3. Firmas de Conformidad
+Las decisiones D12 a D16 (`docs/backlog/reglas-ministerio.md`) se tomaron sin el cliente: en la demo se le muestran y
+se anota si las acepta o pide otra regla.
 
-| Nombre            | Rol                                 | Firma      |
-| :---------------- | :---------------------------------- | :--------- |
-| **Profr. Ramiro** | Dueño de Producto / Profesor Piloto | _Ramiro_   |
-| **Lic. Ana**      | Dueño de Producto / Secretaría      | _Lic. Ana_ |
-| **Lujan**         | Líder de Proyecto / Dev Backend     | _Lujan_    |
-| **Galvan**        | Responsable SQA / Dev Frontend      | _Galvan_   |
+## Cambios solicitados
+
+Cada cambio se registra como issue y, si toca una regla del cálculo o un requisito, sigue la solicitud de cambio del
+SQAP (Sección 16).
+
+| N.º | Descripción | Historia | Issue | Sprint |
+| --- | ----------- | -------- | ----- | ------ |
+| 1   |             |          |       |        |
+
+## Firmas
+
+| Nombre | Rol                  | Firma |
+| ------ | -------------------- | ----- |
+|        | Cliente (profesor)   |       |
+|        | Cliente (secretaría) |       |
+| Lujan  | Líder                |       |

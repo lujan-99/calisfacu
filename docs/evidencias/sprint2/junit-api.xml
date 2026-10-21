@@ -1,57 +1,395 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="39" failures="0" errors="0" time="2.611">
-  <testsuite name="CalculoService" errors="0" failures="0" skipped="0" timestamp="2026-10-21T03:03:50" time="2.03" tests="14">
-    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe aceptar los puntajes de la RM 001/2026, que suman 100" name="CalculoService validarDimensiones (US-18, criterio 6) debe aceptar los puntajes de la RM 001/2026, que suman 100" time="0.003">
+<testsuites name="jest tests" tests="214" failures="0" errors="0" time="10.103">
+  <testsuite name="Autorización de las rutas de notas (M09, RNF-04)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:45" time="2.565" tests="20">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe responder 401 a todas las rutas protegidas sin token" name="Autorización de las rutas de notas (M09, RNF-04) debe responder 401 a todas las rutas protegidas sin token" time="0.023">
     </testcase>
-    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos faltan si no suman 100" name="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos faltan si no suman 100" time="0.012">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe responder 403 al padre de familia en todas las rutas de notas" name="Autorización de las rutas de notas (M09, RNF-04) debe responder 403 al padre de familia en todas las rutas de notas" time="0.011">
     </testcase>
-    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos sobran" name="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos sobran" time="0.001">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe responder 403 al profesor que no está asignado a la materia" name="Autorización de las rutas de notas (M09, RNF-04) debe responder 403 al profesor que no está asignado a la materia" time="0.049">
     </testcase>
-    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe rechazar una lista vacía, códigos repetidos y puntajes no positivos" name="CalculoService validarDimensiones (US-18, criterio 6) debe rechazar una lista vacía, códigos repetidos y puntajes no positivos" time="0.002">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe responder 403 a la secretaria en las rutas de escritura" name="Autorización de las rutas de notas (M09, RNF-04) debe responder 403 a la secretaria en las rutas de escritura" time="0.005">
     </testcase>
-    <testcase classname="CalculoService puntosDimension (US-02, criterio 1) debe calcular Saber con promedio 80 como 36 puntos" name="CalculoService puntosDimension (US-02, criterio 1) debe calcular Saber con promedio 80 como 36 puntos" time="0.001">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe permitir a la secretaria consultar las notas trimestrales" name="Autorización de las rutas de notas (M09, RNF-04) debe permitir a la secretaria consultar las notas trimestrales" time="0.01">
     </testcase>
-    <testcase classname="CalculoService promedio debe promediar sin errores de coma flotante" name="CalculoService promedio debe promediar sin errores de coma flotante" time="0.006">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe responder 401 a un token falsificado" name="Autorización de las rutas de notas (M09, RNF-04) debe responder 401 a un token falsificado" time="0.001">
     </testcase>
-    <testcase classname="CalculoService promedio debe devolver null si no hay notas" name="CalculoService promedio debe devolver null si no hay notas" time="0.001">
+    <testcase classname="Autorización de las rutas de notas (M09, RNF-04) debe dejar pública la ruta de salud" name="Autorización de las rutas de notas (M09, RNF-04) debe dejar pública la ruta de salud" time="0.002">
     </testcase>
-    <testcase classname="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,5 a 51 y aprobar" name="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,5 a 51 y aprobar" time="0.001">
+    <testcase classname="Autorización de la gestión académica (M09, RNF-04) debe responder 401 a todas las rutas sin token" name="Autorización de la gestión académica (M09, RNF-04) debe responder 401 a todas las rutas sin token" time="0.021">
     </testcase>
-    <testcase classname="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,4 a 50 y reprobar" name="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,4 a 50 y reprobar" time="0.001">
+    <testcase classname="Autorización de la gestión académica (M09, RNF-04) debe responder 403 a cada rol sin permiso, ruta por ruta" name="Autorización de la gestión académica (M09, RNF-04) debe responder 403 a cada rol sin permiso, ruta por ruta" time="0.062">
     </testcase>
-    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe sumar los puntos de las cuatro dimensiones" name="CalculoService notaTrimestral (US-02, criterio 2) debe sumar los puntos de las cuatro dimensiones" time="0.002">
+    <testcase classname="Autorización de la gestión académica (M09, RNF-04) debe dejar públicos los datos de la institución para la pantalla de ingreso" name="Autorización de la gestión académica (M09, RNF-04) debe dejar públicos los datos de la institución para la pantalla de ingreso" time="0.002">
     </testcase>
-    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe dejar la nota pendiente si una dimensión no tiene actividades (US-02, criterio 6, regla provisional)" name="CalculoService notaTrimestral (US-02, criterio 2) debe dejar la nota pendiente si una dimensión no tiene actividades (US-02, criterio 6, regla provisional)" time="0.001">
+    <testcase classname="Inicio de sesión (US-17) debe devolver el token y el rol del usuario" name="Inicio de sesión (US-17) debe devolver el token y el rol del usuario" time="0.043">
     </testcase>
-    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe rechazar dimensiones mal configuradas" name="CalculoService notaTrimestral (US-02, criterio 2) debe rechazar dimensiones mal configuradas" time="0.001">
+    <testcase classname="Inicio de sesión (US-17) debe usar el mismo mensaje para un correo inexistente y una contraseña incorrecta" name="Inicio de sesión (US-17) debe usar el mismo mensaje para un correo inexistente y una contraseña incorrecta" time="0.116">
     </testcase>
-    <testcase classname="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe promediar los tres trimestres y redondear" name="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe promediar los tres trimestres y redondear" time="0.001">
+    <testcase classname="Inicio de sesión (US-17) debe bloquear la cuenta después de 5 intentos fallidos, aun con la contraseña correcta" name="Inicio de sesión (US-17) debe bloquear la cuenta después de 5 intentos fallidos, aun con la contraseña correcta" time="0.226">
     </testcase>
-    <testcase classname="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe rechazar si no hay trimestres" name="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe rechazar si no hay trimestres" time="0.001">
+    <testcase classname="Inicio de sesión (US-17) debe contar cada intento fallido una sola vez aunque lleguen en paralelo" name="Inicio de sesión (US-17) debe contar cada intento fallido una sola vez aunque lleguen en paralelo" time="0.172">
+    </testcase>
+    <testcase classname="Inicio de sesión (US-17) debe rechazar datos de entrada inválidos con 400" name="Inicio de sesión (US-17) debe rechazar datos de entrada inválidos con 400" time="0.001">
+    </testcase>
+    <testcase classname="Expiración de la sesión (US-17, criterio 4) debe emitir un token que vence a los 30 minutos" name="Expiración de la sesión (US-17, criterio 4) debe emitir un token que vence a los 30 minutos" time="0.048">
+    </testcase>
+    <testcase classname="Expiración de la sesión (US-17, criterio 4) debe rechazar con 401 una petición con el token vencido" name="Expiración de la sesión (US-17, criterio 4) debe rechazar con 401 una petición con el token vencido" time="0.001">
+    </testcase>
+    <testcase classname="Expiración de la sesión (US-17, criterio 4) debe renovar la sesión de un usuario activo con un token nuevo de 30 minutos" name="Expiración de la sesión (US-17, criterio 4) debe renovar la sesión de un usuario activo con un token nuevo de 30 minutos" time="0.05">
+    </testcase>
+    <testcase classname="Expiración de la sesión (US-17, criterio 4) debe negar la renovación sin token o con el token vencido" name="Expiración de la sesión (US-17, criterio 4) debe negar la renovación sin token o con el token vencido" time="0.001">
+    </testcase>
+    <testcase classname="Expiración de la sesión (US-17, criterio 4) debe negar la renovación a un usuario desactivado" name="Expiración de la sesión (US-17, criterio 4) debe negar la renovación a un usuario desactivado" time="0.049">
     </testcase>
   </testsuite>
-  <testsuite name="Apariencia de la institución (ADR-0010)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T03:03:52" time="0.187" tests="14">
-    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe aceptar un color hexadecimal de 6 dígitos y devolverlo en mayúsculas" name="Apariencia de la institución (ADR-0010) normalizarColor debe aceptar un color hexadecimal de 6 dígitos y devolverlo en mayúsculas" time="0.002">
+  <testsuite name="Configuración de dimensiones por gestión (US-18)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:47" time="0.941" tests="18">
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe listar las dimensiones de la gestión en orden" name="Configuración de dimensiones por gestión (US-18) debe listar las dimensiones de la gestión en orden" time="0.005">
     </testcase>
-    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor 1D4E89" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor 1D4E89" time="0.004">
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe responder 404 al consultar una gestión que no existe" name="Configuración de dimensiones por gestión (US-18) debe responder 404 al consultar una gestión que no existe" time="0.002">
     </testcase>
-    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #FFF" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #FFF" time="0.001">
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe negar la consulta al padre de familia" name="Configuración de dimensiones por gestión (US-18) debe negar la consulta al padre de familia" time="0.001">
     </testcase>
-    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #GGGGGG" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #GGGGGG" time="0.002">
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe permitir al administrador registrar las dimensiones de una gestión nueva (criterio 6)" name="Configuración de dimensiones por gestión (US-18) debe permitir al administrador registrar las dimensiones de una gestión nueva (criterio 6)" time="0.021">
     </testcase>
-    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor rojo" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor rojo" time="0.001">
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe permitir cambiar puntajes, agregar y quitar dimensiones mientras no haya notas" name="Configuración de dimensiones por gestión (US-18) debe permitir cambiar puntajes, agregar y quitar dimensiones mientras no haya notas" time="0.026">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 y decir cuántos puntos faltan si no suman 100 (criterio 6)" name="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 y decir cuántos puntos faltan si no suman 100 (criterio 6)" time="0.006">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 una lista vacía" name="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 una lista vacía" time="0.003">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 un puntaje 0" name="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 un puntaje 0" time="0.003">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 un puntaje con decimales" name="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 un puntaje con decimales" time="0.003">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 un código inválido" name="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 un código inválido" time="0.002">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 códigos repetidos" name="Configuración de dimensiones por gestión (US-18) debe rechazar con 400 códigos repetidos" time="0.002">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe responder 403 si quien configura es profesor" name="Configuración de dimensiones por gestión (US-18) debe responder 403 si quien configura es profesor" time="0.002">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe responder 403 si quien configura es secretaria" name="Configuración de dimensiones por gestión (US-18) debe responder 403 si quien configura es secretaria" time="0.001">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe responder 403 si quien configura es padre" name="Configuración de dimensiones por gestión (US-18) debe responder 403 si quien configura es padre" time="0.001">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe responder 404 si la gestión no existe" name="Configuración de dimensiones por gestión (US-18) debe responder 404 si la gestión no existe" time="0.004">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe impedir quitar una dimensión que ya tiene actividades" name="Configuración de dimensiones por gestión (US-18) debe impedir quitar una dimensión que ya tiene actividades" time="0.024">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe impedir cambiar los puntajes si la gestión ya tiene notas (criterio 7)" name="Configuración de dimensiones por gestión (US-18) debe impedir cambiar los puntajes si la gestión ya tiene notas (criterio 7)" time="0.012">
+    </testcase>
+    <testcase classname="Configuración de dimensiones por gestión (US-18) debe impedir el cambio aunque la primera nota se esté guardando al mismo tiempo (criterio 7)" name="Configuración de dimensiones por gestión (US-18) debe impedir el cambio aunque la primera nota se esté guardando al mismo tiempo (criterio 7)" time="0.33">
+    </testcase>
+  </testsuite>
+  <testsuite name="Gestión académica (US-18, T-016)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:48" time="0.812" tests="43">
+    <testcase classname="Gestión académica (US-18, T-016) Mis materias del profesor (criterio 2) debe mostrar al profesor solo las materias que tiene asignadas, con su curso y gestión" name="Gestión académica (US-18, T-016) Mis materias del profesor (criterio 2) debe mostrar al profesor solo las materias que tiene asignadas, con su curso y gestión" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Mis materias del profesor (criterio 2) debe devolver la lista vacía al profesor sin materias" name="Gestión académica (US-18, T-016) Mis materias del profesor (criterio 2) debe devolver la lista vacía al profesor sin materias" time="0.013">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Mis materias del profesor (criterio 2) debe dar el detalle de una materia a su profesor y negarlo a otro profesor" name="Gestión académica (US-18, T-016) Mis materias del profesor (criterio 2) debe dar el detalle de una materia a su profesor y negarlo a otro profesor" time="0.012">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Gestiones y trimestres debe listar las gestiones de la más reciente a la más antigua" name="Gestión académica (US-18, T-016) Gestiones y trimestres debe listar las gestiones de la más reciente a la más antigua" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Gestiones y trimestres debe listar los trimestres con su estado de cierre (criterio 4)" name="Gestión académica (US-18, T-016) Gestiones y trimestres debe listar los trimestres con su estado de cierre (criterio 4)" time="0.005">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Actividades de una materia en un trimestre (pantalla Materia y actividades) debe listar las actividades con cuántas notas tienen sobre el total de estudiantes" name="Gestión académica (US-18, T-016) Actividades de una materia en un trimestre (pantalla Materia y actividades) debe listar las actividades con cuántas notas tienen sobre el total de estudiantes" time="0.055">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Actividades de una materia en un trimestre (pantalla Materia y actividades) debe negar la lista a otro profesor y responder 404 si el trimestre es de otra gestión" name="Gestión académica (US-18, T-016) Actividades de una materia en un trimestre (pantalla Materia y actividades) debe negar la lista a otro profesor y responder 404 si el trimestre es de otra gestión" time="0.007">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe permitir a la secretaria registrar un curso con nivel, año y paralelo en una gestión" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe permitir a la secretaria registrar un curso con nivel, año y paralelo en una gestión" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe dejar el curso disponible para asignarle materias y estudiantes" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe dejar el curso disponible para asignarle materias y estudiantes" time="0.014">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un curso repetido en la misma gestión con un mensaje" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un curso repetido en la misma gestión con un mensaje" time="0.003">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un año fuera del nivel" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un año fuera del nivel" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un paralelo inválido" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un paralelo inválido" time="0.001">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un nivel inexistente" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe rechazar un nivel inexistente" time="0.001">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe filtrar los cursos por nivel" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe filtrar los cursos por nivel" time="0.003">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe permitir corregir el paralelo y negar el borrado de un curso con estudiantes o materias" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe permitir corregir el paralelo y negar el borrado de un curso con estudiantes o materias" time="0.011">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Cursos (criterio 1) debe borrar un curso vacío" name="Gestión académica (US-18, T-016) Cursos (criterio 1) debe borrar un curso vacío" time="0.01">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe registrar un estudiante con su código RUDE y su curso" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe registrar un estudiante con su código RUDE y su curso" time="0.006">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe guardar el CI opcional en mayúsculas y permitir borrarlo (decisión D15)" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe guardar el CI opcional en mayúsculas y permitir borrarlo (decisión D15)" time="0.012">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar el CI con formato inválido &quot;123&quot;" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar el CI con formato inválido &quot;123&quot;" time="0.001">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar el CI con formato inválido &quot;ABC$1234&quot;" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar el CI con formato inválido &quot;ABC$1234&quot;" time="0.001">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar el CI con formato inválido &quot;1234567890123456&quot;" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar el CI con formato inválido &quot;1234567890123456&quot;" time="0.001">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar con un mensaje al estudiante ya inscrito en otro curso de la misma gestión" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar con un mensaje al estudiante ya inscrito en otro curso de la misma gestión" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe permitir el mismo RUDE en otra gestión (el estudiante pasa de año)" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe permitir el mismo RUDE en otra gestión (el estudiante pasa de año)" time="0.007">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe buscar por apellido sin distinguir mayúsculas y filtrar por curso" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe buscar por apellido sin distinguir mayúsculas y filtrar por curso" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe tratar los comodines de la búsqueda como texto" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe tratar los comodines de la búsqueda como texto" time="0.001">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe permitir cambiar de curso dentro de la gestión solo si el estudiante no tiene notas" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe permitir cambiar de curso dentro de la gestión solo si el estudiante no tiene notas" time="0.015">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe negar el cambio a un curso de otra gestión" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe negar el cambio a un curso de otra gestión" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe negar el borrado de un estudiante con notas y permitirlo sin historial" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe negar el borrado de un estudiante con notas y permitirlo sin historial" time="0.019">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar con 400 un RUDE con símbolos" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar con 400 un RUDE con símbolos" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar con 400 un nombre vacío" name="Gestión académica (US-18, T-016) Estudiantes (criterio 3) debe rechazar con 400 un nombre vacío" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Materias y asignaciones debe listar los profesores activos para asignarlos" name="Gestión académica (US-18, T-016) Materias y asignaciones debe listar los profesores activos para asignarlos" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Materias y asignaciones debe crear una materia en un curso con su profesor" name="Gestión académica (US-18, T-016) Materias y asignaciones debe crear una materia en un curso con su profesor" time="0.007">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Materias y asignaciones debe rechazar una materia repetida en el curso y un profesor que no lo es" name="Gestión académica (US-18, T-016) Materias y asignaciones debe rechazar una materia repetida en el curso y un profesor que no lo es" time="0.004">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Materias y asignaciones debe reasignar la materia a otro profesor (una materia tiene un solo profesor)" name="Gestión académica (US-18, T-016) Materias y asignaciones debe reasignar la materia a otro profesor (una materia tiene un solo profesor)" time="0.006">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Materias y asignaciones debe filtrar las materias por curso" name="Gestión académica (US-18, T-016) Materias y asignaciones debe filtrar las materias por curso" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Materias y asignaciones debe negar el borrado de una materia con actividades y permitirlo sin ellas" name="Gestión académica (US-18, T-016) Materias y asignaciones debe negar el borrado de una materia con actividades y permitirlo sin ellas" time="0.005">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe mostrar los datos de la institución sin iniciar sesión, para la pantalla de ingreso" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe mostrar los datos de la institución sin iniciar sesión, para la pantalla de ingreso" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe permitir a la secretaria corregir el nombre y el código SIE" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe permitir a la secretaria corregir el nombre y el código SIE" time="0.003">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe permitir al administrador cambiar los colores y rechazar los ilegibles" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe permitir al administrador cambiar los colores y rechazar los ilegibles" time="0.005">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe guardar un logo PNG y servirlo con una versión nueva" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe guardar un logo PNG y servirlo con una versión nueva" time="0.009">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe rechazar un logo que no es PNG, JPEG ni WebP aunque diga serlo" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe rechazar un logo que no es PNG, JPEG ni WebP aunque diga serlo" time="0.002">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe rechazar un logo de más de 256 KB" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe rechazar un logo de más de 256 KB" time="0.003">
+    </testcase>
+    <testcase classname="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe quitar el logo y volver al predeterminado" name="Gestión académica (US-18, T-016) Unidad educativa (criterio 5) y apariencia (ADR-0010) debe quitar el logo y volver al predeterminado" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="Corrección auditable de notas (US-04, M15)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:49" time="0.833" tests="10">
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe registrar la nota nueva en la auditoría con origen REGISTRO" name="Corrección auditable de notas (US-04, M15) debe registrar la nota nueva en la auditoría con origen REGISTRO" time="0.002">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe exigir el motivo de la corrección" name="Corrección auditable de notas (US-04, M15) debe exigir el motivo de la corrección" time="0.005">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe exigir una solicitud de edición aprobada por el administrador (decisión D16)" name="Corrección auditable de notas (US-04, M15) debe exigir una solicitud de edición aprobada por el administrador (decisión D16)" time="0.009">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe guardar quién, cuándo, valor anterior, valor nuevo y motivo" name="Corrección auditable de notas (US-04, M15) debe guardar quién, cuándo, valor anterior, valor nuevo y motivo" time="0.023">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe usar cada solicitud aprobada una sola vez" name="Corrección auditable de notas (US-04, M15) debe usar cada solicitud aprobada una sola vez" time="0.01">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe rechazar una corrección que no cambia el valor" name="Corrección auditable de notas (US-04, M15) debe rechazar una corrección que no cambia el valor" time="0.01">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe responder 404 al corregir una nota inexistente" name="Corrección auditable de notas (US-04, M15) debe responder 404 al corregir una nota inexistente" time="0.003">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe impedir modificar o borrar el registro de auditoría aun desde la base (US-04, criterio 2)" name="Corrección auditable de notas (US-04, M15) debe impedir modificar o borrar el registro de auditoría aun desde la base (US-04, criterio 2)" time="0.007">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe permitir al administrador ver el historial" name="Corrección auditable de notas (US-04, M15) debe permitir al administrador ver el historial" time="0.045">
+    </testcase>
+    <testcase classname="Corrección auditable de notas (US-04, M15) debe guardar como valor anterior el que realmente reemplazó, aunque otra transacción cambie la nota" name="Corrección auditable de notas (US-04, M15) debe guardar como valor anterior el que realmente reemplazó, aunque otra transacción cambie la nota" time="0.324">
+    </testcase>
+  </testsuite>
+  <testsuite name="Importación de notas desde Excel (US-05)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:50" time="0.625" tests="11">
+    <testcase classname="Importación de notas desde Excel (US-05) debe entregar la plantilla con los estudiantes del curso" name="Importación de notas desde Excel (US-05) debe entregar la plantilla con los estudiantes del curso" time="0.024">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe mostrar la vista previa con filas válidas y con error sin guardar nada (criterio 1)" name="Importación de notas desde Excel (US-05) debe mostrar la vista previa con filas válidas y con error sin guardar nada (criterio 1)" time="0.017">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe guardar solo las filas válidas y rechazar las demás con su motivo (criterio 2)" name="Importación de notas desde Excel (US-05) debe guardar solo las filas válidas y rechazar las demás con su motivo (criterio 2)" time="0.021">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe dejar cada nota importada en la auditoría con origen importación (criterio 3)" name="Importación de notas desde Excel (US-05) debe dejar cada nota importada en la auditoría con origen importación (criterio 3)" time="0.001">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe rechazar la confirmación si ninguna fila es válida (las notas ya existen)" name="Importación de notas desde Excel (US-05) debe rechazar la confirmación si ninguna fila es válida (las notas ya existen)" time="0.014">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe rechazar un archivo que no es un Excel o que no viene" name="Importación de notas desde Excel (US-05) debe rechazar un archivo que no es un Excel o que no viene" time="0.022">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe exigir las columnas Código RUDE y Nota en la primera fila" name="Importación de notas desde Excel (US-05) debe exigir las columnas Código RUDE y Nota en la primera fila" time="0.015">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe leer el resultado de una nota escrita como fórmula de Excel" name="Importación de notas desde Excel (US-05) debe leer el resultado de una nota escrita como fórmula de Excel" time="0.011">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe rechazar una planilla de más de 1000 filas" name="Importación de notas desde Excel (US-05) debe rechazar una planilla de más de 1000 filas" time="0.043">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe rechazar la importación en un trimestre cerrado" name="Importación de notas desde Excel (US-05) debe rechazar la importación en un trimestre cerrado" time="0.005">
+    </testcase>
+    <testcase classname="Importación de notas desde Excel (US-05) debe responder 403 al profesor no asignado y a la secretaria" name="Importación de notas desde Excel (US-05) debe responder 403 al profesor no asignado y a la secretaria" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="Registro de asistencia (US-19)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:51" time="0.608" tests="15">
+    <testcase classname="Registro de asistencia (US-19) debe mostrar la lista de la clase sin estados antes de tomar asistencia" name="Registro de asistencia (US-19) debe mostrar la lista de la clase sin estados antes de tomar asistencia" time="0.014">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe guardar la asistencia de la fecha con presente, ausente o licencia (criterio 1)" name="Registro de asistencia (US-19) debe guardar la asistencia de la fecha con presente, ausente o licencia (criterio 1)" time="0.02">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe permitir corregir la asistencia de una fecha ya registrada sin duplicarla" name="Registro de asistencia (US-19) debe permitir corregir la asistencia de una fecha ya registrada sin duplicarla" time="0.01">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe calcular el porcentaje de cada estudiante: (presentes + licencias) / clases (criterio 2)" name="Registro de asistencia (US-19) debe calcular el porcentaje de cada estudiante: (presentes + licencias) / clases (criterio 2)" time="0.043">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe filtrar el porcentaje por un rango de fechas" name="Registro de asistencia (US-19) debe filtrar el porcentaje por un rango de fechas" time="0.011">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe impedir registrar asistencia en una fecha futura (criterio 3)" name="Registro de asistencia (US-19) debe impedir registrar asistencia en una fecha futura (criterio 3)" time="0.018">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe aceptar la fecha de hoy" name="Registro de asistencia (US-19) debe aceptar la fecha de hoy" time="0.014">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe exigir la lista completa del curso" name="Registro de asistencia (US-19) debe exigir la lista completa del curso" time="0.01">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe rechazar estudiantes de otro curso y estudiantes repetidos" name="Registro de asistencia (US-19) debe rechazar estudiantes de otro curso y estudiantes repetidos" time="0.016">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe rechazar con 400 una fecha inválida" name="Registro de asistencia (US-19) debe rechazar con 400 una fecha inválida" time="0.003">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe rechazar con 400 un formato de fecha distinto" name="Registro de asistencia (US-19) debe rechazar con 400 un formato de fecha distinto" time="0.002">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe rechazar con 400 un estado desconocido" name="Registro de asistencia (US-19) debe rechazar con 400 un estado desconocido" time="0.003">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe rechazar una fecha que no es del año de la gestión" name="Registro de asistencia (US-19) debe rechazar una fecha que no es del año de la gestión" time="0.007">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe responder 403 al profesor que no está asignado a la materia" name="Registro de asistencia (US-19) debe responder 403 al profesor que no está asignado a la materia" time="0.006">
+    </testcase>
+    <testcase classname="Registro de asistencia (US-19) debe responder 404 si la materia no existe" name="Registro de asistencia (US-19) debe responder 404 si la materia no existe" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="Control de entrega de notas (US-10)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:51" time="0.637" tests="9">
+    <testcase classname="Control de entrega de notas (US-10) debe mostrar por curso cada materia con su profesor y su estado (criterio 1)" name="Control de entrega de notas (US-10) debe mostrar por curso cada materia con su profesor y su estado (criterio 1)" time="0.014">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe usar el primer trimestre abierto de la última gestión si no se indica" name="Control de entrega de notas (US-10) debe usar el primer trimestre abierto de la última gestión si no se indica" time="0.006">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe rechazar la entrega si faltan notas (criterio 2)" name="Control de entrega de notas (US-10) debe rechazar la entrega si faltan notas (criterio 2)" time="0.014">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe aceptar la entrega cuando todos tienen nota en todas las actividades" name="Control de entrega de notas (US-10) debe aceptar la entrega cuando todos tienen nota en todas las actividades" time="0.097">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe mostrar al profesor el estado de su materia" name="Control de entrega de notas (US-10) debe mostrar al profesor el estado de su materia" time="0.013">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe responder 409 si la materia ya se entregó" name="Control de entrega de notas (US-10) debe responder 409 si la materia ya se entregó" time="0.011">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe rechazar la entrega en un trimestre cerrado" name="Control de entrega de notas (US-10) debe rechazar la entrega en un trimestre cerrado" time="0.008">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe rechazar la entrega del profesor no asignado y de la secretaria" name="Control de entrega de notas (US-10) debe rechazar la entrega del profesor no asignado y de la secretaria" time="0.009">
+    </testcase>
+    <testcase classname="Control de entrega de notas (US-10) debe validar el trimestre y la materia" name="Control de entrega de notas (US-10) debe validar el trimestre y la materia" time="0.016">
+    </testcase>
+  </testsuite>
+  <testsuite name="Solicitudes de edición de notas (US-04, decisión D16)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:52" time="0.691" tests="10">
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe crear la solicitud del profesor con sus estudiantes y notas actuales" name="Solicitudes de edición de notas (US-04, decisión D16) debe crear la solicitud del profesor con sus estudiantes y notas actuales" time="0.036">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe pedir edición solo de notas ya registradas" name="Solicitudes de edición de notas (US-04, decisión D16) debe pedir edición solo de notas ya registradas" time="0.012">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe rechazar a un estudiante que ya tiene una solicitud abierta en la actividad" name="Solicitudes de edición de notas (US-04, decisión D16) debe rechazar a un estudiante que ya tiene una solicitud abierta en la actividad" time="0.013">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe exigir motivo y al menos un estudiante" name="Solicitudes de edición de notas (US-04, decisión D16) debe exigir motivo y al menos un estudiante" time="0.004">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe negar la solicitud al profesor no asignado y a la secretaria" name="Solicitudes de edición de notas (US-04, decisión D16) debe negar la solicitud al profesor no asignado y a la secretaria" time="0.01">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe mostrar a cada profesor solo sus solicitudes y al administrador todas" name="Solicitudes de edición de notas (US-04, decisión D16) debe mostrar a cada profesor solo sus solicitudes y al administrador todas" time="0.023">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe dejar aprobar solo al administrador y una sola vez" name="Solicitudes de edición de notas (US-04, decisión D16) debe dejar aprobar solo al administrador y una sola vez" time="0.02">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe habilitar una corrección por estudiante aprobado y marcarla como usada" name="Solicitudes de edición de notas (US-04, decisión D16) debe habilitar una corrección por estudiante aprobado y marcarla como usada" time="0.031">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe exigir una observación para rechazar y entonces no habilitar la corrección" name="Solicitudes de edición de notas (US-04, decisión D16) debe exigir una observación para rechazar y entonces no habilitar la corrección" time="0.043">
+    </testcase>
+    <testcase classname="Solicitudes de edición de notas (US-04, decisión D16) debe responder 404 a una solicitud inexistente y rechazar un trimestre cerrado" name="Solicitudes de edición de notas (US-04, decisión D16) debe responder 404 a una solicitud inexistente y rechazar un trimestre cerrado" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="Historial académico del estudiante (US-03)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:53" time="0.6" tests="6">
+    <testcase classname="Historial académico del estudiante (US-03) debe mostrar las notas y promedios de cada trimestre en orden cronológico (criterio 1)" name="Historial académico del estudiante (US-03) debe mostrar las notas y promedios de cada trimestre en orden cronológico (criterio 1)" time="0.026">
+    </testcase>
+    <testcase classname="Historial académico del estudiante (US-03) debe detallar los puntos de cada dimensión con su puntaje máximo" name="Historial académico del estudiante (US-03) debe detallar los puntos de cada dimensión con su puntaje máximo" time="0.012">
+    </testcase>
+    <testcase classname="Historial académico del estudiante (US-03) debe mostrar el historial completo a cualquier profesor que le da clases" name="Historial académico del estudiante (US-03) debe mostrar el historial completo a cualquier profesor que le da clases" time="0.006">
+    </testcase>
+    <testcase classname="Historial académico del estudiante (US-03) debe permitir a la secretaria consultar el historial" name="Historial académico del estudiante (US-03) debe permitir a la secretaria consultar el historial" time="0.004">
+    </testcase>
+    <testcase classname="Historial académico del estudiante (US-03) debe responder 403 si el estudiante no cursa ninguna materia del profesor (criterio 2)" name="Historial académico del estudiante (US-03) debe responder 403 si el estudiante no cursa ninguna materia del profesor (criterio 2)" time="0.003">
+    </testcase>
+    <testcase classname="Historial académico del estudiante (US-03) debe responder 404 si el estudiante no existe" name="Historial académico del estudiante (US-03) debe responder 404 si el estudiante no existe" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Registro de notas (US-01) y cálculo trimestral (US-02)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:53" time="0.519" tests="17">
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe mostrar la planilla con todos los estudiantes del curso, ordenados por apellido" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe mostrar la planilla con todos los estudiantes del curso, ordenados por apellido" time="0.02">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota 0" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota 0" time="0.004">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota 101" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota 101" time="0.003">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota &quot;ochenta&quot;" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota &quot;ochenta&quot;" time="0.002">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota 70.123" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar con 400 la nota 70.123" time="0.002">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar una nota fuera de 1 a 100 aun si se escribe directo en la base" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar una nota fuera de 1 a 100 aun si se escribe directo en la base" time="0.003">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe guardar todas o ninguna: un estudiante de otro curso anula la planilla (US-01, criterio 3)" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe guardar todas o ninguna: un estudiante de otro curso anula la planilla (US-01, criterio 3)" time="0.008">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar un estudiante repetido en la misma planilla" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe rechazar un estudiante repetido en la misma planilla" time="0.004">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe responder 404 si la actividad no existe" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe responder 404 si la actividad no existe" time="0.002">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe impedir registrar notas en un trimestre cerrado" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe impedir registrar notas en un trimestre cerrado" time="0.003">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe guardar la planilla completa y no permitir sobrescribir una nota ya registrada" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe guardar la planilla completa y no permitir sobrescribir una nota ya registrada" time="0.023">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe devolver el id de cada nota registrada para poder corregirla (US-04)" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe devolver el id de cada nota registrada para poder corregirla (US-04)" time="0.008">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe calcular la nota trimestral con las dimensiones de la gestión (RM 001/2026)" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe calcular la nota trimestral con las dimensiones de la gestión (RM 001/2026)" time="0.045">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) crear actividad debe crear una actividad en la materia del profesor" name="Registro de notas (US-01) y cálculo trimestral (US-02) crear actividad debe crear una actividad en la materia del profesor" time="0.006">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) crear actividad debe rechazar una materia de otro profesor, un trimestre cerrado y datos inexistentes" name="Registro de notas (US-01) y cálculo trimestral (US-02) crear actividad debe rechazar una materia de otro profesor, un trimestre cerrado y datos inexistentes" time="0.012">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) crear actividad debe rechazar una dimensión de otra gestión" name="Registro de notas (US-01) y cálculo trimestral (US-02) crear actividad debe rechazar una dimensión de otra gestión" time="0.006">
+    </testcase>
+    <testcase classname="Registro de notas (US-01) y cálculo trimestral (US-02) debe responder 404 si el trimestre no es de la gestión de la materia" name="Registro de notas (US-01) y cálculo trimestral (US-02) debe responder 404 si el trimestre no es de la gestión de la materia" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Reglas de la importación desde Excel (US-05)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:54" time="0.424" tests="6">
+    <testcase classname="Reglas de la importación desde Excel (US-05) leerNota debe aceptar números de 1 a 100 con hasta dos decimales, también con coma" name="Reglas de la importación desde Excel (US-05) leerNota debe aceptar números de 1 a 100 con hasta dos decimales, también con coma" time="0">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) leerNota debe rechazar valores fuera de la escala, con más decimales o que no son números" name="Reglas de la importación desde Excel (US-05) leerNota debe rechazar valores fuera de la escala, con más decimales o que no son números" time="0">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe separar las filas válidas de las filas con error, cada una con su motivo" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe separar las filas válidas de las filas con error, cada una con su motivo" time="0">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe ignorar las filas sin nota: el profesor puede llenar solo una parte de la plantilla" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe ignorar las filas sin nota: el profesor puede llenar solo una parte de la plantilla" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar al estudiante que ya tiene nota en la actividad (se corrige con motivo, US-04)" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar al estudiante que ya tiene nota en la actividad (se corrige con motivo, US-04)" time="0">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar las filas repetidas del mismo estudiante, salvo la primera" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar las filas repetidas del mismo estudiante, salvo la primera" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Tabla de casos de cálculo firmada por el cliente (M01, R02)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:54" time="0.372" tests="5">
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Caso típico" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Caso típico" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,5 se redondea a 51 (aprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,5 se redondea a 51 (aprueba)" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,4 se redondea a 50 (reprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,4 se redondea a 50 (reprueba)" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al máximo" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al máximo" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al mínimo de la escala" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al mínimo de la escala" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Esquema de la base (ADR-0002)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:55" time="0.074" tests="1">
+    <testcase classname="Esquema de la base (ADR-0002) debe coincidir con las entidades después de aplicar las migraciones" name="Esquema de la base (ADR-0002) debe coincidir con las entidades después de aplicar las migraciones" time="0.033">
+    </testcase>
+  </testsuite>
+  <testsuite name="Apariencia de la institución (ADR-0010)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:55" time="0.018" tests="14">
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe aceptar un color hexadecimal de 6 dígitos y devolverlo en mayúsculas" name="Apariencia de la institución (ADR-0010) normalizarColor debe aceptar un color hexadecimal de 6 dígitos y devolverlo en mayúsculas" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor 1D4E89" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor 1D4E89" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #FFF" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #FFF" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #GGGGGG" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #GGGGGG" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor rojo" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor rojo" time="0">
     </testcase>
     <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #1D4E8900" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #1D4E8900" time="0">
     </testcase>
     <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 21 entre negro y blanco" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 21 entre negro y blanco" time="0">
     </testcase>
-    <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 1 entre dos colores iguales" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 1 entre dos colores iguales" time="0.001">
+    <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 1 entre dos colores iguales" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 1 entre dos colores iguales" time="0">
     </testcase>
     <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe ser simétrico" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe ser simétrico" time="0">
     </testcase>
     <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe aceptar los colores predeterminados del diseño" name="Apariencia de la institución (ADR-0010) validarColores debe aceptar los colores predeterminados del diseño" time="0.001">
     </testcase>
-    <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe rechazar un color de marca o primario con poco contraste para texto blanco" name="Apariencia de la institución (ADR-0010) validarColores debe rechazar un color de marca o primario con poco contraste para texto blanco" time="0.002">
+    <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe rechazar un color de marca o primario con poco contraste para texto blanco" name="Apariencia de la institución (ADR-0010) validarColores debe rechazar un color de marca o primario con poco contraste para texto blanco" time="0">
     </testcase>
     <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe rechazar un acento que no se distingue sobre el color de marca" name="Apariencia de la institución (ADR-0010) validarColores debe rechazar un acento que no se distingue sobre el color de marca" time="0">
     </testcase>
@@ -60,30 +398,68 @@
     <testcase classname="Apariencia de la institución (ADR-0010) detectarTipoImagen debe rechazar SVG, GIF y otros formatos (un SVG puede llevar código)" name="Apariencia de la institución (ADR-0010) detectarTipoImagen debe rechazar SVG, GIF y otros formatos (un SVG puede llevar código)" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="Tabla de casos de cálculo firmada por el cliente (M01, R02)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T03:03:52" time="0.19" tests="5">
-    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Caso típico" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Caso típico" time="0.003">
+  <testsuite name="CalculoService" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:55" time="0.02" tests="19">
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe aceptar los puntajes de la RM 001/2026, que suman 100" name="CalculoService validarDimensiones (US-18, criterio 6) debe aceptar los puntajes de la RM 001/2026, que suman 100" time="0.001">
     </testcase>
-    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,5 se redondea a 51 (aprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,5 se redondea a 51 (aprueba)" time="0.001">
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos faltan si no suman 100" name="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos faltan si no suman 100" time="0.001">
     </testcase>
-    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,4 se redondea a 50 (reprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,4 se redondea a 50 (reprueba)" time="0">
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos sobran" name="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos sobran" time="0">
     </testcase>
-    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al máximo" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al máximo" time="0.001">
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe rechazar una lista vacía, códigos repetidos y puntajes no positivos" name="CalculoService validarDimensiones (US-18, criterio 6) debe rechazar una lista vacía, códigos repetidos y puntajes no positivos" time="0.001">
     </testcase>
-    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al mínimo de la escala" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al mínimo de la escala" time="0">
+    <testcase classname="CalculoService puntosDimension (US-02, criterio 1) debe calcular Saber con promedio 80 como 36 puntos" name="CalculoService puntosDimension (US-02, criterio 1) debe calcular Saber con promedio 80 como 36 puntos" time="0">
+    </testcase>
+    <testcase classname="CalculoService promedio debe promediar sin errores de coma flotante" name="CalculoService promedio debe promediar sin errores de coma flotante" time="0">
+    </testcase>
+    <testcase classname="CalculoService promedio debe devolver null si no hay notas" name="CalculoService promedio debe devolver null si no hay notas" time="0">
+    </testcase>
+    <testcase classname="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,5 a 51 y aprobar" name="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,5 a 51 y aprobar" time="0">
+    </testcase>
+    <testcase classname="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,4 a 50 y reprobar" name="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,4 a 50 y reprobar" time="0">
+    </testcase>
+    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe sumar los puntos de las cuatro dimensiones" name="CalculoService notaTrimestral (US-02, criterio 2) debe sumar los puntos de las cuatro dimensiones" time="0">
+    </testcase>
+    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe dejar la nota pendiente si una dimensión no tiene actividades (US-02, criterio 6, regla provisional)" name="CalculoService notaTrimestral (US-02, criterio 2) debe dejar la nota pendiente si una dimensión no tiene actividades (US-02, criterio 6, regla provisional)" time="0">
+    </testcase>
+    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe rechazar dimensiones mal configuradas" name="CalculoService notaTrimestral (US-02, criterio 2) debe rechazar dimensiones mal configuradas" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe promediar los tres trimestres y redondear" name="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe promediar los tres trimestres y redondear" time="0">
+    </testcase>
+    <testcase classname="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe rechazar si no hay trimestres" name="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe rechazar si no hay trimestres" time="0">
+    </testcase>
+    <testcase classname="CalculoService promedioDeMaterias (US-03, decisión D12) debe promediar las notas de las materias con dos decimales, 0,5 hacia arriba" name="CalculoService promedioDeMaterias (US-03, decisión D12) debe promediar las notas de las materias con dos decimales, 0,5 hacia arriba" time="0">
+    </testcase>
+    <testcase classname="CalculoService promedioDeMaterias (US-03, decisión D12) debe quedar pendiente si alguna materia no tiene nota o no hay materias" name="CalculoService promedioDeMaterias (US-03, decisión D12) debe quedar pendiente si alguna materia no tiene nota o no hay materias" time="0">
+    </testcase>
+    <testcase classname="CalculoService resumenAnual (US-03, decisión D12) debe promediar los trimestres con nota e ignorar los pendientes" name="CalculoService resumenAnual (US-03, decisión D12) debe promediar los trimestres con nota e ignorar los pendientes" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService resumenAnual (US-03, decisión D12) debe comparar los dos últimos trimestres con nota para la tendencia" name="CalculoService resumenAnual (US-03, decisión D12) debe comparar los dos últimos trimestres con nota para la tendencia" time="0">
+    </testcase>
+    <testcase classname="CalculoService resumenAnual (US-03, decisión D12) debe marcar en riesgo un promedio anual menor que la nota mínima de aprobación" name="CalculoService resumenAnual (US-03, decisión D12) debe marcar en riesgo un promedio anual menor que la nota mínima de aprobación" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="Reglas de asistencia (US-19)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T03:03:53" time="0.09" tests="6">
-    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe contar presentes y licencias sobre las clases dictadas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe contar presentes y licencias sobre las clases dictadas" time="0.004">
+  <testsuite name="Reglas de asistencia (US-19)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:55" time="0.007" tests="6">
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe contar presentes y licencias sobre las clases dictadas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe contar presentes y licencias sobre las clases dictadas" time="0">
     </testcase>
-    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe redondear a un decimal, 0,05 hacia arriba" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe redondear a un decimal, 0,05 hacia arriba" time="0.001">
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe redondear a un decimal, 0,05 hacia arriba" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe redondear a un decimal, 0,05 hacia arriba" time="0">
     </testcase>
-    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver 100 si nunca faltó y 0 si faltó a todas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver 100 si nunca faltó y 0 si faltó a todas" time="0.001">
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver 100 si nunca faltó y 0 si faltó a todas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver 100 si nunca faltó y 0 si faltó a todas" time="0">
     </testcase>
-    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver null si todavía no hay clases registradas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver null si todavía no hay clases registradas" time="0">
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver null si todavía no hay clases registradas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver null si todavía no hay clases registradas" time="0.001">
     </testcase>
-    <testcase classname="Reglas de asistencia (US-19) fechas (criterio 3) debe tomar la fecha de hoy en Bolivia (UTC-4), no la del servidor" name="Reglas de asistencia (US-19) fechas (criterio 3) debe tomar la fecha de hoy en Bolivia (UTC-4), no la del servidor" time="0.003">
+    <testcase classname="Reglas de asistencia (US-19) fechas (criterio 3) debe tomar la fecha de hoy en Bolivia (UTC-4), no la del servidor" name="Reglas de asistencia (US-19) fechas (criterio 3) debe tomar la fecha de hoy en Bolivia (UTC-4), no la del servidor" time="0">
     </testcase>
-    <testcase classname="Reglas de asistencia (US-19) fechas (criterio 3) debe considerar futura solo una fecha posterior a hoy en Bolivia" name="Reglas de asistencia (US-19) fechas (criterio 3) debe considerar futura solo una fecha posterior a hoy en Bolivia" time="0.001">
+    <testcase classname="Reglas de asistencia (US-19) fechas (criterio 3) debe considerar futura solo una fecha posterior a hoy en Bolivia" name="Reglas de asistencia (US-19) fechas (criterio 3) debe considerar futura solo una fecha posterior a hoy en Bolivia" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Reglas de la entrega de notas (US-10)" errors="0" failures="0" skipped="0" timestamp="2026-10-21T09:01:55" time="0.007" tests="4">
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe aceptar la entrega si todos los estudiantes tienen nota en todas las actividades" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe aceptar la entrega si todos los estudiantes tienen nota en todas las actividades" time="0">
+    </testcase>
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazarla e indicar cuántas notas faltan" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazarla e indicar cuántas notas faltan" time="0">
+    </testcase>
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar una materia sin actividades en el trimestre" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar una materia sin actividades en el trimestre" time="0">
+    </testcase>
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar un curso sin estudiantes" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar un curso sin estudiantes" time="0">
     </testcase>
   </testsuite>
 </testsuites>

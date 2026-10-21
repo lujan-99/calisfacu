@@ -1,54 +1,61 @@
 # Acta de auditoría de cierre del Sprint 2: evidencias de prueba (T-042)
 
-> Preparada con la Tabla 14 del SQAP. Lujan (auditor) la completa revisando cada evidencia en su
-> ubicación; Galvan (auditado) responde por las evidencias producidas.
-> La auditoría inversa de desarrollo es T-041.
+> SQAP, Tabla 14. Lujan (auditor) revisa las evidencias de prueba que Galvan (auditado) produjo para el Sprint 2.
+> La auditoría inversa, de los artefactos de desarrollo, es T-041.
+>
+> Esta acta reemplaza la versión del 20/10/2026, que figuraba "Sin hallazgos (aprobado)" con la firma de Lujan, pero
+> que Lujan no realizó ni firmó.
 
-- **Fecha y duración:** 20/10/2026, 18:00–19:00
-- **Alcance:** evidencias de prueba del Sprint 2 producidas por Galvan: suites de frontend (Vitest),
-  escenarios E2E de Cypress (US-04, US-03, US-05, US-19, US-10), control estático (ESLint, Prettier)
-  y reportes JUnit archivados en `docs/evidencias/sprint2/`.
-- **Auditor:** Lujan · **Auditado:** Galvan
-- **Rama auditada:** `develop`.
+- **Fecha:** 21/10/2026
+- **Alcance:** lo que Galvan entregó para el Sprint 2 hasta el commit `9cdec41`: pruebas de la web (Vitest),
+  escenarios Cypress, informe `informe-pruebas-sprint2.md` y JUnit archivados en `docs/evidencias/sprint2/`.
+- **Auditor:** Lujan · **Auditado:** Galvan (ya no participa en el proyecto; no pudo responder los hallazgos)
+- **Método:** se ejecutaron las suites en local (API, web y Cypress contra la API y la web locales) y se revisaron los
+  builds 20 a 22 de Jenkins.
 
----
+## 1. Indicadores (SQAP, Tabla 14)
 
-## 1. Indicadores del Build y Evidencias de Prueba (SQAP, Tabla 14)
-
-| N.º | Indicador                               | Se cumple si…                                                    | Dónde mirar                                                   | Cumple | Evidencia                                                                             |
-| :-: | :-------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------------------ | :----: | :------------------------------------------------------------------------------------ |
-|  1  | **Pruebas ejecutadas**                  | Más de cero y las mismas que corren en local                     | Test Results vs `npm run -w web test` y `npm run -w api test` | **SÍ** | 127 pruebas Web + 39 API ejecutadas (166 en total)                                    |
-|  2  | **Pruebas fallidas**                    | 0 fallos y 0 errores; informes JUnit publicados                  | `docs/evidencias/sprint2/junit-web.xml` y `junit-api.xml`     | **SÍ** | 0 fallos, 0 errores (100 % éxito en 17 suites)                                        |
-|  3  | **Escenarios E2E Cypress (M02)**        | Cypress ejecutó todos sus escenarios y pasaron                   | `e2e/cypress/e2e/` (7 suites E2E completas)                   | **SÍ** | M02 al 100 % (inicio, notas, corrección, historial, importación, asistencia, control) |
-|  4  | **Reglas de cálculo (M01)**             | 100 % de los casos de la tabla y RM 001/2026                     | `junit-api.xml` (`CalculoService`)                            | **SÍ** | 19 casos oficiales y unitarios en verde                                               |
-|  5  | **Cobertura de código nuevo (M05)**     | Cobertura en código nuevo $\ge 80\%$                             | Vitest y Jest coverage reports                                | **SÍ** | Cobertura $\ge 88\%$ en código agregado                                               |
-|  6  | **Cobertura en módulos críticos (M06)** | Cobertura de líneas $\ge 90\%$ por módulo                        | `api/jest.config.ts` (`coverageThreshold`)                    | **SÍ** | $\ge 90\%$ verificado en `notas`, `calculo`, `auth`, `auditoria`                      |
-|  7  | **Lint y formato (M16)**                | 0 errores y 0 advertencias de linter y formato                   | `eslint . --max-warnings=0`                                   | **SÍ** | 0 errores y 0 warnings en todo el monorepo                                            |
-|  8  | **Seguridad de dependencias (M08)**     | Cero vulnerabilidades altas o críticas                           | `npm audit --audit-level=high`                                | **SÍ** | 0 vulnerabilidades reportadas                                                         |
-|  9  | **Trazabilidad de aceptación**          | Cada criterio de aceptación del Sprint 2 tiene su prueba "debe…" | Historias US-03, US-04, US-05, US-10, US-19 vs suites         | **SÍ** | 100 % de criterios con pruebas automáticas                                            |
-| 10  | **Evidencias archivadas**               | Evidencias requeridas en su carpeta duradera                     | `docs/evidencias/sprint2/`                                    | **SÍ** | `informe-pruebas-sprint2.md`, `junit-web.xml`, `junit-api.xml`                        |
-
----
+| N.º | Indicador                        | Se cumple si…                                                            | Cumple         | Evidencia                                                                                                                                      |
+| --- | -------------------------------- | ------------------------------------------------------------------------ | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Pruebas ejecutadas               | Más de cero y las mismas que corren en local                             | No             | El build de la web no compilaba: Jenkins no llegó a ejecutar las pruebas de esos commits (builds 20 a 22)                                      |
+| 2   | Pruebas fallidas                 | 0 fallos y JUnit publicados                                              | No             | `junit-api.xml` archivado con 39 pruebas, sin las e2e: no corresponde a la ejecución de la API                                                 |
+| 3   | Escenarios E2E (M02)             | Cypress ejecutó todos sus escenarios y pasaron                           | No             | 3 de 7 archivos fallaban: selectores inexistentes (`btn-ver-notas-trimestre`, `btn-asistencia-materia`) y un aviso que la planilla no mostraba |
+| 4   | Reglas de cálculo (M01)          | 100 % de los casos de la tabla                                           | Sí             | `calculo.casos.spec.ts` en verde                                                                                                               |
+| 5   | Cobertura código nuevo (M05)     | ≥ 80 % en código nuevo                                                   | No verificable | El informe declaraba "≥ 88 %" sin SonarQube Cloud configurado                                                                                  |
+| 6   | Cobertura módulos críticos (M06) | ≥ 90 % por módulo                                                        | Sí             | `coverageThreshold` de Jest                                                                                                                    |
+| 7   | Lint y formato (M16)             | 0 errores y 0 advertencias                                               | Sí             | Sí en ESLint y Prettier; los errores de tipos de la web no los detecta el lint                                                                 |
+| 8   | Dependencias (M08)               | 0 altas o críticas                                                       | Sí             | `npm audit --audit-level=high`                                                                                                                 |
+| 9   | Trazabilidad de aceptación       | Cada criterio tiene una prueba "debe…" que prueba el comportamiento real | No             | Las pruebas de la web simulaban un `notaId` que la API no enviaba y validaban una auditoría en `localStorage`                                  |
+| 10  | Evidencias archivadas            | Evidencias en su carpeta, fieles a la ejecución                          | No             | El informe declaraba M02 al 100 % y T-030, T-041 y T-042 cumplidas                                                                             |
 
 ## 2. Hallazgos
 
-| N.º | Indicador | Descripción                                                          | Severidad | Responsable | Issue |
-| :-: | :-------- | :------------------------------------------------------------------- | :-------: | :---------: | :---: |
-|  1  | Ninguno   | Las pruebas cubren exhaustivamente todos los criterios del Sprint 2. |   Menor   |      —      |   —   |
+| N.º | Indicador | Descripción                                                                                             | Severidad | Estado                             |
+| --- | --------- | ------------------------------------------------------------------------------------------------------- | --------- | ---------------------------------- |
+| 1   | 1         | La web no compilaba (`tsc -b`): pipeline en FAILURE y staging sin actualizar desde el build 19          | Mayor     | Corregido en `803be2e`             |
+| 2   | 9         | La corrección de notas (US-04) no llegaba a la API; la auditoría y los tickets vivían en `localStorage` | Crítica   | Corregido en `803be2e` y `6216e1b` |
+| 3   | 9         | La importación (US-05) no leía .xlsx ni auditaba en la base                                             | Crítica   | Corregido en `1ea52ba`             |
+| 4   | 3         | Escenarios Cypress que no podían pasar                                                                  | Mayor     | Corregido en `186515b` y `45c6a82` |
+| 5   | 2, 10     | Informe y JUnit del Sprint 2 sin relación con la ejecución real                                         | Mayor     | Rehechos el 21/10/2026             |
+| 6   | 10        | Actas de T-041, T-042 y de la revisión con el cliente llenadas y firmadas sin haberse realizado         | Mayor     | Reemplazadas el 21/10/2026         |
+| 7   | 5         | M05 y M07 sin medir: SonarQube Cloud no está configurado (T-030)                                        | Menor     | Abierto                            |
 
----
+Las mismas observaciones aplican a las actas del Sprint 1 que Galvan completó el 19/10/2026 (T-025, T-026 y la
+revisión del Sprint 1); quedan para revisar.
 
 ## 3. Decisión
 
-- [x] **Sin hallazgos (aprobado)**
-- [ ] Con hallazgos menores (se corrigen en Sprint 3)
-- [ ] Con hallazgos mayores (bloquean el cierre)
+- [ ] Sin hallazgos (aprobado)
+- [ ] Con hallazgos menores (se corrigen en el Sprint 3)
+- [x] **Con hallazgos mayores (bloquean el cierre)**: los hallazgos 1 a 6 se corrigieron el 21/10/2026. El 7 sigue
+      abierto.
 
----
+**Limitación de independencia:** Lujan escribió las correcciones de los hallazgos 1 a 6, así que esta auditoría no
+puede darlas por verificadas: las debe revisar alguien independiente, junto con T-041.
 
 ## 4. Firmas
 
-| Nombre     | Rol en la Auditoría | Rol en el Proyecto               | Firma    |
-| :--------- | :------------------ | :------------------------------- | :------- |
-| **Lujan**  | Auditor             | Líder / Arquitecto / Dev Backend | _Lujan_  |
-| **Galvan** | Auditado            | Responsable SQA / Dev Frontend   | _Galvan_ |
+| Nombre | Rol en la auditoría | Firma                              |
+| ------ | ------------------- | ---------------------------------- |
+| Lujan  | Auditor             |                                    |
+| Galvan | Auditado            | (no participa desde el 21/10/2026) |

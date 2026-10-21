@@ -1,8 +1,8 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import type { DataSource } from 'typeorm';
-import { Nota, RegistroAuditoria } from '../src/database/entities';
-import { crearApp, escenario, limpiar, token, type Escenario } from './utils';
+import { Nota, RegistroAuditoria, SolicitudEdicionEstudiante } from '../src/database/entities';
+import { crearApp, escenario, habilitarCorreccion, limpiar, token, type Escenario } from './utils';
 
 /** M15: el 100 % de los cambios de nota quedan con registro de auditoría completo (US-04). */
 describe('Corrección auditable de notas (US-04, M15)', () => {
@@ -53,7 +53,20 @@ describe('Corrección auditable de notas (US-04, M15)', () => {
       .expect(400);
   });
 
+  it('debe exigir una solicitud de edición aprobada por el administrador (decisión D16)', async () => {
+    const r = await http()
+      .patch(`/api/notas/${notaId}/correccion`)
+      .set('Authorization', `Bearer ${tk}`)
+      .send({ valor: 75, motivo: 'Error de transcripción' })
+      .expect(422);
+    expect(r.body.message).toBe(
+      'Para corregir esta nota necesita una solicitud de edición aprobada por el administrador',
+    );
+    expect((await ds.getRepository(Nota).findOneByOrFail({ id: notaId })).valor).toBe(60);
+  });
+
   it('debe guardar quién, cuándo, valor anterior, valor nuevo y motivo', async () => {
+    await habilitarCorreccion(ds, e, e.actividades.saber1.id, e.estudiantes[0].id);
     await http()
       .patch(`/api/notas/${notaId}/correccion`)
       .set('Authorization', `Bearer ${tk}`)
@@ -74,6 +87,16 @@ describe('Corrección auditable de notas (US-04, M15)', () => {
     });
     expect(new Date(r.body[1].fecha).getTime()).not.toBeNaN();
     expect((await ds.getRepository(Nota).findOneByOrFail({ id: notaId })).valor).toBe(75);
+  });
+
+  it('debe usar cada solicitud aprobada una sola vez', async () => {
+    await http()
+      .patch(`/api/notas/${notaId}/correccion`)
+      .set('Authorization', `Bearer ${tk}`)
+      .send({ valor: 80, motivo: 'Otra corrección' })
+      .expect(422);
+    const usada = await ds.getRepository(SolicitudEdicionEstudiante).findOneByOrFail({});
+    expect(usada.usadaEn).toBeInstanceOf(Date);
   });
 
   it('debe rechazar una corrección que no cambia el valor', async () => {
@@ -109,6 +132,7 @@ describe('Corrección auditable de notas (US-04, M15)', () => {
   });
 
   it('debe guardar como valor anterior el que realmente reemplazó, aunque otra transacción cambie la nota', async () => {
+    await habilitarCorreccion(ds, e, e.actividades.saber1.id, e.estudiantes[0].id);
     // Otra transacción tiene la fila bloqueada y está cambiando la nota a 90.
     const otra = ds.createQueryRunner();
     await otra.connect();

@@ -11,11 +11,14 @@ import {
   Curso,
   DimensionEvaluacion,
   ENTIDADES,
+  EstadoSolicitud,
   Estudiante,
   Gestion,
   Materia,
   Nivel,
   Rol,
+  SolicitudEdicion,
+  SolicitudEdicionEstudiante,
   Trimestre,
   UnidadEducativa,
   Usuario,
@@ -123,4 +126,27 @@ export async function token(app: INestApplication<App>, email: string): Promise<
     .send({ email, contrasena: CONTRASENA })
     .expect(200);
   return (r.body as { token: string }).token;
+}
+
+/**
+ * Solicitud de edición ya aprobada por el administrador (decisión D16): habilita una corrección de la nota del
+ * estudiante en la actividad. El flujo completo por la API se prueba en solicitudes.e2e-spec.ts.
+ */
+export async function habilitarCorreccion(
+  ds: DataSource,
+  e: Escenario,
+  actividadId: number,
+  estudianteId: number,
+) {
+  const solicitud = await ds.getRepository(SolicitudEdicion).save({
+    actividad: { id: actividadId },
+    profesor: { id: e.profesor.id },
+    motivo: 'Revisión del examen',
+    estado: EstadoSolicitud.APROBADA,
+    resueltoEn: new Date(),
+    resueltoPor: { id: e.admin.id },
+  });
+  await ds
+    .getRepository(SolicitudEdicionEstudiante)
+    .save({ solicitud, estudiante: { id: estudianteId } });
 }

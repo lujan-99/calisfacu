@@ -474,3 +474,53 @@ export const confirmarImportacion = (actividadId: number, archivo: File) =>
     `/importaciones/actividades/${actividadId}/confirmar`,
     conArchivo(archivo),
   );
+
+// ---------- Solicitudes de edición de notas registradas (US-04, decisión D16) ----------
+
+export type EstadoSolicitud = 'PENDIENTE' | 'APROBADA' | 'RECHAZADA';
+
+export interface SolicitudEdicion {
+  id: number;
+  profesorId: number;
+  profesorNombre: string;
+  actividadId: number;
+  actividadNombre: string;
+  materiaId: number;
+  materiaNombre: string;
+  cursoNombre: string;
+  dimension: string;
+  estudiantes: {
+    estudianteId: number;
+    estudianteNombre: string;
+    notaActual: number | null;
+    /** La corrección aprobada ya se hizo. */
+    usada: boolean;
+  }[];
+  motivo: string;
+  fechaSolicitud: string;
+  estado: EstadoSolicitud;
+  fechaResolucion: string | null;
+  observacionAdmin: string | null;
+}
+
+export const listarSolicitudes = (
+  filtro: { actividadId?: number; estado?: EstadoSolicitud } = {},
+) => {
+  const params = new URLSearchParams();
+  if (filtro.actividadId) params.set('actividadId', String(filtro.actividadId));
+  if (filtro.estado) params.set('estado', filtro.estado);
+  const qs = params.toString();
+  return solicitar<SolicitudEdicion[]>(`/solicitudes-edicion${qs ? `?${qs}` : ''}`);
+};
+export const crearSolicitud = (d: {
+  actividadId: number;
+  estudianteIds: number[];
+  motivo: string;
+}) => solicitar<SolicitudEdicion>('/solicitudes-edicion', enviar('POST', d));
+export const aprobarSolicitud = (id: number) =>
+  solicitar<SolicitudEdicion>(`/solicitudes-edicion/${id}/aprobar`, enviar('PATCH'));
+export const rechazarSolicitud = (id: number, observacion: string) =>
+  solicitar<SolicitudEdicion>(
+    `/solicitudes-edicion/${id}/rechazar`,
+    enviar('PATCH', { observacion }),
+  );

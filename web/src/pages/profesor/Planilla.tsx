@@ -5,8 +5,10 @@ import { Aviso, Cargando, ErrorCarga } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
 import {
   corregirNota,
+  crearSolicitud,
   guardarPlanilla,
   historialNota,
+  listarSolicitudes,
   obtenerPlanilla,
   type FilaPlanilla,
   type Planilla as TPlanilla,
@@ -14,6 +16,7 @@ import {
 } from '../../lib/api';
 import { formatoNumero, nombreTrimestre } from '../../lib/formato';
 import { validarNota } from '../../lib/notas';
+import { estadoEdicion, puedePedirEdicion } from '../../lib/solicitudes';
 import { useCarga } from '../../lib/useCarga';
 
 type Mensaje = { tipo: 'exito' | 'error'; texto: string } | null;
@@ -28,12 +31,18 @@ type NotaElegida = {
  * Planilla de una actividad (US-01, criterios 1 a 3; T-020). Se guardan todas las notas pendientes o ninguna: si una
  * está vacía o fuera de 1 a 100, se marca junto a su campo y no se envía nada.
  * Una nota ya registrada no se vuelve a escribir aquí: se corrige con motivo obligatorio y su historial se lee de la
- * auditoría de la API (US-04, RNF-04, M15).
+ * auditoría de la API (US-04, RNF-04, M15). Corregir exige una solicitud de edición aprobada por el administrador,
+ * que se pide desde aquí (decisión D16).
  */
 export function Planilla() {
   const { materiaId, actividadId } = useParams();
   const id = Number(actividadId);
   const { carga, recargar, setCarga } = useCarga(() => obtenerPlanilla(id), [id]);
+  const { carga: cargaSolicitudes, recargar: recargarSolicitudes } = useCarga(
+    () => listarSolicitudes({ actividadId: id }),
+    [id],
+  );
+  const solicitudes = cargaSolicitudes.estado === 'datos' ? cargaSolicitudes.datos : [];
   const [valores, setValores] = useState<Record<number, string>>({});
   const [tocados, setTocados] = useState<Record<number, boolean>>({});
   const [intento, setIntento] = useState(false);
@@ -43,6 +52,13 @@ export function Planilla() {
   const [mensaje, setMensaje] = useState<Mensaje>(() =>
     state?.mensajeExito ? { tipo: 'exito', texto: state.mensajeExito } : null,
   );
+
+  // Solicitud de edición al administrador (decisión D16)
+  const [modalSolicitud, setModalSolicitud] = useState(false);
+  const [seleccionados, setSeleccionados] = useState<number[]>([]);
+  const [motivoSolicitud, setMotivoSolicitud] = useState('');
+  const [errorSolicitud, setErrorSolicitud] = useState<string | null>(null);
+  const [enviandoSolicitud, setEnviandoSolicitud] = useState(false);
 
   // Estados para corrección auditable y auditoría de notas (US-04)
   const [estudianteACorregir, setEstudianteACorregir] = useState<NotaElegida | null>(null);
@@ -192,10 +208,54 @@ export function Planilla() {
         )} a ${formatoNumero(r.valor)}. Se guardó el registro de auditoría inmutable.`,
       });
       setEstudianteACorregir(null);
+      recargarSolicitudes();
     } catch (e) {
       setErrorCorreccion(e instanceof Error ? e.message : 'Error al guardar la corrección');
     } finally {
       setGuardandoCorreccion(false);
+    }
+  };
+
+  /** Estudiantes con nota que pueden entrar en una solicitud nueva. */
+  const pedibles =
+    planilla?.filas.filter(
+      (f) => f.notaId && puedePedirEdicion(estadoEdicion(solicitudes, f.estudianteId)),
+    ) ?? [];
+
+  const abrirSolicitud = (estudianteIds: number[]) => {
+    setSeleccionados(estudianteIds);
+    setMotivoSolicitud('');
+    setErrorSolicitud(null);
+    setModalSolicitud(true);
+  };
+
+  const enviarSolicitud = async () => {
+    if (seleccionados.length === 0) {
+      setErrorSolicitud('Seleccione al menos un estudiante.');
+      return;
+    }
+    if (!motivoSolicitud.trim()) {
+      setErrorSolicitud('Escriba el motivo de la corrección.');
+      return;
+    }
+    setEnviandoSolicitud(true);
+    setErrorSolicitud(null);
+    try {
+      const s = await crearSolicitud({
+        actividadId: id,
+        estudianteIds: seleccionados,
+        motivo: motivoSolicitud.trim(),
+      });
+      setModalSolicitud(false);
+      setMensaje({
+        tipo: 'exito',
+        texto: `Se envió la solicitud #${s.id} al administrador. Cuando la apruebe podrá corregir la nota.`,
+      });
+      recargarSolicitudes();
+    } catch (e) {
+      setErrorSolicitud(e instanceof Error ? e.message : 'No se pudo enviar la solicitud');
+    } finally {
+      setEnviandoSolicitud(false);
     }
   };
 
@@ -278,6 +338,18 @@ export function Planilla() {
             <Icono nombre="documento" tam={16} />
             Importar desde Excel
           </Link>
+          {!cerrado && pedibles.length > 0 && (
+            <button
+              type="button"
+              className="boton boton-secundario"
+              data-cy="btn-solicitar-edicion"
+              onClick={() => abrirSolicitud([])}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              <Icono nombre="candado" tam={16} />
+              Solicitar edición de notas
+            </button>
+          )}
         </div>
       </div>
 
@@ -300,7 +372,8 @@ export function Planilla() {
 
       <p className="ayuda">
         Notas de 1 a 100, con hasta 2 decimales. Enter pasa al siguiente estudiante. Una nota ya
-        registrada se corrige con motivo obligatorio y queda en la auditoría.
+        registrada se corrige con motivo obligatorio, después de que el administrador aprueba su
+        solicitud de edición, y queda en la auditoría.
       </p>
 
       <section className="tabla-marco" aria-labelledby="titulo-planilla">
@@ -361,6 +434,7 @@ export function Planilla() {
                           <Icono nombre="candado" tam={14} />
                           Registrada
                         </span>
+                        <EstadoSolicitudFila estado={estadoEdicion(solicitudes, f.estudianteId)} />
                         {/* Sin id no hay nota en la base que corregir ni historial que leer. */}
                         {f.notaId && (
                           <div
@@ -371,29 +445,50 @@ export function Planilla() {
                               alignItems: 'center',
                             }}
                           >
-                            {!cerrado && (
-                              <button
-                                type="button"
-                                className="boton-texto"
-                                data-cy="btn-corregir-nota"
-                                style={{
-                                  fontSize: 12,
-                                  color: 'var(--color-primario, #78192a)',
-                                  cursor: 'pointer',
-                                  border: 'none',
-                                  background: 'none',
-                                  textDecoration: 'underline',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 3,
-                                }}
-                                onClick={() => abrirModalCorreccion(f)}
-                                title="Corregir esta nota con motivo obligatorio (US-04)"
-                              >
-                                <Icono nombre="lapiz" tam={13} />
-                                Corregir
-                              </button>
-                            )}
+                            {!cerrado &&
+                              puedePedirEdicion(estadoEdicion(solicitudes, f.estudianteId)) && (
+                                <button
+                                  type="button"
+                                  className="boton-texto"
+                                  data-cy="btn-pedir-edicion"
+                                  style={{
+                                    fontSize: 12,
+                                    color: 'var(--texto-3)',
+                                    border: 'none',
+                                    background: 'none',
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer',
+                                  }}
+                                  onClick={() => abrirSolicitud([f.estudianteId])}
+                                  title="Pedir al administrador que habilite la corrección (D16)"
+                                >
+                                  Pedir edición
+                                </button>
+                              )}
+                            {!cerrado &&
+                              estadoEdicion(solicitudes, f.estudianteId).tipo === 'HABILITADA' && (
+                                <button
+                                  type="button"
+                                  className="boton-texto"
+                                  data-cy="btn-corregir-nota"
+                                  style={{
+                                    fontSize: 12,
+                                    color: 'var(--color-primario, #78192a)',
+                                    cursor: 'pointer',
+                                    border: 'none',
+                                    background: 'none',
+                                    textDecoration: 'underline',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 3,
+                                  }}
+                                  onClick={() => abrirModalCorreccion(f)}
+                                  title="Corregir esta nota con motivo obligatorio (US-04)"
+                                >
+                                  <Icono nombre="lapiz" tam={13} />
+                                  Corregir
+                                </button>
+                              )}
                             <button
                               type="button"
                               className="boton-texto"
@@ -478,6 +573,106 @@ export function Planilla() {
           {guardando ? 'Guardando…' : 'Guardar notas'}
         </button>
       </div>
+
+      {/* Solicitud de edición al administrador (decisión D16) */}
+      {modalSolicitud && (
+        <Dialogo
+          titulo="Solicitar edición de notas"
+          alCerrar={() => !enviandoSolicitud && setModalSolicitud(false)}
+          cy="dialogo-solicitud-edicion"
+        >
+          <p className="ayuda">
+            Elija los estudiantes cuya nota necesita corregir y explique el motivo al administrador.
+            Cuando apruebe la solicitud, podrá corregir cada nota una vez.
+          </p>
+          <fieldset style={{ border: 'none', padding: 0, margin: '0 0 12px' }}>
+            <legend style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+              Estudiantes con nota registrada
+            </legend>
+            <div
+              style={{
+                maxHeight: 180,
+                overflowY: 'auto',
+                border: '1px solid var(--borde)',
+                borderRadius: 6,
+                padding: 8,
+              }}
+            >
+              {pedibles.map((f) => (
+                <label
+                  key={f.estudianteId}
+                  style={{
+                    display: 'flex',
+                    gap: 8,
+                    alignItems: 'center',
+                    padding: '4px 0',
+                    fontSize: 13,
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    data-cy="solicitud-estudiante"
+                    checked={seleccionados.includes(f.estudianteId)}
+                    onChange={(e) =>
+                      setSeleccionados(
+                        e.target.checked
+                          ? [...seleccionados, f.estudianteId]
+                          : seleccionados.filter((x) => x !== f.estudianteId),
+                      )
+                    }
+                  />
+                  <span>
+                    <strong>{f.estudiante}</strong> — nota actual {formatoNumero(f.valor ?? 0)}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <label htmlFor="motivo-solicitud" style={{ fontSize: 13, fontWeight: 600 }}>
+            Motivo de la corrección
+          </label>
+          <textarea
+            id="motivo-solicitud"
+            data-cy="solicitud-motivo"
+            rows={3}
+            style={{
+              width: '100%',
+              padding: 10,
+              borderRadius: 6,
+              border: '1px solid var(--borde)',
+              fontSize: 13,
+              marginTop: 6,
+            }}
+            value={motivoSolicitud}
+            onChange={(e) => setMotivoSolicitud(e.target.value)}
+            disabled={enviandoSolicitud}
+          />
+          {errorSolicitud && (
+            <span className="campo-error" data-cy="error-solicitud" style={{ display: 'block' }}>
+              {errorSolicitud}
+            </span>
+          )}
+          <div className="dialogo-acciones">
+            <button
+              type="button"
+              className="boton boton-secundario"
+              onClick={() => setModalSolicitud(false)}
+              disabled={enviandoSolicitud}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="boton boton-primario"
+              data-cy="btn-enviar-solicitud"
+              disabled={enviandoSolicitud}
+              onClick={() => void enviarSolicitud()}
+            >
+              {enviandoSolicitud ? 'Enviando…' : 'Enviar al administrador'}
+            </button>
+          </div>
+        </Dialogo>
+      )}
 
       {/* Modal de Corrección Auditable de Nota (US-04, criterio 1) */}
       {estudianteACorregir && (
@@ -838,4 +1033,43 @@ export function Planilla() {
       )}
     </>
   );
+}
+
+/** Estado de la solicitud de edición de una nota registrada (decisión D16). */
+function EstadoSolicitudFila({ estado }: { estado: ReturnType<typeof estadoEdicion> }) {
+  if (estado.tipo === 'PENDIENTE') {
+    return (
+      <span
+        className="insignia insignia-neutra"
+        data-cy="solicitud-pendiente"
+        style={{ fontSize: 11 }}
+      >
+        Solicitud #{estado.solicitudId} en revisión
+      </span>
+    );
+  }
+  if (estado.tipo === 'HABILITADA') {
+    return (
+      <span
+        className="insignia insignia-exito"
+        data-cy="edicion-habilitada"
+        style={{ fontSize: 11 }}
+      >
+        Edición habilitada
+      </span>
+    );
+  }
+  if (estado.tipo === 'RECHAZADA') {
+    return (
+      <span
+        className="insignia insignia-error"
+        data-cy="solicitud-rechazada"
+        style={{ fontSize: 11 }}
+        title={estado.observacion}
+      >
+        Rechazada: {estado.observacion}
+      </span>
+    );
+  }
+  return null;
 }

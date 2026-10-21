@@ -5,13 +5,14 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { decimal } from '../decimal.transformer';
 import { DimensionEvaluacion, Estudiante, Materia, Trimestre } from './academico.entity';
-import { EstadoAsistencia, OrigenCambio } from './enums';
+import { EstadoAsistencia, EstadoSolicitud, OrigenCambio } from './enums';
 import { Usuario } from './usuario.entity';
 
 @Entity('actividades')
@@ -121,4 +122,64 @@ export class EntregaNotas {
 
   @CreateDateColumn({ type: 'timestamptz' })
   entregadoEn: Date;
+}
+
+/**
+ * Solicitud de edición (decisión D16): el profesor pide corregir notas ya registradas de una actividad y el
+ * administrador la aprueba o la rechaza con una observación. Cada estudiante aprobado habilita una corrección.
+ */
+@Entity('solicitudes_edicion')
+@Check('solicitudes_rechazo_con_observacion', `estado <> 'RECHAZADA' OR observacion IS NOT NULL`)
+export class SolicitudEdicion {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Actividad, { nullable: false })
+  actividad: Actividad;
+
+  @ManyToOne(() => Usuario, { nullable: false })
+  profesor: Usuario;
+
+  @Column({ type: 'text' })
+  motivo: string;
+
+  @Column({
+    type: 'enum',
+    enum: EstadoSolicitud,
+    enumName: 'estado_solicitud',
+    default: EstadoSolicitud.PENDIENTE,
+  })
+  estado: EstadoSolicitud;
+
+  @Column({ type: 'text', nullable: true })
+  observacion: string | null;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  creadoEn: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  resueltoEn: Date | null;
+
+  @ManyToOne(() => Usuario, { nullable: true })
+  resueltoPor: Usuario | null;
+
+  @OneToMany(() => SolicitudEdicionEstudiante, (x) => x.solicitud)
+  estudiantes: SolicitudEdicionEstudiante[];
+}
+
+/** Un estudiante de la solicitud. `usadaEn` se llena cuando la corrección aprobada se hace (una sola vez). */
+@Entity('solicitudes_edicion_estudiantes')
+@Unique(['solicitud', 'estudiante'])
+export class SolicitudEdicionEstudiante {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => SolicitudEdicion, (s) => s.estudiantes, { nullable: false })
+  solicitud: SolicitudEdicion;
+
+  @ManyToOne(() => Estudiante, { nullable: false })
+  estudiante: Estudiante;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  usadaEn: Date | null;
 }

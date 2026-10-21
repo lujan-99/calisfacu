@@ -2,13 +2,20 @@ import { Injectable, NotFoundException, UnprocessableEntityException } from '@ne
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import type { DataSource, Repository } from 'typeorm';
 import type { UsuarioToken } from '../../common/decoradores';
-import { Nota, OrigenCambio, RegistroAuditoria } from '../../database/entities';
+import {
+  EstadoSolicitud,
+  Nota,
+  OrigenCambio,
+  RegistroAuditoria,
+  SolicitudEdicionEstudiante,
+} from '../../database/entities';
 import { AccesoNotasService } from '../notas/acceso.service';
 
 /**
  * Módulo crítico: corrección auditable (US-04, M15).
  * Toda corrección guarda quién, cuándo, valor anterior, valor nuevo y motivo, en la misma transacción
  * que el cambio. La nota trimestral se calcula al consultarla, así que refleja la corrección de inmediato.
+ * Cada corrección usa una solicitud de edición aprobada por el administrador (decisión D16).
  */
 @Injectable()
 export class AuditoriaService {
@@ -22,7 +29,7 @@ export class AuditoriaService {
   private async notaConActividad(notaId: number) {
     const nota = await this.notas.findOne({
       where: { id: notaId },
-      relations: { actividad: true },
+      relations: { actividad: true, estudiante: true },
     });
     if (!nota) throw new NotFoundException('La nota no existe');
     return nota;
@@ -42,6 +49,27 @@ export class AuditoriaService {
       if (actual.valor === valor) {
         throw new UnprocessableEntityException('La nota nueva es igual a la actual');
       }
+      // La autorización se bloquea y se marca usada aquí mismo: dos correcciones no pueden usar la misma (D16).
+      const autorizacion = await tx
+        .getRepository(SolicitudEdicionEstudiante)
+        .createQueryBuilder('se')
+        .innerJoin('se.solicitud', 's')
+        .where('s.actividad_id = :actividad AND se.estudiante_id = :estudiante', {
+          actividad: nota.actividad.id,
+          estudiante: nota.estudiante.id,
+        })
+        .andWhere('s.estado = :aprobada AND se.usada_en IS NULL', {
+          aprobada: EstadoSolicitud.APROBADA,
+        })
+        .orderBy('se.id', 'ASC')
+        .setLock('pessimistic_write', undefined, ['se'])
+        .getOne();
+      if (!autorizacion) {
+        throw new UnprocessableEntityException(
+          'Para corregir esta nota necesita una solicitud de edición aprobada por el administrador',
+        );
+      }
+      await tx.update(SolicitudEdicionEstudiante, { id: autorizacion.id }, { usadaEn: new Date() });
       await tx.update(Nota, { id: notaId }, { valor });
       await tx.insert(RegistroAuditoria, {
         nota: { id: notaId },

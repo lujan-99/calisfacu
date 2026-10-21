@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../lib/api';
 import { abrir, DIMENSIONES, GESTION } from '../../prueba-utils';
@@ -70,5 +70,72 @@ describe('Boletín del padre (US-11, Sprint 3)', () => {
   it('debe avisar que el boletín todavía no está disponible', async () => {
     abrir('/padre/boletin', 'PADRE');
     expect(await screen.findByText('El boletín todavía no está disponible')).toBeInTheDocument();
+  });
+});
+
+describe('Solicitudes de edición (decisión D16)', () => {
+  const SOLICITUD: api.SolicitudEdicion = {
+    id: 12,
+    profesorId: 10,
+    profesorNombre: 'Rosa Mamani Condori',
+    actividadId: 1,
+    actividadNombre: 'Examen de Álgebra',
+    materiaId: 7,
+    materiaNombre: 'Matemática',
+    cursoNombre: 'Secundaria 4.º «A»',
+    dimension: 'Saber',
+    estudiantes: [
+      { estudianteId: 2, estudianteNombre: 'Choque Huanca, Rosa', notaActual: 45, usada: false },
+    ],
+    motivo: 'Verificación de la hoja de respuestas',
+    fechaSolicitud: '2026-10-20T10:00:00Z',
+    estado: 'PENDIENTE',
+    fechaResolucion: null,
+    observacionAdmin: null,
+  };
+
+  it('debe listar las solicitudes de la API y aprobarlas', async () => {
+    vi.spyOn(api, 'listarSolicitudes')
+      .mockResolvedValueOnce([SOLICITUD])
+      .mockResolvedValueOnce([{ ...SOLICITUD, estado: 'APROBADA' }]);
+    const aprobar = vi
+      .spyOn(api, 'aprobarSolicitud')
+      .mockResolvedValue({ ...SOLICITUD, estado: 'APROBADA' });
+    abrir('/admin/solicitudes-edicion', 'ADMINISTRADOR');
+    expect(await screen.findByText('Rosa Mamani Condori')).toBeInTheDocument();
+    expect(screen.getByText('Examen de Álgebra (Saber)')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Aprobar' }));
+    await waitFor(() => expect(aprobar).toHaveBeenCalledWith(12));
+    expect(await screen.findByText(/Ticket #12 aprobado/)).toBeInTheDocument();
+    expect(await screen.findByText('Aprobada')).toBeInTheDocument();
+  });
+
+  it('debe exigir una observación para rechazar', async () => {
+    vi.spyOn(api, 'listarSolicitudes').mockResolvedValue([SOLICITUD]);
+    const rechazar = vi
+      .spyOn(api, 'rechazarSolicitud')
+      .mockResolvedValue({ ...SOLICITUD, estado: 'RECHAZADA' });
+    abrir('/admin/solicitudes-edicion', 'ADMINISTRADOR');
+    fireEvent.click(await screen.findByRole('button', { name: 'Rechazar' }));
+    const d = screen.getByRole('dialog');
+    fireEvent.click(within(d).getByRole('button', { name: 'Confirmar Rechazo' }));
+    expect(
+      within(d).getByText('Debe ingresar un motivo para denegar la habilitación.'),
+    ).toBeInTheDocument();
+    fireEvent.change(within(d).getByLabelText('Observación del rechazo'), {
+      target: { value: 'Falta la hoja de respuestas' },
+    });
+    fireEvent.click(within(d).getByRole('button', { name: 'Confirmar Rechazo' }));
+    await waitFor(() => expect(rechazar).toHaveBeenCalledWith(12, 'Falta la hoja de respuestas'));
+  });
+
+  it('debe mostrar el error de la API si la solicitud ya fue resuelta', async () => {
+    vi.spyOn(api, 'listarSolicitudes').mockResolvedValue([SOLICITUD]);
+    vi.spyOn(api, 'aprobarSolicitud').mockRejectedValue(
+      new api.ErrorApi(409, 'La solicitud ya fue resuelta'),
+    );
+    abrir('/admin/solicitudes-edicion', 'ADMINISTRADOR');
+    fireEvent.click(await screen.findByRole('button', { name: 'Aprobar' }));
+    expect(await screen.findByText('La solicitud ya fue resuelta')).toBeInTheDocument();
   });
 });

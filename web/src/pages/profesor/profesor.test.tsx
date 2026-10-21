@@ -342,6 +342,70 @@ describe('Corrección auditable de notas (US-04, T-032, RNF-04)', () => {
     ],
   });
   const ruta = '/profesor/materias/7/actividades/5';
+  const solicitud = (
+    estado: api.EstadoSolicitud,
+    usada = false,
+    observacionAdmin: string | null = null,
+  ): api.SolicitudEdicion => ({
+    id: 4,
+    profesorId: 1,
+    profesorNombre: 'Ana Profesora',
+    actividadId: 5,
+    actividadNombre: 'Práctica: funciones cuadráticas',
+    materiaId: 7,
+    materiaNombre: 'Matemática',
+    cursoNombre: 'Secundaria 4.º «A»',
+    dimension: 'Saber',
+    estudiantes: [
+      { estudianteId: 1, estudianteNombre: 'Apaza Condori, Miguel', notaActual: 78, usada },
+    ],
+    motivo: 'Revisión del examen',
+    fechaSolicitud: '2026-10-20T10:00:00Z',
+    estado,
+    fechaResolucion: null,
+    observacionAdmin,
+  });
+
+  // Por defecto, el administrador ya aprobó la edición de la nota de Miguel (decisión D16).
+  beforeEach(() => {
+    vi.spyOn(api, 'listarSolicitudes').mockResolvedValue([solicitud('APROBADA')]);
+  });
+
+  it('debe pedir la edición al administrador si la nota no está habilitada (decisión D16)', async () => {
+    vi.spyOn(api, 'listarSolicitudes').mockResolvedValue([]);
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    const crear = vi.spyOn(api, 'crearSolicitud').mockResolvedValue(solicitud('PENDIENTE'));
+    abrir(ruta, 'PROFESOR');
+    fireEvent.click(await screen.findByRole('button', { name: 'Pedir edición' }));
+    expect(screen.queryByRole('button', { name: /^Corregir$/ })).not.toBeInTheDocument();
+    const d = screen.getByRole('dialog');
+    fireEvent.click(within(d).getByRole('button', { name: 'Enviar al administrador' }));
+    expect(within(d).getByText('Escriba el motivo de la corrección.')).toBeInTheDocument();
+    fireEvent.change(within(d).getByLabelText('Motivo de la corrección'), {
+      target: { value: 'Error de transcripción' },
+    });
+    fireEvent.click(within(d).getByRole('button', { name: 'Enviar al administrador' }));
+    await waitFor(() =>
+      expect(crear).toHaveBeenCalledWith({
+        actividadId: 5,
+        estudianteIds: [1],
+        motivo: 'Error de transcripción',
+      }),
+    );
+    expect(
+      await screen.findByText(/Se envió la solicitud #4 al administrador/),
+    ).toBeInTheDocument();
+  });
+
+  it('debe mostrar la solicitud en revisión y el rechazo con su observación', async () => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    vi.spyOn(api, 'listarSolicitudes').mockResolvedValue([
+      solicitud('RECHAZADA', false, 'Falta la hoja de respuestas'),
+    ]);
+    abrir(ruta, 'PROFESOR');
+    expect(await screen.findByText('Rechazada: Falta la hoja de respuestas')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Pedir edición' })).toBeInTheDocument();
+  });
 
   it('debe abrir el modal de corrección y exigir el motivo obligatorio antes de guardar (US-04, criterio 1)', async () => {
     vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());

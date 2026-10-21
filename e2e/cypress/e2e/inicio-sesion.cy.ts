@@ -22,7 +22,7 @@ const ROLES = [
     rol: 'Administrador',
     email: 'adminEmail',
     inicio: '/admin/dimensiones',
-    menu: ['Dimensiones de evaluación'],
+    menu: ['Dimensiones de evaluación', 'Solicitudes de edición'],
   },
   { rol: 'Padre', email: 'padreEmail', inicio: '/padre/boletin', menu: ['Boletín de mi hijo'] },
 ];

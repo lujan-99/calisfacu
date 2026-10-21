@@ -5,6 +5,7 @@ import { INICIO_POR_ROL } from './lib/formato';
 import { InstitucionProvider } from './lib/institucion';
 import { SesionProvider, useSesion } from './lib/sesion';
 import { Dimensiones } from './pages/admin/Dimensiones';
+import { SolicitudesEdicion } from './pages/admin/SolicitudesEdicion';
 import { Login } from './pages/Login';
 import { NoEncontrada } from './pages/NoEncontrada';
 import { AsistenciaMateria } from './pages/profesor/AsistenciaMateria';
@@ -63,7 +64,10 @@ export const rutas = [
       },
       {
         element: <RutaProtegida roles={['ADMINISTRADOR']} />,
-        children: [{ path: '/admin/dimensiones', element: <Dimensiones /> }],
+        children: [
+          { path: '/admin/dimensiones', element: <Dimensiones /> },
+          { path: '/admin/solicitudes-edicion', element: <SolicitudesEdicion /> },
+        ],
       },
       {
         element: <RutaProtegida roles={['PADRE']} />,

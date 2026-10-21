@@ -51,6 +51,12 @@ export const MENU_POR_ROL: Record<Rol, OpcionMenu[]> = {
       icono: 'ajustes',
       cy: 'menu-dimensiones',
     },
+    {
+      a: '/admin/solicitudes-edicion',
+      texto: 'Solicitudes de edición',
+      icono: 'portapapeles',
+      cy: 'menu-solicitudes-edicion',
+    },
   ],
   PADRE: [
     { a: '/padre/boletin', texto: 'Boletín de mi hijo', icono: 'documento', cy: 'menu-boletin' },

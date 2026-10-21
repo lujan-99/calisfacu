@@ -61,7 +61,8 @@ api/src/
                   [crítico] dimensiones por gestión: suman 100; bloqueadas  US-18 (T-015)
                   si la gestión tiene notas (GET/PUT /api/gestiones/:id/dimensiones)
                   historial del estudiante por trimestre (GET /api/estudiantes/:id/historial, D12)  US-03 (T-034)
-    auditoria/    [crítico] corrección con motivo e historial             US-04
+    auditoria/    [crítico] corrección con motivo e historial; solicitudes US-04
+                  de edición que aprueba el administrador (D16)
     asistencia/   asistencia por clase y porcentaje por estudiante        US-19 (T-036)
     entregas/     control de entrega de notas por materia y trimestre     US-10 (T-040)
                   (GET /api/entregas, POST /api/entregas/materias/:id/entregar, D13)
@@ -70,7 +71,7 @@ api/src/
     academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, academico, esquema) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)
@@ -123,6 +124,8 @@ erDiagram
   usuarios ||--o{ registros_auditoria : autor
   materias ||--o{ asistencias : ""
   estudiantes ||--o{ asistencias : ""
+  actividades ||--o{ solicitudes_edicion : "pedidas por el profesor"
+  solicitudes_edicion ||--|{ solicitudes_edicion_estudiantes : "una corrección cada uno"
   materias ||--o{ entregas_notas : "una por trimestre"
   trimestres ||--o{ entregas_notas : ""
 ```
@@ -134,6 +137,8 @@ Decisiones del modelo:
 - Restricciones en la base, además de la validación de la API: nota entre 1 y 100 (D1), puntaje de dimensión positivo, número
   de trimestre entre 1 y 3, una nota por estudiante y actividad, un profesor por materia.
 - La nota trimestral **no se guarda**: se calcula al consultarla, así que una corrección se refleja de inmediato.
+- `solicitudes_edicion_estudiantes.usada_en` se llena en la misma transacción que la corrección: cada aprobación
+  habilita una sola corrección (D16). Un rechazo exige observación (`CHECK`).
 - `entregas_notas` tiene una fila por materia y trimestre (`UNIQUE`): la entrega no se repite ni se deshace (US-10, D13).
 - `estudiantes.ci` (cédula de identidad) es opcional y no identifica al estudiante (D15).
 - `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos

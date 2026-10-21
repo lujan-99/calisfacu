@@ -109,6 +109,16 @@ describe('Autorización de las rutas de notas (M09, RNF-04)', () => {
       url: `/api/importaciones/actividades/${e.actividades.saber1.id}/confirmar`,
     },
     {
+      nombre: 'pedir la edición de una nota registrada',
+      metodo: 'post' as const,
+      url: '/api/solicitudes-edicion',
+      cuerpo: {
+        actividadId: e.actividades.ser.id,
+        estudianteIds: [e.estudiantes[0].id],
+        motivo: 'prueba',
+      },
+    },
+    {
       nombre: 'configurar dimensiones (solo administrador)',
       metodo: 'put' as const,
       url: `/api/gestiones/${e.t1.gestion.id}/dimensiones`,
@@ -201,7 +211,7 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
 
   afterAll(() => app.close());
 
-  type Metodo = 'get' | 'post' | 'put' | 'delete';
+  type Metodo = 'get' | 'post' | 'put' | 'patch' | 'delete';
   const secretariaYAdmin = ['profesor', 'otro', 'padre'];
   const soloAdmin = ['profesor', 'secretaria', 'padre'];
   const rutas = (): { metodo: Metodo; url: string; noPermitidos: string[] }[] => [
@@ -216,6 +226,17 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
     { metodo: 'put', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
     { metodo: 'delete', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
     { metodo: 'get', url: '/api/entregas', noPermitidos: ['profesor', 'otro', 'padre'] },
+    { metodo: 'get', url: '/api/solicitudes-edicion', noPermitidos: ['secretaria', 'padre'] },
+    {
+      metodo: 'patch',
+      url: '/api/solicitudes-edicion/1/aprobar',
+      noPermitidos: ['profesor', 'otro', 'secretaria', 'padre'],
+    },
+    {
+      metodo: 'patch',
+      url: '/api/solicitudes-edicion/1/rechazar',
+      noPermitidos: ['profesor', 'otro', 'secretaria', 'padre'],
+    },
     // Ningún profesor del escenario da clases al curso de e.ajeno (US-03, criterio 2).
     {
       metodo: 'get',

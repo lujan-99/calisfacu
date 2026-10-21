@@ -9,7 +9,15 @@ import {
   UnidadEducativa,
   VinculoPadre,
 } from './academico.entity';
-import { Actividad, Asistencia, EntregaNotas, Nota, RegistroAuditoria } from './evaluacion.entity';
+import {
+  Actividad,
+  Asistencia,
+  EntregaNotas,
+  Nota,
+  RegistroAuditoria,
+  SolicitudEdicion,
+  SolicitudEdicionEstudiante,
+} from './evaluacion.entity';
 import { Usuario } from './usuario.entity';
 
 export * from './academico.entity';
@@ -33,4 +41,6 @@ export const ENTIDADES = [
   RegistroAuditoria,
   Asistencia,
   EntregaNotas,
+  SolicitudEdicion,
+  SolicitudEdicionEstudiante,
 ];

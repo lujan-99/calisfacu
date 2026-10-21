@@ -119,6 +119,10 @@ DECISIONES = [
          'Sí, opcional, a pedido del equipo de frontend (no la exige ninguna historia). De 5 a 15 caracteres: números, letras, espacio o guion, en mayúsculas. '
          'No identifica al estudiante (lo hace el RUDE, D10) y no se valida contra el SEGIP. La ven la secretaria, el administrador y el profesor en el historial.',
          '`DatosEstudianteDto.ci`, columna `estudiantes.ci` (US-18)'],
+        ['D16', '¿Quién autoriza corregir una nota ya registrada?',
+         'El administrador. El profesor pide una solicitud de edición con motivo para uno o más estudiantes de una actividad; el administrador la aprueba o la rechaza con una observación. '
+         'Cada estudiante aprobado habilita una sola corrección (con su motivo, US-04), que la usa en la misma transacción que la auditoría. No se pide en un trimestre cerrado.',
+         '`SolicitudesService`, `AuditoriaService.corregir` (US-04)'],
     ]), '',
 ]
 

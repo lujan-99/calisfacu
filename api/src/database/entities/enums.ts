@@ -22,3 +22,9 @@ export enum EstadoAsistencia {
   AUSENTE = 'AUSENTE',
   LICENCIA = 'LICENCIA',
 }
+
+export enum EstadoSolicitud {
+  PENDIENTE = 'PENDIENTE',
+  APROBADA = 'APROBADA',
+  RECHAZADA = 'RECHAZADA',
+}

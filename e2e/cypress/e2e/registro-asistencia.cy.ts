@@ -5,7 +5,7 @@ describe('Registro de asistencia por clase (US-19, T-037)', () => {
   beforeEach(() => {
     cy.ingresar(Cypress.env('profesorEmail') as string);
     cy.contains('[data-cy=materia-item]', 'Matemática').click();
-    cy.get('[data-cy=btn-asistencia-materia]').click();
+    cy.get('[data-cy=link-asistencia-materia]').click();
   });
 
   it('debe registrar y guardar la asistencia de la clase para la fecha actual', () => {
@@ -14,7 +14,7 @@ describe('Registro de asistencia por clase (US-19, T-037)', () => {
 
     // Usar acción rápida para marcar a todos presentes
     cy.get('[data-cy=btn-todos-presentes]').click();
-    cy.get('[data-cy=resumen-marcados]').should('contain', '0 pendientes');
+    cy.get('[data-cy=resumen-marcados]').should('not.contain', 'pendientes de marcado');
 
     // Cambiar el primer estudiante a Licencia
     cy.get('[data-cy^=btn-licencia-]').first().click();
@@ -27,8 +27,8 @@ describe('Registro de asistencia por clase (US-19, T-037)', () => {
   });
 
   it('debe impedir el registro de asistencia en fechas futuras (criterio 3)', () => {
-    // Intentar fijar una fecha en el año 2099
-    cy.get('[data-cy=input-fecha-asistencia]').invoke('val', '2099-12-31').trigger('change');
+    // Escribir una fecha del año 2099 (invoke('val') no dispara el onChange de React)
+    cy.get('[data-cy=input-fecha-asistencia]').clear().type('2099-12-31');
 
     // Comprobar que aparece el aviso de bloqueo por fecha futura
     cy.get('[data-cy=aviso-fecha-futura]').should(

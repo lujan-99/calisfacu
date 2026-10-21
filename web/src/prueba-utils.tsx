@@ -16,7 +16,8 @@ export const USUARIOS: Record<Rol, api.Usuario> = {
 };
 
 /** Renderiza la aplicación en `ruta` con la sesión del rol indicado (o sin sesión). */
-export function abrir(ruta: string, rol?: Rol) {
+/** La ruta puede llevar estado de navegación, como el aviso con el que vuelve la importación. */
+export function abrir(ruta: string | { pathname: string; state: unknown }, rol?: Rol) {
   vi.spyOn(api, 'obtenerInstitucion').mockResolvedValue({
     nombre: 'Unidad Educativa Juana Azurduy',
     codigoSie: '80980123',

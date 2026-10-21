@@ -194,6 +194,15 @@ describe('Planilla de notas (US-01, criterios 1 a 3)', () => {
     expect(screen.getByText('Todas las notas están registradas')).toBeInTheDocument();
   });
 
+  it('debe mostrar el aviso con el que vuelve la importación desde Excel (US-05)', async () => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planilla());
+    abrir(
+      { pathname: ruta, state: { mensajeExito: 'Se importaron 3 calificaciones' } },
+      'PROFESOR',
+    );
+    expect(await screen.findByText('Se importaron 3 calificaciones')).toBeInTheDocument();
+  });
+
   it('debe mostrar el rechazo de la API sin perder lo escrito', async () => {
     vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planilla());
     vi.spyOn(api, 'guardarPlanilla').mockRejectedValue(

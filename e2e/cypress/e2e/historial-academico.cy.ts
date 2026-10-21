@@ -5,7 +5,7 @@ describe('Historial académico anual del estudiante (US-03, T-035)', () => {
   beforeEach(() => {
     cy.ingresar(Cypress.env('profesorEmail') as string);
     cy.contains('[data-cy=materia-item]', 'Matemática').click();
-    cy.get('[data-cy=btn-ver-notas-trimestre]').click();
+    cy.get('[data-cy=link-notas-trimestre]').click();
   });
 
   it('debe acceder al historial del estudiante desde la lista de notas trimestrales', () => {
@@ -24,7 +24,7 @@ describe('Historial académico anual del estudiante (US-03, T-035)', () => {
 
     // Comprobar pestañas/tarjetas de trimestres cronológicos (criterio 1)
     cy.get('[data-cy=resumen-cronologico-trimestres]').should('be.visible');
-    cy.get('[data-cy=tab-trimestre-1]').should('exist').and('contain', '1er');
+    cy.get('[data-cy=tab-trimestre-1]').should('exist').and('contain', '1.er');
 
     // Comprobar tabla de calificaciones detalladas por dimensión
     cy.get('[data-cy=tabla-historial-trimestre]').should('be.visible');

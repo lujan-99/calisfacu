@@ -1,5 +1,5 @@
 import { useEffect, useState, type KeyboardEvent } from 'react';
-import { Link, useBlocker, useParams } from 'react-router-dom';
+import { Link, useBlocker, useLocation, useParams } from 'react-router-dom';
 import { Dialogo } from '../../componentes/Dialogo';
 import { Aviso, Cargando, ErrorCarga } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
@@ -38,7 +38,11 @@ export function Planilla() {
   const [tocados, setTocados] = useState<Record<number, boolean>>({});
   const [intento, setIntento] = useState(false);
   const [guardando, setGuardando] = useState(false);
-  const [mensaje, setMensaje] = useState<Mensaje>(null);
+  // La importación desde Excel vuelve aquí con el resumen de lo guardado (US-05).
+  const { state } = useLocation() as { state: { mensajeExito?: string } | null };
+  const [mensaje, setMensaje] = useState<Mensaje>(() =>
+    state?.mensajeExito ? { tipo: 'exito', texto: state.mensajeExito } : null,
+  );
 
   // Estados para corrección auditable y auditoría de notas (US-04)
   const [estudianteACorregir, setEstudianteACorregir] = useState<NotaElegida | null>(null);

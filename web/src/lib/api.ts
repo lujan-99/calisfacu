@@ -265,7 +265,7 @@ export interface RegistroAuditoriaNota {
   valorAnterior: number | null;
   valorNuevo: number;
   motivo: string | null;
-  origen: 'REGISTRO' | 'CORRECCION';
+  origen: 'REGISTRO' | 'CORRECCION' | 'IMPORTACION';
 }
 
 export interface ResultadoCorreccion {

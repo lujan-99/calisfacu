@@ -19,7 +19,7 @@ export interface RegistroAuditoriaDetallado {
   valorAnterior: number | null;
   valorNuevo: number;
   motivo: string;
-  origen: 'REGISTRO' | 'CORRECCION';
+  origen: 'REGISTRO' | 'CORRECCION' | 'IMPORTACION';
 }
 
 export interface DatosCorreccion {

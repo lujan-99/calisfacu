@@ -28,6 +28,6 @@ Depende de US-01. Las notas importadas pasan por la misma validación y auditor�
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

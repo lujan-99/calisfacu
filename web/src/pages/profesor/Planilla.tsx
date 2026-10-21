@@ -388,6 +388,15 @@ export function Planilla() {
           </span>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <Link
+            to={`/profesor/materias/${materiaId}/actividades/${id}/importar`}
+            className="boton boton-secundario"
+            data-cy="btn-importar-excel"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Icono nombre="documento" tam={16} />
+            Importar desde Excel
+          </Link>
           <button
             type="button"
             className="boton boton-secundario"

@@ -417,7 +417,7 @@ describe('Corrección auditable de notas (US-04, T-032, RNF-04)', () => {
     expect(
       await screen.findByText(/Historial de Auditoría — Apaza Condori, Miguel/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Revisión formal con el estudiante/)).toBeInTheDocument();
+    expect(await screen.findByText(/Revisión formal con el estudiante/)).toBeInTheDocument();
     expect(screen.getByText(/Registro inmutable de solo lectura/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
     // Comprobar que no hay botones de editar ni eliminar la auditoría (solo lectura)
@@ -546,5 +546,114 @@ describe('Historial académico del estudiante (US-03, T-035)', () => {
       'href',
       '/profesor/materias',
     );
+  });
+});
+
+describe('Importación desde Excel (US-05, T-039)', () => {
+  const planillaImportacion: api.Planilla = {
+    actividad: {
+      id: 5,
+      nombre: 'Examen Diagnóstico',
+      dimension: 'Saber',
+      materia: 'Matemática',
+      materiaId: 7,
+      curso: 'Secundaria 4.º «A»',
+      trimestre: { id: 23, numero: 3, cerrado: false },
+    },
+    filas: [
+      { estudianteId: 1, estudiante: 'Apaza Condori, Miguel', valor: null },
+      { estudianteId: 2, estudiante: 'Choque Huanca, Rosa', valor: null },
+      { estudianteId: 3, estudiante: 'Flores Quispe, Daniela', valor: null },
+    ],
+  };
+
+  const estudiantesCatalogo: api.Estudiante[] = [
+    {
+      id: 1,
+      rude: '809800012026001',
+      ci: '12345678',
+      nombres: 'Miguel',
+      apellidos: 'Apaza Condori',
+      cursoId: 1,
+    },
+    {
+      id: 2,
+      rude: '809800012026002',
+      ci: '87654321',
+      nombres: 'Rosa',
+      apellidos: 'Choque Huanca',
+      cursoId: 1,
+    },
+    {
+      id: 3,
+      rude: '809800012026003',
+      ci: '11223344',
+      nombres: 'Daniela',
+      apellidos: 'Flores Quispe',
+      cursoId: 1,
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaImportacion);
+    vi.spyOn(api, 'listarEstudiantes').mockResolvedValue(estudiantesCatalogo);
+  });
+
+  it('debe mostrar la pantalla de importación con instrucciones y opción de descarga de plantilla (US-05, criterio 1)', async () => {
+    abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
+    expect(
+      await screen.findByRole('heading', { name: /Importar Notas desde Excel/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Descargar plantilla Excel/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Pegar celdas copiadas desde Excel')).toBeInTheDocument();
+  });
+
+  it('debe procesar texto pegado de Excel, generar vista previa separando válidas y errores (US-05, criterio 1 y 2)', async () => {
+    abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
+    await screen.findByRole('heading', { name: /Importar Notas desde Excel/i });
+
+    const textoPegado = `RUDE\tEstudiante\tNota\n809800012026001\tApaza Condori, Miguel\t88\n999999999999999\tDesconocido\t75\n809800012026002\tChoque Huanca, Rosa\t105`;
+
+    const areaTexto = screen.getByLabelText('Pegar celdas copiadas desde Excel');
+    fireEvent.change(areaTexto, { target: { value: textoPegado } });
+    fireEvent.click(screen.getByRole('button', { name: /Analizar filas copiadas/i }));
+
+    // Ver métricas y pestañas
+    expect(await screen.findByRole('button', { name: /Válidas \(1\)/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Observadas \(2\)/i })).toBeInTheDocument();
+
+    // Fila válida visible
+    expect(screen.getByText('Apaza Condori, Miguel')).toBeInTheDocument();
+    expect(screen.getByText('88')).toBeInTheDocument();
+
+    // Cambiar a pestaña de observaciones
+    fireEvent.click(screen.getByRole('button', { name: /Observadas \(2\)/i }));
+    expect(screen.getByText('999999999999999')).toBeInTheDocument();
+    expect(screen.getByText(/no existe o no pertenece a este curso/i)).toBeInTheDocument();
+    expect(screen.getByText(/La nota debe estar entre 1 y 100/i)).toBeInTheDocument();
+  });
+
+  it('debe confirmar la importación con origen IMPORTACION y registrar planilla (US-05, criterio 3)', async () => {
+    const registrarSpy = vi.spyOn(api, 'guardarPlanilla').mockResolvedValue({
+      guardadas: 1,
+    });
+
+    abrir('/profesor/materias/7/actividades/5/importar', 'PROFESOR');
+    await screen.findByRole('heading', { name: /Importar Notas desde Excel/i });
+
+    const textoPegado = `RUDE\tEstudiante\tNota\n809800012026001\tApaza Condori, Miguel\t88`;
+
+    const areaTexto = screen.getByLabelText('Pegar celdas copiadas desde Excel');
+    fireEvent.change(areaTexto, { target: { value: textoPegado } });
+    fireEvent.click(screen.getByRole('button', { name: /Analizar filas copiadas/i }));
+
+    const btnConfirmar = await screen.findByRole('button', {
+      name: /Confirmar e Importar/i,
+    });
+    fireEvent.click(btnConfirmar);
+
+    await waitFor(() => {
+      expect(registrarSpy).toHaveBeenCalledWith(5, [{ estudianteId: 1, valor: 88 }]);
+    });
   });
 });

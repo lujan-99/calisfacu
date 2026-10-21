@@ -10,7 +10,13 @@ const ROLES = [
     rol: 'Secretaria',
     email: 'secretariaEmail',
     inicio: '/secretaria/cursos',
-    menu: ['Cursos', 'Estudiantes', 'Materias y asignaciones', 'Unidad educativa'],
+    menu: [
+      'Cursos',
+      'Estudiantes',
+      'Materias y asignaciones',
+      'Control de entregas',
+      'Unidad educativa',
+    ],
   },
   {
     rol: 'Administrador',

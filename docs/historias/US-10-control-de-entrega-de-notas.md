@@ -1,6 +1,6 @@
 # US-10 · Control de Entrega de Notas
 
-- **Sprint:** Sprint 2 · **Prioridad:** MEDIA · **Puntos:** valor 5, esfuerzo 3 · **Estado:** Planificada
+- **Sprint:** Sprint 2 · **Prioridad:** MEDIA · **Puntos:** valor 5, esfuerzo 3 · **Estado:** En proceso
 
 ## Historia
 

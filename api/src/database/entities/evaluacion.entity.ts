@@ -102,3 +102,23 @@ export class Asistencia {
   @Column({ type: 'enum', enum: EstadoAsistencia, enumName: 'estado_asistencia' })
   estado: EstadoAsistencia;
 }
+
+/** Entrega de las notas de una materia en un trimestre (US-10): la marca el profesor asignado, una sola vez. */
+@Entity('entregas_notas')
+@Unique(['materia', 'trimestre'])
+export class EntregaNotas {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Materia, { nullable: false })
+  materia: Materia;
+
+  @ManyToOne(() => Trimestre, { nullable: false })
+  trimestre: Trimestre;
+
+  @ManyToOne(() => Usuario, { nullable: false })
+  profesor: Usuario;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  entregadoEn: Date;
+}

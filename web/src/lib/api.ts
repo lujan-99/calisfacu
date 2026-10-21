@@ -384,7 +384,7 @@ export interface EntregaMateria {
   materia: string;
   cursoId: number;
   curso: string;
-  profesorId: number;
+  profesorId: number | null;
   profesor: string;
   trimestreId: number;
   trimestreNumero: number;

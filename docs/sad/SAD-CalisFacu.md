@@ -63,10 +63,12 @@ api/src/
                   historial del estudiante por trimestre (GET /api/estudiantes/:id/historial, D12)  US-03 (T-034)
     auditoria/    [crítico] corrección con motivo e historial             US-04
     asistencia/   asistencia por clase y porcentaje por estudiante        US-19 (T-036)
+    entregas/     control de entrega de notas por materia y trimestre     US-10 (T-040)
+                  (GET /api/entregas, POST /api/entregas/materias/:id/entregar, D13)
     academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, academico, esquema) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, academico, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)
@@ -119,6 +121,8 @@ erDiagram
   usuarios ||--o{ registros_auditoria : autor
   materias ||--o{ asistencias : ""
   estudiantes ||--o{ asistencias : ""
+  materias ||--o{ entregas_notas : "una por trimestre"
+  trimestres ||--o{ entregas_notas : ""
 ```
 
 Decisiones del modelo:
@@ -128,6 +132,7 @@ Decisiones del modelo:
 - Restricciones en la base, además de la validación de la API: nota entre 1 y 100 (D1), puntaje de dimensión positivo, número
   de trimestre entre 1 y 3, una nota por estudiante y actividad, un profesor por materia.
 - La nota trimestral **no se guarda**: se calcula al consultarla, así que una corrección se refleja de inmediato.
+- `entregas_notas` tiene una fila por materia y trimestre (`UNIQUE`): la entrega no se repite ni se deshace (US-10, D13).
 - `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos
   de la misma gestión (US-18, criterio 3; D10). La fila guarda también la gestión del curso para que la base lo exija.
 - `unidades_educativas` guarda los colores de la web (`CHECK` de formato `#RRGGBB`) y el logo (`bytea`, máximo 256 KB):

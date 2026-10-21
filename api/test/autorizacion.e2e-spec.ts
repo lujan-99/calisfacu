@@ -83,6 +83,17 @@ describe('Autorización de las rutas de notas (M09, RNF-04)', () => {
       url: `/api/asistencias/materias/${e.matematica.id}/porcentajes`,
     },
     {
+      nombre: 'entregar las notas de la materia',
+      metodo: 'post' as const,
+      url: `/api/entregas/materias/${e.matematica.id}/entregar`,
+      cuerpo: { trimestreId: e.t1.id },
+    },
+    {
+      nombre: 'ver el estado de entrega de la materia',
+      metodo: 'get' as const,
+      url: `/api/entregas/materias/${e.matematica.id}?trimestreId=${e.t1.id}`,
+    },
+    {
       nombre: 'configurar dimensiones (solo administrador)',
       metodo: 'put' as const,
       url: `/api/gestiones/${e.t1.gestion.id}/dimensiones`,
@@ -189,6 +200,7 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
     { metodo: 'post', url: '/api/estudiantes', noPermitidos: secretariaYAdmin },
     { metodo: 'put', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
     { metodo: 'delete', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/entregas', noPermitidos: ['profesor', 'otro', 'padre'] },
     // Ningún profesor del escenario da clases al curso de e.ajeno (US-03, criterio 2).
     {
       metodo: 'get',

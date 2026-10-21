@@ -107,6 +107,10 @@ DECISIONES = [
          'Promedio del trimestre = promedio de las notas de las materias, con dos decimales (pendiente si falta alguna); promedio anual = promedio de los trimestres con nota; '
          'tendencia = comparación de los dos últimos trimestres con nota; en riesgo si el promedio anual es menor que 51. Son indicadores, no notas oficiales (las oficiales son D2 y D3 por materia).',
          '`CalculoService.resumenAnual`, `HistorialService` (US-03)'],
+        ['D13', '¿Cómo funciona la entrega de notas de una materia?',
+         'El profesor asignado la entrega una sola vez por trimestre, cuando no falta ninguna nota del curso, y no se puede deshacer; no se entrega en un trimestre cerrado. '
+         'Después de entregar, las correcciones siguen por US-04 con su auditoría. Si la secretaria no indica el trimestre, el control muestra el primero abierto de la última gestión.',
+         '`requisitosEntrega`, `EntregasService` (US-10)'],
     ]), '',
 ]
 

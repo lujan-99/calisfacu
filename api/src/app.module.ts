@@ -7,6 +7,7 @@ import { AsistenciaModule } from './modules/asistencia/asistencia.module';
 import { AuditoriaModule } from './modules/auditoria/auditoria.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CalculoModule } from './modules/calculo/calculo.module';
+import { EntregasModule } from './modules/entregas/entregas.module';
 import { NotasModule } from './modules/notas/notas.module';
 import { SaludModule } from './modules/salud/salud.module';
 
@@ -21,6 +22,7 @@ import { SaludModule } from './modules/salud/salud.module';
     AuditoriaModule,
     CalculoModule,
     AsistenciaModule,
+    EntregasModule,
   ],
 })
 export class AppModule {}

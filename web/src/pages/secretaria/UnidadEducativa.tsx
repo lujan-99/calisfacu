@@ -118,6 +118,33 @@ export function UnidadEducativa() {
               </Aviso>
             )}
             {errorApi && <Aviso tipo="error">{errorApi}</Aviso>}
+            {/* Burbuja de Integridad Institucional y Advertencia de Impacto */}
+            <div
+              className="burbuja-impacto-institucion"
+              style={{
+                backgroundColor: '#f8fafc',
+                border: '1px solid var(--borde)',
+                borderRadius: 8,
+                padding: '12px 14px',
+                marginBottom: 16,
+                display: 'flex',
+                gap: 12,
+                fontSize: 13,
+                lineHeight: 1.45,
+                color: 'var(--texto-2)',
+              }}
+            >
+              <Icono nombre="escudo" tam={22} />
+              <div>
+                <strong style={{ color: 'var(--texto-1)', display: 'block', marginBottom: 2 }}>
+                  Integridad de la Acreditación Oficial (Técnica de Burbuja)
+                </strong>
+                Si corrige el nombre de la unidad educativa o el código SIE por error de tipeo,
+                estos datos actualizarán de inmediato los encabezados de todos los boletines
+                trimestrales y centralizadores oficiales emitidos.
+              </div>
+            </div>
+
             <Campo etiqueta="Nombre" error={errores.nombre}>
               <input
                 data-cy="ue-nombre"
@@ -127,6 +154,18 @@ export function UnidadEducativa() {
                 aria-invalid={!!errores.nombre}
                 onChange={(e) => setNombre(e.target.value)}
               />
+              {carga.datos && carga.datos.nombre && nombre.trim() !== carga.datos.nombre && (
+                <span
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    color: '#b45309',
+                    marginTop: 4,
+                  }}
+                >
+                  Denominación anterior registrada: «{carga.datos.nombre}»
+                </span>
+              )}
             </Campo>
             <Campo
               etiqueta="Código SIE"

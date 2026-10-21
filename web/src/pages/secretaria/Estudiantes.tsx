@@ -15,7 +15,33 @@ import {
 import { useCarga } from '../../lib/useCarga';
 import { textoError, useMensaje } from '../../lib/useMensaje';
 
-type Formulario = DatosEstudiante & { id?: number };
+type Formulario = DatosEstudiante & { id?: number; ci?: string };
+
+const CLAVE_CI = 'calisfacu_estudiantes_ci_v1';
+
+function cargarCiStorage(): Record<number, string> {
+  try {
+    const raw = localStorage.getItem(CLAVE_CI);
+    return raw ? (JSON.parse(raw) as Record<number, string>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function guardarCiEstudiante(id: number, ci?: string) {
+  if (!ci || !ci.trim()) return;
+  try {
+    const current = cargarCiStorage();
+    current[id] = ci.trim().toUpperCase();
+    localStorage.setItem(CLAVE_CI, JSON.stringify(current));
+  } catch {
+    // Si falla localStorage no bloqueamos el flujo
+  }
+}
+
+function obtenerCiEstudiante(id: number): string | undefined {
+  return cargarCiStorage()[id];
+}
 
 /** Espera a que el usuario deje de escribir antes de buscar. */
 function useRetardo<T>(valor: T, ms = 300): T {
@@ -30,6 +56,8 @@ function useRetardo<T>(valor: T, ms = 300): T {
 /**
  * Estudiantes de la gestión más reciente (US-18, criterio 3; T-017). El código RUDE no se repite en una gestión
  * (decisión D10): si el estudiante ya está inscrito en otro curso, la API lo rechaza y el mensaje dice dónde está.
+ * Ahora incluye registro de Cédula de Identidad (CI) y advertencia preventiva por técnica de burbuja para evitar
+ * pérdidas accidentales de historial de notas.
  */
 export function Estudiantes() {
   const { carga: cursos } = useCarga(() => listarCursos({}), []);
@@ -42,7 +70,7 @@ export function Estudiantes() {
   );
   const [mensaje, setMensaje] = useMensaje();
   const [form, setForm] = useState<Formulario | null>(null);
-  const [errores, setErrores] = useState<Partial<Record<keyof DatosEstudiante, string>>>({});
+  const [errores, setErrores] = useState<Partial<Record<keyof DatosEstudiante | 'ci', string>>>({});
   const [errorForm, setErrorForm] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
   const [aBorrar, setABorrar] = useState<Estudiante | null>(null);
@@ -61,6 +89,9 @@ export function Estudiantes() {
     if (!f.nombres.trim()) e.nombres = 'Escriba los nombres';
     if (!f.apellidos.trim()) e.apellidos = 'Escriba los apellidos';
     if (!f.cursoId) e.cursoId = 'Seleccione un curso';
+    if (f.ci && f.ci.trim() && !/^[0-9A-Z -]{5,15}$/i.test(f.ci.trim())) {
+      e.ci = 'El CI debe tener de 5 a 15 caracteres (números, letras y guion)';
+    }
     setErrores(e);
     return Object.keys(e).length === 0;
   }
@@ -70,9 +101,12 @@ export function Estudiantes() {
     if (!form || !validar(form)) return;
     setGuardando(true);
     setErrorForm(null);
-    const { id, ...datos } = form;
+    const { id, ci, ...datos } = form;
     try {
       const est = id ? await actualizarEstudiante(id, datos) : await crearEstudiante(datos);
+      if (ci) {
+        guardarCiEstudiante(est.id, ci);
+      }
       setForm(null);
       setMensaje(`Se guardó a ${est.apellidos}, ${est.nombres}`);
       recargar();
@@ -218,6 +252,9 @@ export function Estudiantes() {
                   <th scope="col">Apellidos</th>
                   <th scope="col">Nombres</th>
                   <th scope="col" className="ocultar-celular">
+                    CI
+                  </th>
+                  <th scope="col" className="ocultar-celular">
                     RUDE
                   </th>
                   <th scope="col">Curso</th>
@@ -234,6 +271,11 @@ export function Estudiantes() {
                     </th>
                     <td>{e.nombres}</td>
                     <td className="ocultar-celular" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      <span className="insignia insignia-plomo" data-cy="estudiante-ci-badge">
+                        {obtenerCiEstudiante(e.id) || '—'}
+                      </span>
+                    </td>
+                    <td className="ocultar-celular" style={{ fontVariantNumeric: 'tabular-nums' }}>
                       <span className="insignia insignia-plomo">{e.codigoRude}</span>
                     </td>
                     <td>
@@ -245,15 +287,17 @@ export function Estudiantes() {
                         className="boton-icono"
                         data-cy="btn-editar-estudiante"
                         aria-label={`Editar a ${e.apellidos}, ${e.nombres}`}
-                        onClick={() =>
+                        onClick={(ev) => {
+                          ev.stopPropagation();
                           abrir({
                             id: e.id,
                             cursoId: e.curso.id,
                             codigoRude: e.codigoRude,
+                            ci: obtenerCiEstudiante(e.id) ?? '',
                             nombres: e.nombres,
                             apellidos: e.apellidos,
-                          })
-                        }
+                          });
+                        }}
                       >
                         <Icono nombre="lapiz" tam={18} />
                       </button>
@@ -262,7 +306,8 @@ export function Estudiantes() {
                         className="boton-icono peligro"
                         data-cy="btn-eliminar-estudiante"
                         aria-label={`Eliminar a ${e.apellidos}, ${e.nombres}`}
-                        onClick={() => {
+                        onClick={(ev) => {
+                          ev.stopPropagation();
                           setErrorPagina(null);
                           setABorrar(e);
                         }}
@@ -311,6 +356,20 @@ export function Estudiantes() {
                   maxLength={80}
                   aria-invalid={!!errores.nombres}
                   onChange={(e) => setForm({ ...form, nombres: e.target.value })}
+                />
+              </Campo>
+              <Campo
+                etiqueta="Cédula de Identidad (CI)"
+                error={errores.ci}
+                ayuda="Cédula de identidad (ej. 7654321 o 7654321 LP)"
+              >
+                <input
+                  data-cy="estudiante-ci"
+                  value={form.ci ?? ''}
+                  maxLength={15}
+                  placeholder="Número de CI"
+                  aria-invalid={!!errores.ci}
+                  onChange={(e) => setForm({ ...form, ci: e.target.value.toUpperCase() })}
                 />
               </Campo>
               <Campo
@@ -377,7 +436,33 @@ export function Estudiantes() {
           <strong>
             {aBorrar.apellidos}, {aBorrar.nombres}
           </strong>
-          .
+          .{/* Burbuja preventiva de impacto académico */}
+          <span
+            className="burbuja-impacto-advertencia"
+            style={{
+              display: 'flex',
+              gap: 10,
+              alignItems: 'flex-start',
+              backgroundColor: '#fff1f2',
+              border: '1px solid #fecdd3',
+              borderRadius: 8,
+              padding: '12px 14px',
+              marginTop: 12,
+              fontSize: 13,
+              color: '#9f1239',
+              lineHeight: 1.4,
+              textAlign: 'left',
+            }}
+          >
+            <Icono nombre="escudo" tam={20} />
+            <span>
+              <strong style={{ display: 'block', marginBottom: 2 }}>
+                Advertencia de Impacto Académico (Técnica de Burbuja)
+              </strong>
+              Eliminar a este estudiante desvinculará sus registros y calificaciones en los cursos
+              de la gestión. Realice esta operación únicamente en caso de error de registro inicial.
+            </span>
+          </span>
         </ConfirmarBorrado>
       )}
     </>

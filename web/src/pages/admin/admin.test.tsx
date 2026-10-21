@@ -72,3 +72,32 @@ describe('Boletín del padre (US-11, Sprint 3)', () => {
     expect(await screen.findByText('El boletín todavía no está disponible')).toBeInTheDocument();
   });
 });
+
+describe('Bandeja de Solicitudes de Edición (US-04)', () => {
+  it('debe listar tickets creados y permitir al administrador aprobarlos', async () => {
+    localStorage.clear();
+    const { crearSolicitud } = await import('../../lib/solicitudesEdicion');
+    crearSolicitud({
+      profesorId: 10,
+      profesorNombre: 'Rosa Mamani Condori',
+      actividadId: 1,
+      actividadNombre: 'Examen de Álgebra',
+      materiaNombre: 'Matemática',
+      cursoNombre: 'Secundaria 4.º «A»',
+      dimension: 'Saber',
+      estudiantes: [{ estudianteId: 2, estudianteNombre: 'Choque Rosa', notaActual: 45 }],
+      motivo: 'Verificación de hoja de respuestas presencial',
+    });
+
+    abrir('/admin/solicitudes-edicion', 'ADMINISTRADOR');
+    expect(await screen.findByText('Rosa Mamani Condori')).toBeInTheDocument();
+    expect(screen.getByText('Examen de Álgebra (Saber)')).toBeInTheDocument();
+    expect(screen.getByText('Pendiente')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Aprobar' }));
+    expect(
+      await screen.findByText(/aprobado\. Se habilitó la edición de notas\./),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Aprobada')).toBeInTheDocument();
+  });
+});

@@ -46,4 +46,13 @@ export class AccesoNotasService {
       throw new ForbiddenException('Usted no es el profesor asignado a esta materia');
     }
   }
+
+  /** El profesor ve a un estudiante solo si dicta al menos una materia de su curso (US-03, criterio 2). */
+  async verificarEstudiante(cursoId: number, usuario: UsuarioToken) {
+    if (usuario.rol !== Rol.PROFESOR) return;
+    const dicta = await this.asignaciones.exists({
+      where: { materia: { curso: { id: cursoId } }, profesor: { id: usuario.id } },
+    });
+    if (!dicta) throw new ForbiddenException('Usted no da clases a este estudiante');
+  }
 }

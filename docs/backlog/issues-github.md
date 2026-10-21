@@ -38,7 +38,7 @@
 | T-031 | [#31](https://github.com/lujan-99/calisfacu/issues/31) | Sprint 2 | US-04    | Lujan       | Galvan  | En revisión |
 | T-032 | [#32](https://github.com/lujan-99/calisfacu/issues/32) | Sprint 2 | US-04    | Galvan      | Lujan   | Por hacer   |
 | T-033 | [#33](https://github.com/lujan-99/calisfacu/issues/33) | Sprint 2 | US-04    | Galvan      | Lujan   | Por hacer   |
-| T-034 | [#34](https://github.com/lujan-99/calisfacu/issues/34) | Sprint 2 | US-03    | Lujan       | Galvan  | Por hacer   |
+| T-034 | [#34](https://github.com/lujan-99/calisfacu/issues/34) | Sprint 2 | US-03    | Lujan       | Galvan  | En revisión |
 | T-035 | [#35](https://github.com/lujan-99/calisfacu/issues/35) | Sprint 2 | US-03    | Galvan      | Lujan   | Por hacer   |
 | T-036 | [#36](https://github.com/lujan-99/calisfacu/issues/36) | Sprint 2 | US-19    | Lujan       | Galvan  | En revisión |
 | T-037 | [#37](https://github.com/lujan-99/calisfacu/issues/37) | Sprint 2 | US-19    | Galvan      | Lujan   | Por hacer   |

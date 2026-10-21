@@ -1,6 +1,6 @@
 # US-03 · Historial Académico del Estudiante
 
-- **Sprint:** Sprint 2 · **Prioridad:** ALTA · **Puntos:** valor 10, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 2 · **Prioridad:** ALTA · **Puntos:** valor 10, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 

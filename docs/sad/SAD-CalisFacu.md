@@ -60,12 +60,13 @@ api/src/
     calculo/      [crítico] nota trimestral según la RM 001/2026          US-02
                   [crítico] dimensiones por gestión: suman 100; bloqueadas  US-18 (T-015)
                   si la gestión tiene notas (GET/PUT /api/gestiones/:id/dimensiones)
+                  historial del estudiante por trimestre (GET /api/estudiantes/:id/historial, D12)  US-03 (T-034)
     auditoria/    [crítico] corrección con motivo e historial             US-04
     asistencia/   asistencia por clase y porcentaje por estudiante        US-19 (T-036)
     academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, academico, esquema) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, academico, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)

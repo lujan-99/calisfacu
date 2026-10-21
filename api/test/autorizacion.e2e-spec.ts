@@ -189,6 +189,12 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
     { metodo: 'post', url: '/api/estudiantes', noPermitidos: secretariaYAdmin },
     { metodo: 'put', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
     { metodo: 'delete', url: `/api/estudiantes/${e.ajeno.id}`, noPermitidos: secretariaYAdmin },
+    // Ningún profesor del escenario da clases al curso de e.ajeno (US-03, criterio 2).
+    {
+      metodo: 'get',
+      url: `/api/estudiantes/${e.ajeno.id}/historial`,
+      noPermitidos: ['profesor', 'otro', 'padre'],
+    },
     { metodo: 'get', url: '/api/materias', noPermitidos: secretariaYAdmin },
     { metodo: 'post', url: '/api/materias', noPermitidos: secretariaYAdmin },
     { metodo: 'put', url: `/api/materias/${e.lenguaje.id}`, noPermitidos: secretariaYAdmin },

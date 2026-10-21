@@ -102,6 +102,11 @@ DECISIONES = [
         ['D11', '¿Qué es "30 minutos sin actividad" en la sesión?',
          'El token dura 30 minutos y la web lo renueva (`POST /api/auth/renovar`) mientras el usuario trabaja; sin peticiones durante 30 minutos, vence.',
          '`AuthService.renovar` (US-17, criterio 4)'],
+        ['D12', '¿Qué muestra el historial del estudiante y quién lo ve?',
+         'Todas las materias de su curso en cada trimestre, con la nota calculada al consultar. El profesor lo ve si dicta al menos una materia del curso; la secretaria y el administrador, siempre. '
+         'Promedio del trimestre = promedio de las notas de las materias, con dos decimales (pendiente si falta alguna); promedio anual = promedio de los trimestres con nota; '
+         'tendencia = comparación de los dos últimos trimestres con nota; en riesgo si el promedio anual es menor que 51. Son indicadores, no notas oficiales (las oficiales son D2 y D3 por materia).',
+         '`CalculoService.resumenAnual`, `HistorialService` (US-03)'],
     ]), '',
 ]
 

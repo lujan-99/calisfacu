@@ -25,6 +25,15 @@ export interface ResultadoTrimestral {
   pendientes: string[];
 }
 
+export type Tendencia = 'ASCENDENTE' | 'DESCENDENTE' | 'ESTABLE' | 'PENDIENTE';
+export type EstadoAnual = 'PROMOVIDO' | 'EN_RIESGO' | 'PENDIENTE';
+
+export interface ResumenAnual {
+  promedioAnual: number | null;
+  tendencia: Tendencia;
+  estadoAnual: EstadoAnual;
+}
+
 const dec = (n: number) => new Decimal(String(n));
 
 /**
@@ -111,5 +120,42 @@ export class CalculoService {
   notaAnual(trimestrales: readonly number[]): number {
     if (trimestrales.length === 0) throw new BadRequestException('No hay notas trimestrales');
     return this.redondear(this.promedio(trimestrales) as Decimal);
+  }
+
+  /**
+   * Promedio de las notas trimestrales de las materias de un estudiante, con dos decimales (decisión D12).
+   * Es un indicador del historial (US-03), no una nota oficial: queda pendiente si falta alguna materia.
+   */
+  promedioDeMaterias(notas: readonly (number | null)[]): number | null {
+    if (notas.length === 0 || notas.some((n) => n === null)) return null;
+    return this.dosDecimales(this.promedio(notas as number[]) as Decimal);
+  }
+
+  /**
+   * Promedio anual, tendencia y estado del historial (US-03, decisión D12): se promedian los trimestres con nota,
+   * la tendencia compara los dos últimos y el estado usa la nota mínima de aprobación.
+   */
+  resumenAnual(promediosTrimestrales: readonly (number | null)[]): ResumenAnual {
+    const conNota = promediosTrimestrales.filter((p): p is number => p !== null);
+    if (conNota.length === 0) {
+      return { promedioAnual: null, tendencia: 'PENDIENTE', estadoAnual: 'PENDIENTE' };
+    }
+    const promedioAnual = this.dosDecimales(this.promedio(conNota) as Decimal);
+    let tendencia: Tendencia = 'PENDIENTE';
+    if (conNota.length >= 2) {
+      const diferencia = dec(conNota[conNota.length - 1]).comparedTo(
+        dec(conNota[conNota.length - 2]),
+      );
+      tendencia = diferencia > 0 ? 'ASCENDENTE' : diferencia < 0 ? 'DESCENDENTE' : 'ESTABLE';
+    }
+    return {
+      promedioAnual,
+      tendencia,
+      estadoAnual: promedioAnual >= NOTA_MINIMA_APROBACION ? 'PROMOVIDO' : 'EN_RIESGO',
+    };
+  }
+
+  private dosDecimales(valor: Decimal): number {
+    return valor.toDecimalPlaces(2, Decimal.ROUND_HALF_UP).toNumber();
   }
 }

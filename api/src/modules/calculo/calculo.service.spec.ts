@@ -117,4 +117,37 @@ describe('CalculoService', () => {
       expect(() => calculo.notaAnual([])).toThrow(BadRequestException);
     });
   });
+
+  describe('promedioDeMaterias (US-03, decisión D12)', () => {
+    it('debe promediar las notas de las materias con dos decimales, 0,5 hacia arriba', () => {
+      expect(calculo.promedioDeMaterias([80, 71])).toBe(75.5);
+      expect(calculo.promedioDeMaterias([70, 70, 71])).toBe(70.33);
+      expect(calculo.promedioDeMaterias([1, 2, 2])).toBe(1.67);
+    });
+
+    it('debe quedar pendiente si alguna materia no tiene nota o no hay materias', () => {
+      expect(calculo.promedioDeMaterias([80, null])).toBeNull();
+      expect(calculo.promedioDeMaterias([])).toBeNull();
+    });
+  });
+
+  describe('resumenAnual (US-03, decisión D12)', () => {
+    it('debe promediar los trimestres con nota e ignorar los pendientes', () => {
+      expect(calculo.resumenAnual([60, 70, null]).promedioAnual).toBe(65);
+      expect(calculo.resumenAnual([null, null, null]).promedioAnual).toBeNull();
+    });
+
+    it('debe comparar los dos últimos trimestres con nota para la tendencia', () => {
+      expect(calculo.resumenAnual([60, 70, null]).tendencia).toBe('ASCENDENTE');
+      expect(calculo.resumenAnual([80, null, 70]).tendencia).toBe('DESCENDENTE');
+      expect(calculo.resumenAnual([50, 70, 70]).tendencia).toBe('ESTABLE');
+      expect(calculo.resumenAnual([70, null, null]).tendencia).toBe('PENDIENTE');
+    });
+
+    it('debe marcar en riesgo un promedio anual menor que la nota mínima de aprobación', () => {
+      expect(calculo.resumenAnual([51, null, null]).estadoAnual).toBe('PROMOVIDO');
+      expect(calculo.resumenAnual([50.99, null, null]).estadoAnual).toBe('EN_RIESGO');
+      expect(calculo.resumenAnual([null, null, null]).estadoAnual).toBe('PENDIENTE');
+    });
+  });
 });

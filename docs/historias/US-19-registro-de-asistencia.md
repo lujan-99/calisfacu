@@ -28,6 +28,6 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-06 y US-07
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

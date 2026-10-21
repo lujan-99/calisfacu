@@ -8,6 +8,7 @@ import { Dimensiones } from './pages/admin/Dimensiones';
 import { SolicitudesEdicion } from './pages/admin/SolicitudesEdicion';
 import { Login } from './pages/Login';
 import { NoEncontrada } from './pages/NoEncontrada';
+import { AsistenciaMateria } from './pages/profesor/AsistenciaMateria';
 import { Boletin } from './pages/padre/Boletin';
 import { HistorialEstudiante } from './pages/profesor/HistorialEstudiante';
 import { ImportarNotas } from './pages/profesor/ImportarNotas';
@@ -42,6 +43,7 @@ export const rutas = [
             path: '/profesor/materias/:materiaId/actividades/:actividadId/importar',
             element: <ImportarNotas />,
           },
+          { path: '/profesor/materias/:materiaId/asistencia', element: <AsistenciaMateria /> },
           { path: '/profesor/materias/:materiaId/notas', element: <NotasTrimestre /> },
           {
             path: '/profesor/estudiantes/:estudianteId/historial',

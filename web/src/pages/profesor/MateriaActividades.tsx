@@ -142,16 +142,27 @@ export function MateriaActividades() {
             {materia.curso.nombre} · Gestión {materia.gestion.anio}
           </span>
         </div>
-        {trimestre && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <Link
-            to={`/profesor/materias/${materiaId}/notas?trimestre=${trimestre.id}`}
+            to={`/profesor/materias/${materiaId}/asistencia`}
             className="boton boton-secundario"
-            data-cy="link-notas-trimestre"
+            data-cy="link-asistencia-materia"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            <Icono nombre="tabla" tam={18} />
-            Ver notas del trimestre
+            <Icono nombre="personas" tam={18} />
+            Control de asistencia
           </Link>
-        )}
+          {trimestre && (
+            <Link
+              to={`/profesor/materias/${materiaId}/notas?trimestre=${trimestre.id}`}
+              className="boton boton-secundario"
+              data-cy="link-notas-trimestre"
+            >
+              <Icono nombre="tabla" tam={18} />
+              Ver notas del trimestre
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="segmentos" role="group" aria-label="Trimestre">

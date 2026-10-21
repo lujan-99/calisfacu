@@ -657,3 +657,121 @@ describe('Importación desde Excel (US-05, T-039)', () => {
     });
   });
 });
+
+describe('Registro de asistencia por clase (US-19, T-037)', () => {
+  const claseMock: api.AsistenciaClase = {
+    materia: 'Matemática',
+    fecha: '2026-04-15',
+    filas: [
+      { estudianteId: 1, estudiante: 'Apaza Condori, Miguel', estado: null },
+      { estudianteId: 2, estudiante: 'Choque Huanca, Rosa', estado: null },
+    ],
+  };
+
+  const porcentajesMock: api.PorcentajeAsistenciaEstudiante[] = [
+    {
+      estudianteId: 1,
+      estudiante: 'Apaza Condori, Miguel',
+      presentes: 8,
+      licencias: 1,
+      ausentes: 1,
+      clases: 10,
+      porcentaje: 90.0,
+    },
+    {
+      estudianteId: 2,
+      estudiante: 'Choque Huanca, Rosa',
+      presentes: 6,
+      licencias: 0,
+      ausentes: 4,
+      clases: 10,
+      porcentaje: 60.0,
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'obtenerMateria').mockResolvedValue(MATERIA);
+    vi.spyOn(api, 'obtenerAsistenciaClase').mockResolvedValue(claseMock);
+    vi.spyOn(api, 'obtenerPorcentajesAsistencia').mockResolvedValue(porcentajesMock);
+  });
+
+  it('debe mostrar la lista de la clase y permitir marcar asistencia individual o masiva (US-19, criterio 1)', async () => {
+    abrir('/profesor/materias/7/asistencia', 'PROFESOR');
+    expect(
+      await screen.findByRole('heading', { name: /Control de Asistencia · Matemática/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Apaza Condori, Miguel')).toBeInTheDocument();
+    expect(screen.getByText('Choque Huanca, Rosa')).toBeInTheDocument();
+
+    // Marcar a todos como presentes con el botón rápido
+    fireEvent.click(screen.getByRole('button', { name: /Marcar todos Presentes/i }));
+    expect(screen.getByTestId('resumen-marcados')).toHaveTextContent(
+      /Marcados:\s*2\s*presentes\s*·\s*0\s*licencias\s*·\s*0\s*ausentes/i,
+    );
+
+    // Cambiar a Rosa a Licencia
+    fireEvent.click(screen.getByTestId('btn-licencia-2'));
+    expect(screen.getByTestId('resumen-marcados')).toHaveTextContent(
+      /Marcados:\s*1\s*presentes\s*·\s*1\s*licencias\s*·\s*0\s*ausentes/i,
+    );
+  });
+
+  it('debe guardar la asistencia de la fecha cuando la lista está completa (US-19, criterio 1)', async () => {
+    const guardarSpy = vi.spyOn(api, 'guardarAsistenciaClase').mockResolvedValue({
+      fecha: '2026-04-15',
+      guardados: 2,
+    });
+
+    abrir('/profesor/materias/7/asistencia', 'PROFESOR');
+    await screen.findByRole('heading', { name: /Control de Asistencia · Matemática/i });
+
+    // Marcar todos presentes
+    fireEvent.click(screen.getByRole('button', { name: /Marcar todos Presentes/i }));
+
+    // Guardar
+    const btnGuardar = screen.getByRole('button', {
+      name: /Guardar Asistencia de la Fecha/i,
+    });
+    fireEvent.click(btnGuardar);
+
+    await waitFor(() => {
+      expect(guardarSpy).toHaveBeenCalledWith(7, expect.any(String), {
+        registros: [
+          { estudianteId: 1, estado: 'PRESENTE' },
+          { estudianteId: 2, estado: 'PRESENTE' },
+        ],
+      });
+    });
+    expect(await screen.findByText(/Se guardó correctamente la asistencia/i)).toBeInTheDocument();
+  });
+
+  it('debe impedir registrar asistencia de una fecha futura mostrando advertencia (US-19, criterio 3)', async () => {
+    abrir('/profesor/materias/7/asistencia', 'PROFESOR');
+    await screen.findByRole('heading', { name: /Control de Asistencia · Matemática/i });
+
+    // Cambiar selector a fecha futura lejana (2099-12-31)
+    const inputFecha = screen.getByLabelText(/Fecha de la clase/i);
+    fireEvent.change(inputFecha, { target: { value: '2099-12-31' } });
+
+    expect(
+      await screen.findByText(/No se puede registrar asistencia de una fecha futura/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Guardar Asistencia de la Fecha/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('debe mostrar los porcentajes acumulados calculados según D5 (US-19, criterio 2)', async () => {
+    abrir('/profesor/materias/7/asistencia', 'PROFESOR');
+    await screen.findByRole('heading', { name: /Control de Asistencia · Matemática/i });
+
+    // Cambiar a pestaña de porcentajes
+    fireEvent.click(screen.getByRole('button', { name: /Porcentajes acumulados/i }));
+
+    expect(await screen.findByText('90,0 %')).toBeInTheDocument();
+    expect(screen.getByText('Regular (≥80%)')).toBeInTheDocument();
+
+    expect(screen.getByText('60,0 %')).toBeInTheDocument();
+    expect(screen.getByText('En riesgo (<70%)')).toBeInTheDocument();
+  });
+});

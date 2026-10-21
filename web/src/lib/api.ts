@@ -318,3 +318,59 @@ export interface HistorialAcademicoEstudiante {
 
 export const obtenerHistorialAcademicoEstudiante = (estudianteId: number) =>
   solicitar<HistorialAcademicoEstudiante>(`/estudiantes/${estudianteId}/historial`);
+
+// ---------- Asistencia por clase (US-19, T-036, T-037) ----------
+
+export type EstadoAsistencia = 'PRESENTE' | 'AUSENTE' | 'LICENCIA';
+
+export interface FilaAsistenciaClase {
+  estudianteId: number;
+  estudiante: string;
+  estado: EstadoAsistencia | null;
+}
+
+export interface AsistenciaClase {
+  materia: string;
+  fecha: string;
+  filas: FilaAsistenciaClase[];
+}
+
+export interface RegistrarAsistenciaPayload {
+  registros: {
+    estudianteId: number;
+    estado: EstadoAsistencia;
+  }[];
+}
+
+export interface PorcentajeAsistenciaEstudiante {
+  estudianteId: number;
+  estudiante: string;
+  presentes: number;
+  licencias: number;
+  ausentes: number;
+  clases: number;
+  porcentaje: number | null;
+}
+
+export const obtenerAsistenciaClase = (materiaId: number, fecha: string) =>
+  solicitar<AsistenciaClase>(`/asistencias/materias/${materiaId}/fechas/${fecha}`);
+
+export const guardarAsistenciaClase = (
+  materiaId: number,
+  fecha: string,
+  datos: RegistrarAsistenciaPayload,
+) =>
+  solicitar<{ fecha: string; guardados: number }>(
+    `/asistencias/materias/${materiaId}/fechas/${fecha}`,
+    enviar('PUT', datos),
+  );
+
+export const obtenerPorcentajesAsistencia = (materiaId: number, desde?: string, hasta?: string) => {
+  const params = new URLSearchParams();
+  if (desde) params.set('desde', desde);
+  if (hasta) params.set('hasta', hasta);
+  const qs = params.toString();
+  return solicitar<PorcentajeAsistenciaEstudiante[]>(
+    `/asistencias/materias/${materiaId}/porcentajes${qs ? `?${qs}` : ''}`,
+  );
+};

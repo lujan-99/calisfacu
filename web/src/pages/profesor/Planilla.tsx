@@ -4,41 +4,35 @@ import { Dialogo } from '../../componentes/Dialogo';
 import { Aviso, Cargando, ErrorCarga } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
 import {
+  corregirNota,
   guardarPlanilla,
+  historialNota,
   obtenerPlanilla,
+  type FilaPlanilla,
   type Planilla as TPlanilla,
   type RegistroAuditoriaNota,
 } from '../../lib/api';
-import {
-  ejecutarCorreccionNota,
-  escucharCambiosAuditoria,
-  obtenerCorreccionesActividad,
-  obtenerHistorialNotaEstudiante,
-  type RegistroAuditoriaDetallado,
-} from '../../lib/auditoriaNotas';
 import { formatoNumero, nombreTrimestre } from '../../lib/formato';
 import { validarNota } from '../../lib/notas';
-import { useSesion } from '../../lib/sesion';
-import {
-  crearSolicitud,
-  escucharCambiosSolicitudes,
-  marcarEdicionConsumida,
-  obtenerEstadoEdicionEstudiante,
-  obtenerSolicitudes,
-} from '../../lib/solicitudesEdicion';
 import { useCarga } from '../../lib/useCarga';
 
 type Mensaje = { tipo: 'exito' | 'error'; texto: string } | null;
+type NotaElegida = {
+  estudianteId: number;
+  estudianteNombre: string;
+  notaActual: number;
+  notaId: number;
+};
 
 /**
  * Planilla de una actividad (US-01, criterios 1 a 3; T-020). Se guardan todas las notas pendientes o ninguna: si una
  * está vacía o fuera de 1 a 100, se marca junto a su campo y no se envía nada.
- * Permite corrección auditable con motivo obligatorio y visualización de historial inmutable (US-04, RNF-04, M15).
+ * Una nota ya registrada no se vuelve a escribir aquí: se corrige con motivo obligatorio y su historial se lee de la
+ * auditoría de la API (US-04, RNF-04, M15).
  */
 export function Planilla() {
   const { materiaId, actividadId } = useParams();
   const id = Number(actividadId);
-  const { usuario } = useSesion();
   const { carga, recargar, setCarga } = useCarga(() => obtenerPlanilla(id), [id]);
   const [valores, setValores] = useState<Record<number, string>>({});
   const [tocados, setTocados] = useState<Record<number, boolean>>({});
@@ -46,60 +40,21 @@ export function Planilla() {
   const [guardando, setGuardando] = useState(false);
   const [mensaje, setMensaje] = useState<Mensaje>(null);
 
-  // Estados de solicitudes / tickets de edición
-  const [, setRevisionTickets] = useState(0);
-  const [modalTicket, setModalTicket] = useState(false);
-  const [modalHistorial, setModalHistorial] = useState(false);
-  const [estudiantesSeleccionados, setEstudiantesSeleccionados] = useState<number[]>([]);
-  const [motivoTicket, setMotivoTicket] = useState('');
-  const [errorTicket, setErrorTicket] = useState<string | null>(null);
-
   // Estados para corrección auditable y auditoría de notas (US-04)
-  const [estudianteACorregir, setEstudianteACorregir] = useState<{
-    estudianteId: number;
-    estudianteNombre: string;
-    notaActual: number;
-    notaId?: number | null;
-  } | null>(null);
+  const [estudianteACorregir, setEstudianteACorregir] = useState<NotaElegida | null>(null);
   const [valorNuevaNota, setValorNuevaNota] = useState('');
   const [motivoCorreccion, setMotivoCorreccion] = useState('');
   const [guardandoCorreccion, setGuardandoCorreccion] = useState(false);
   const [errorCorreccion, setErrorCorreccion] = useState<string | null>(null);
 
-  const [estudianteHistorial, setEstudianteHistorial] = useState<{
-    estudianteId: number;
-    estudianteNombre: string;
-    notaActual: number;
-    notaId?: number | null;
-  } | null>(null);
+  const [estudianteHistorial, setEstudianteHistorial] = useState<NotaElegida | null>(null);
   const [cargandoHistorial, setCargandoHistorial] = useState(false);
   const [registrosHistorial, setRegistrosHistorial] = useState<RegistroAuditoriaNota[]>([]);
-
-  const [modalAuditoriaActividad, setModalAuditoriaActividad] = useState(false);
-  const [correccionesActividad, setCorreccionesActividad] = useState<RegistroAuditoriaDetallado[]>(
-    [],
-  );
-  const [, setRevisionAuditoria] = useState(0);
-
-  useEffect(() => {
-    return escucharCambiosSolicitudes(() => setRevisionTickets((v) => v + 1));
-  }, []);
-
-  useEffect(() => {
-    return escucharCambiosAuditoria(() => {
-      setRevisionAuditoria((v) => v + 1);
-      setCorreccionesActividad(obtenerCorreccionesActividad(id));
-    });
-  }, [id]);
+  const [errorHistorial, setErrorHistorial] = useState<string | null>(null);
 
   const planilla = carga.estado === 'datos' ? carga.datos : null;
   const pendientes = planilla?.filas.filter((f) => f.valor === null) ?? [];
-  const habilitados =
-    planilla?.filas.filter(
-      (f) => f.valor !== null && obtenerEstadoEdicionEstudiante(id, f.estudianteId).habilitada,
-    ) ?? [];
-  const editables = [...pendientes, ...habilitados];
-  const escritas = editables.filter((f) => (valores[f.estudianteId] ?? '').trim() !== '');
+  const escritas = pendientes.filter((f) => (valores[f.estudianteId] ?? '').trim() !== '');
   const hayCambios = escritas.length > 0 && !guardando;
   const cerrado = planilla?.actividad.trimestre.cerrado ?? false;
 
@@ -134,12 +89,8 @@ export function Planilla() {
     if (!planilla) return;
     const notas: { estudianteId: number; valor: number }[] = [];
     let errores = 0;
-    for (const f of editables) {
-      const v = valores[f.estudianteId];
-      if (f.valor !== null && (v === undefined || v.trim() === '')) {
-        continue;
-      }
-      const r = validarNota(v ?? '');
+    for (const f of pendientes) {
+      const r = validarNota(valores[f.estudianteId] ?? '');
       if (r.valida) notas.push({ estudianteId: f.estudianteId, valor: r.valor });
       else errores++;
     }
@@ -155,19 +106,20 @@ export function Planilla() {
     setMensaje(null);
     try {
       const r = await guardarPlanilla(id, notas);
-      for (const n of notas) {
-        marcarEdicionConsumida(id, n.estudianteId);
-      }
+      // La API no devuelve los id de las notas nuevas: se vuelve a leer la planilla para poder corregirlas.
+      const actualizada = await obtenerPlanilla(id).catch(() => null);
       const guardadas = new Map(notas.map((n) => [n.estudianteId, n.valor]));
       setCarga({
         estado: 'datos',
-        datos: {
-          ...planilla,
-          filas: planilla.filas.map((f) => ({
-            ...f,
-            valor: guardadas.get(f.estudianteId) ?? f.valor,
-          })),
-        } satisfies TPlanilla,
+        datos:
+          actualizada ??
+          ({
+            ...planilla,
+            filas: planilla.filas.map((f) => ({
+              ...f,
+              valor: guardadas.get(f.estudianteId) ?? f.valor,
+            })),
+          } satisfies TPlanilla),
       });
       setValores({});
       setTocados({});
@@ -180,66 +132,8 @@ export function Planilla() {
     }
   }
 
-  const abrirModalTicket = (estudiantesIds?: number[]) => {
-    const registrados = planilla?.filas.filter((f) => f.valor !== null) ?? [];
-    if (registrados.length === 0) {
-      setMensaje({
-        tipo: 'error',
-        texto: 'No hay notas registradas para solicitar edición.',
-      });
-      return;
-    }
-    setEstudiantesSeleccionados(estudiantesIds ?? [registrados[0].estudianteId]);
-    setMotivoTicket('');
-    setErrorTicket(null);
-    setModalTicket(true);
-  };
-
-  const enviarTicket = () => {
-    if (!planilla || !usuario) return;
-    if (estudiantesSeleccionados.length === 0) {
-      setErrorTicket('Seleccione al menos un estudiante para la solicitud.');
-      return;
-    }
-    if (!motivoTicket.trim()) {
-      setErrorTicket('Escriba el motivo justificado de la corrección.');
-      return;
-    }
-
-    const estudiantesData = planilla.filas
-      .filter((f) => estudiantesSeleccionados.includes(f.estudianteId))
-      .map((f) => ({
-        estudianteId: f.estudianteId,
-        estudianteNombre: f.estudiante,
-        notaActual: f.valor ?? 0,
-      }));
-
-    const ticket = crearSolicitud({
-      profesorId: usuario.id,
-      profesorNombre: usuario.nombre,
-      actividadId: id,
-      actividadNombre: planilla.actividad.nombre,
-      materiaNombre: planilla.actividad.materia,
-      cursoNombre: planilla.actividad.curso,
-      dimension: planilla.actividad.dimension,
-      estudiantes: estudiantesData,
-      motivo: motivoTicket.trim(),
-    });
-
-    setModalTicket(false);
-    setMensaje({
-      tipo: 'exito',
-      texto: `Se creó el ticket #${ticket.id}. Ha sido remitido al Administrador para su aprobación.`,
-    });
-  };
-
-  const abrirModalCorreccion = (f: {
-    estudianteId: number;
-    estudiante: string;
-    valor: number | null;
-    notaId?: number | null;
-  }) => {
-    if (f.valor === null) return;
+  const abrirModalCorreccion = (f: FilaPlanilla) => {
+    if (f.valor === null || !f.notaId) return;
     setEstudianteACorregir({
       estudianteId: f.estudianteId,
       estudianteNombre: f.estudiante,
@@ -252,7 +146,7 @@ export function Planilla() {
   };
 
   const guardarCorreccionAuditable = async () => {
-    if (!estudianteACorregir || !usuario || !planilla) return;
+    if (!estudianteACorregir || !planilla) return;
     const r = validarNota(valorNuevaNota);
     if (!r.valida) {
       setErrorCorreccion(r.error);
@@ -270,18 +164,10 @@ export function Planilla() {
     setGuardandoCorreccion(true);
     setErrorCorreccion(null);
     try {
-      await ejecutarCorreccionNota({
-        actividadId: id,
-        estudianteId: estudianteACorregir.estudianteId,
-        estudianteNombre: estudianteACorregir.estudianteNombre,
-        notaId: estudianteACorregir.notaId,
-        valorActual: estudianteACorregir.notaActual,
-        valorNuevo: r.valor,
+      await corregirNota(estudianteACorregir.notaId, {
+        valor: r.valor,
         motivo: motivoCorreccion.trim(),
-        usuarioNombre: usuario.nombre,
       });
-
-      marcarEdicionConsumida(id, estudianteACorregir.estudianteId);
 
       setCarga({
         estado: 'datos',
@@ -309,13 +195,8 @@ export function Planilla() {
     }
   };
 
-  const abrirHistorialNota = async (f: {
-    estudianteId: number;
-    estudiante: string;
-    valor: number | null;
-    notaId?: number | null;
-  }) => {
-    if (f.valor === null) return;
+  const abrirHistorialNota = async (f: FilaPlanilla) => {
+    if (f.valor === null || !f.notaId) return;
     setEstudianteHistorial({
       estudianteId: f.estudianteId,
       estudianteNombre: f.estudiante,
@@ -324,18 +205,14 @@ export function Planilla() {
     });
     setCargandoHistorial(true);
     try {
-      const hist = await obtenerHistorialNotaEstudiante(id, f.estudianteId, f.notaId);
-      setRegistrosHistorial(hist);
-    } catch {
+      setErrorHistorial(null);
+      setRegistrosHistorial(await historialNota(f.notaId));
+    } catch (e) {
       setRegistrosHistorial([]);
+      setErrorHistorial(e instanceof Error ? e.message : 'No se pudo cargar el historial');
     } finally {
       setCargandoHistorial(false);
     }
-  };
-
-  const abrirAuditoriaActividad = () => {
-    setCorreccionesActividad(obtenerCorreccionesActividad(id));
-    setModalAuditoriaActividad(true);
   };
 
   if (carga.estado === 'cargando')
@@ -397,36 +274,6 @@ export function Planilla() {
             <Icono nombre="documento" tam={16} />
             Importar desde Excel
           </Link>
-          <button
-            type="button"
-            className="boton boton-secundario"
-            data-cy="btn-solicitar-edicion"
-            onClick={() => abrirModalTicket()}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            <Icono nombre="candado" tam={16} />
-            Solicitar edición de notas
-          </button>
-          <button
-            type="button"
-            className="boton boton-secundario"
-            data-cy="btn-ver-solicitudes"
-            onClick={() => setModalHistorial(true)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            <Icono nombre="portapapeles" tam={16} />
-            Tickets de corrección
-          </button>
-          <button
-            type="button"
-            className="boton boton-secundario"
-            data-cy="btn-auditoria-actividad"
-            onClick={abrirAuditoriaActividad}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            <Icono nombre="reloj" tam={16} />
-            Auditoría de cambios
-          </button>
         </div>
       </div>
 
@@ -448,8 +295,8 @@ export function Planilla() {
       )}
 
       <p className="ayuda">
-        Notas de 1 a 100, con hasta 2 decimales. Enter pasa al siguiente estudiante. Las notas ya
-        registradas requieren solicitud de ticket al administrador para su desbloqueo.
+        Notas de 1 a 100, con hasta 2 decimales. Enter pasa al siguiente estudiante. Una nota ya
+        registrada se corrige con motivo obligatorio y queda en la auditoría.
       </p>
 
       <section className="tabla-marco" aria-labelledby="titulo-planilla">
@@ -484,10 +331,7 @@ export function Planilla() {
           </thead>
           <tbody>
             {filas.map((f, i) => {
-              const ticketInfo =
-                f.valor !== null ? obtenerEstadoEdicionEstudiante(id, f.estudianteId) : null;
-              const edicionHabilitada = ticketInfo?.habilitada ?? false;
-              const error = f.valor === null || edicionHabilitada ? errorDe(f.estudianteId) : null;
+              const error = f.valor === null ? errorDe(f.estudianteId) : null;
               return (
                 <tr key={f.estudianteId} data-cy="fila-estudiante">
                   <td className="col-n">
@@ -504,157 +348,74 @@ export function Planilla() {
                         {f.estudiante}
                       </Link>
                     </div>
-                    {ticketInfo?.ticket &&
-                      !edicionHabilitada &&
-                      ticketInfo.ticket.estado === 'PENDIENTE' && (
-                        <span
-                          className="insignia insignia-neutra"
-                          style={{ fontSize: 11, marginTop: 4 }}
-                        >
-                          Ticket #{ticketInfo.ticket.id} en revisión (Admin)
-                        </span>
-                      )}
-                    {ticketInfo?.ticket &&
-                      !edicionHabilitada &&
-                      ticketInfo.ticket.estado === 'RECHAZADA' && (
-                        <span
-                          className="insignia insignia-error"
-                          style={{ fontSize: 11, marginTop: 4 }}
-                          title={ticketInfo.ticket.observacionAdmin}
-                        >
-                          Rechazado: {ticketInfo.ticket.observacionAdmin}
-                        </span>
-                      )}
                   </th>
                   <td>
-                    {f.valor !== null && !edicionHabilitada ? (
+                    {f.valor !== null ? (
                       <div className="nota-registrada" data-cy="nota-registrada">
                         <strong>{formatoNumero(f.valor)}</strong>
                         <span>
                           <Icono nombre="candado" tam={14} />
                           Registrada
                         </span>
-                        <div
-                          style={{
-                            display: 'inline-flex',
-                            gap: 8,
-                            marginLeft: 8,
-                            alignItems: 'center',
-                          }}
-                        >
-                          <button
-                            type="button"
-                            className="boton-texto"
-                            data-cy="btn-corregir-nota"
-                            style={{
-                              fontSize: 12,
-                              color: 'var(--color-primario, #78192a)',
-                              cursor: 'pointer',
-                              border: 'none',
-                              background: 'none',
-                              textDecoration: 'underline',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                            }}
-                            onClick={() => abrirModalCorreccion(f)}
-                            title="Corregir esta nota con motivo obligatorio (US-04)"
-                          >
-                            <Icono nombre="lapiz" tam={13} />
-                            Corregir
-                          </button>
-                          <button
-                            type="button"
-                            className="boton-texto"
-                            data-cy="btn-historial-nota"
-                            style={{
-                              fontSize: 12,
-                              color: 'var(--color-plomo, #5B6770)',
-                              cursor: 'pointer',
-                              border: 'none',
-                              background: 'none',
-                              textDecoration: 'underline',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 3,
-                            }}
-                            onClick={() => void abrirHistorialNota(f)}
-                            title="Ver historial de cambios y auditoría (US-04)"
-                          >
-                            <Icono nombre="reloj" tam={13} />
-                            Historial
-                          </button>
-                          {!ticketInfo?.ticket && (
-                            <button
-                              type="button"
-                              className="boton-texto"
-                              style={{
-                                fontSize: 12,
-                                color: 'var(--texto-3)',
-                                cursor: 'pointer',
-                                border: 'none',
-                                background: 'none',
-                                textDecoration: 'underline',
-                              }}
-                              onClick={() => abrirModalTicket([f.estudianteId])}
-                              title="Solicitar ticket de desbloqueo al administrador"
-                            >
-                              Pedir ticket
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                        {f.valor !== null && edicionHabilitada && (
+                        {/* Sin id no hay nota en la base que corregir ni historial que leer. */}
+                        {f.notaId && (
                           <div
                             style={{
-                              display: 'flex',
+                              display: 'inline-flex',
+                              gap: 8,
+                              marginLeft: 8,
                               alignItems: 'center',
-                              gap: 6,
-                              fontSize: 11,
-                              color: '#166534',
                             }}
                           >
-                            <span className="insignia insignia-exito" style={{ fontSize: 10 }}>
-                              Edición habilitada
-                            </span>
-                            <span>Anterior: {formatoNumero(f.valor)}</span>
-                            <button
-                              type="button"
-                              className="boton-texto"
-                              data-cy="btn-corregir-nota"
-                              style={{
-                                fontSize: 11,
-                                color: 'var(--color-primario, #78192a)',
-                                cursor: 'pointer',
-                                border: 'none',
-                                background: 'none',
-                                textDecoration: 'underline',
-                                marginLeft: 4,
-                              }}
-                              onClick={() => abrirModalCorreccion(f)}
-                            >
-                              Corregir con motivo
-                            </button>
+                            {!cerrado && (
+                              <button
+                                type="button"
+                                className="boton-texto"
+                                data-cy="btn-corregir-nota"
+                                style={{
+                                  fontSize: 12,
+                                  color: 'var(--color-primario, #78192a)',
+                                  cursor: 'pointer',
+                                  border: 'none',
+                                  background: 'none',
+                                  textDecoration: 'underline',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 3,
+                                }}
+                                onClick={() => abrirModalCorreccion(f)}
+                                title="Corregir esta nota con motivo obligatorio (US-04)"
+                              >
+                                <Icono nombre="lapiz" tam={13} />
+                                Corregir
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="boton-texto"
                               data-cy="btn-historial-nota"
                               style={{
-                                fontSize: 11,
+                                fontSize: 12,
                                 color: 'var(--color-plomo, #5B6770)',
                                 cursor: 'pointer',
                                 border: 'none',
                                 background: 'none',
                                 textDecoration: 'underline',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 3,
                               }}
                               onClick={() => void abrirHistorialNota(f)}
+                              title="Ver historial de cambios y auditoría (US-04)"
                             >
+                              <Icono nombre="reloj" tam={13} />
                               Historial
                             </button>
                           </div>
                         )}
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                         <input
                           className="entrada-nota"
                           type="text"
@@ -713,208 +474,6 @@ export function Planilla() {
           {guardando ? 'Guardando…' : 'Guardar notas'}
         </button>
       </div>
-
-      {/* Modal para solicitar Ticket de Edición */}
-      {modalTicket && (
-        <Dialogo
-          titulo="Solicitud de Habilitación de Edición de Notas"
-          alCerrar={() => setModalTicket(false)}
-        >
-          <div style={{ padding: '8px 0' }}>
-            <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--texto-2)' }}>
-              Seleccione los estudiantes para los que solicita autorización de corrección e indique
-              el motivo justificativo para el Administrador (US-04):
-            </p>
-
-            <div style={{ marginBottom: 16 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}>
-                Estudiantes con nota registrada:
-              </span>
-              <div
-                style={{
-                  maxHeight: 180,
-                  overflowY: 'auto',
-                  border: '1px solid var(--borde)',
-                  borderRadius: 6,
-                  padding: 8,
-                }}
-              >
-                {planilla?.filas
-                  .filter((f) => f.valor !== null)
-                  .map((f) => (
-                    <label
-                      key={f.estudianteId}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        padding: '4px 0',
-                        fontSize: 13,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={estudiantesSeleccionados.includes(f.estudianteId)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setEstudiantesSeleccionados([
-                              ...estudiantesSeleccionados,
-                              f.estudianteId,
-                            ]);
-                          } else {
-                            setEstudiantesSeleccionados(
-                              estudiantesSeleccionados.filter((id) => id !== f.estudianteId),
-                            );
-                          }
-                        }}
-                      />
-                      <span>
-                        <strong>{f.estudiante}</strong> — Nota actual: {formatoNumero(f.valor)}
-                      </span>
-                    </label>
-                  ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 12 }}>
-              <label
-                htmlFor="motivo-ticket"
-                style={{ fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 6 }}
-              >
-                Motivo y justificación oficial de la corrección:
-              </label>
-              <textarea
-                id="motivo-ticket"
-                data-cy="ticket-motivo"
-                style={{
-                  width: '100%',
-                  minHeight: 80,
-                  padding: 10,
-                  borderRadius: 6,
-                  border: '1px solid var(--borde)',
-                  fontSize: 14,
-                }}
-                placeholder="Ej. Error de transcripción verificado con la prueba física del estudiante..."
-                value={motivoTicket}
-                onChange={(e) => setMotivoTicket(e.target.value)}
-              />
-            </div>
-
-            {errorTicket && (
-              <span className="campo-error" style={{ display: 'block', marginBottom: 12 }}>
-                {errorTicket}
-              </span>
-            )}
-
-            <div
-              style={{
-                backgroundColor: '#f8fafc',
-                border: '1px solid var(--borde)',
-                borderRadius: 6,
-                padding: 10,
-                fontSize: 12,
-                color: 'var(--texto-2)',
-              }}
-            >
-              ℹ Al remitir el ticket, este quedará en revisión ante Dirección / Administrador. Una
-              vez aprobado, el casillero se desbloqueará para que ingrese la calificación corregida.
-            </div>
-          </div>
-
-          <div className="dialogo-acciones">
-            <button
-              type="button"
-              className="boton boton-secundario"
-              onClick={() => setModalTicket(false)}
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              className="boton boton-primario"
-              data-cy="btn-enviar-ticket"
-              onClick={enviarTicket}
-            >
-              Enviar solicitud al Administrador
-            </button>
-          </div>
-        </Dialogo>
-      )}
-
-      {/* Modal de Historial de Tickets */}
-      {modalHistorial && (
-        <Dialogo
-          titulo="Historial de Tickets de Edición (Esta Actividad)"
-          alCerrar={() => setModalHistorial(false)}
-        >
-          <div style={{ padding: '8px 0' }}>
-            {obtenerSolicitudes().filter((s) => s.actividadId === id).length === 0 ? (
-              <p style={{ fontSize: 14, color: 'var(--texto-2)' }}>
-                No se han emitido tickets de corrección para esta actividad.
-              </p>
-            ) : (
-              <table className="tabla" style={{ fontSize: 13 }}>
-                <thead>
-                  <tr>
-                    <th>Ticket</th>
-                    <th>Estudiantes</th>
-                    <th>Motivo</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {obtenerSolicitudes()
-                    .filter((s) => s.actividadId === id)
-                    .map((s) => (
-                      <tr key={s.id}>
-                        <td>
-                          <strong>{s.id}</strong>
-                          <div style={{ fontSize: 11, color: 'var(--texto-2)' }}>
-                            {new Date(s.fechaSolicitud).toLocaleDateString()}
-                          </div>
-                        </td>
-                        <td>
-                          {s.estudiantes.map((e) => (
-                            <div key={e.estudianteId}>{e.estudianteNombre}</div>
-                          ))}
-                        </td>
-                        <td style={{ maxWidth: 200 }}>
-                          <div>{s.motivo}</div>
-                          {s.observacionAdmin && (
-                            <div style={{ fontSize: 11, fontStyle: 'italic', marginTop: 2 }}>
-                              Respuesta: {s.observacionAdmin}
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          {s.estado === 'PENDIENTE' && (
-                            <span className="insignia insignia-neutra">Pendiente</span>
-                          )}
-                          {s.estado === 'APROBADA' && (
-                            <span className="insignia insignia-exito">Aprobada</span>
-                          )}
-                          {s.estado === 'RECHAZADA' && (
-                            <span className="insignia insignia-error">Rechazada</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-          <div className="dialogo-acciones">
-            <button
-              type="button"
-              className="boton boton-secundario"
-              onClick={() => setModalHistorial(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </Dialogo>
-      )}
 
       {/* Modal de Corrección Auditable de Nota (US-04, criterio 1) */}
       {estudianteACorregir && (
@@ -1109,6 +668,10 @@ export function Planilla() {
               <p style={{ fontSize: 13, color: 'var(--texto-2)' }}>
                 Cargando registros de auditoría…
               </p>
+            ) : errorHistorial ? (
+              <Aviso tipo="error" cy="error-historial-nota">
+                {errorHistorial}
+              </Aviso>
             ) : registrosHistorial.length === 0 ? (
               <div
                 style={{
@@ -1163,7 +726,11 @@ export function Planilla() {
                         }
                         style={{ fontSize: 11 }}
                       >
-                        {reg.origen === 'CORRECCION' ? 'Corrección' : 'Registro inicial'}
+                        {reg.origen === 'CORRECCION'
+                          ? 'Corrección'
+                          : reg.origen === 'IMPORTACION'
+                            ? 'Importación desde Excel'
+                            : 'Registro inicial'}
                       </span>
                       <span style={{ fontSize: 11, color: 'var(--texto-3)' }}>
                         {new Date(reg.fecha).toLocaleString()}
@@ -1172,7 +739,7 @@ export function Planilla() {
                     <div style={{ fontSize: 13, marginBottom: 4 }}>
                       {reg.origen === 'CORRECCION' ? (
                         <span>
-                          Cambio de <strong>{formatoNumero(reg.valorAnterior)}</strong> a{' '}
+                          Cambio de <strong>{formatoNumero(reg.valorAnterior ?? 0)}</strong> a{' '}
                           <strong style={{ color: 'var(--color-primario, #78192a)' }}>
                             {formatoNumero(reg.valorNuevo)}
                           </strong>
@@ -1229,69 +796,6 @@ export function Planilla() {
               type="button"
               className="boton boton-secundario"
               onClick={() => setEstudianteHistorial(null)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </Dialogo>
-      )}
-
-      {/* Modal de Auditoría Consolidada de la Actividad (US-04) */}
-      {modalAuditoriaActividad && (
-        <Dialogo
-          titulo={`Auditoría de Cambios — ${actividad.nombre}`}
-          alCerrar={() => setModalAuditoriaActividad(false)}
-          cy="dialogo-auditoria-actividad"
-        >
-          <div style={{ padding: '8px 0' }}>
-            <p style={{ margin: '0 0 12px', fontSize: 13, color: 'var(--texto-2)' }}>
-              Registro consolidado de todas las correcciones auditadas efectuadas sobre las notas de
-              esta actividad conforme a los criterios 1 y 2 de la US-04.
-            </p>
-
-            {correccionesActividad.length === 0 ? (
-              <p style={{ fontSize: 13, color: 'var(--texto-2)', padding: '12px 0' }}>
-                No se han registrado correcciones en esta actividad todavía.
-              </p>
-            ) : (
-              <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-                <table className="tabla" style={{ fontSize: 12 }}>
-                  <thead>
-                    <tr>
-                      <th>Fecha y hora</th>
-                      <th>Estudiante</th>
-                      <th>Cambio</th>
-                      <th>Motivo justificado</th>
-                      <th>Responsable</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {correccionesActividad.map((c) => (
-                      <tr key={c.id}>
-                        <td>{new Date(c.fecha).toLocaleString()}</td>
-                        <td>
-                          <strong>{c.estudianteNombre}</strong>
-                        </td>
-                        <td>
-                          {formatoNumero(c.valorAnterior)} &rarr;{' '}
-                          <strong style={{ color: 'var(--color-primario, #78192a)' }}>
-                            {formatoNumero(c.valorNuevo)}
-                          </strong>
-                        </td>
-                        <td style={{ maxWidth: 180 }}>{c.motivo}</td>
-                        <td>{c.usuario}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-          <div className="dialogo-acciones">
-            <button
-              type="button"
-              className="boton boton-secundario"
-              onClick={() => setModalAuditoriaActividad(false)}
             >
               Cerrar
             </button>

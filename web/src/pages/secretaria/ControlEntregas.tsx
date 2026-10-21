@@ -237,7 +237,7 @@ export function ControlEntregas() {
       {cursosAgrupados.length === 0 && (
         <Vacio
           titulo="No se encontraron materias"
-          descripcion="No hay materias que coincidan con los filtros aplicados para este trimestre."
+          texto="No hay materias que coincidan con los filtros aplicados para este trimestre."
         />
       )}
 

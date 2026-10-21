@@ -114,7 +114,7 @@ export class NotasService {
     };
   }
 
-  /** Planilla de una actividad: todos los estudiantes del curso con su nota, si ya la tienen. */
+  /** Planilla de una actividad: todos los estudiantes del curso con su nota y su id, si ya la tienen. */
   async planilla(actividadId: number, usuario: UsuarioToken) {
     const actividad = await this.acceso.actividadDelProfesor(actividadId, usuario, false);
     const [estudiantes, notas] = await Promise.all([
@@ -127,7 +127,7 @@ export class NotasService {
         relations: { estudiante: true },
       }),
     ]);
-    const porEstudiante = new Map(notas.map((n) => [n.estudiante.id, n.valor]));
+    const porEstudiante = new Map(notas.map((n) => [n.estudiante.id, n]));
     return {
       actividad: {
         id: actividad.id,
@@ -146,7 +146,9 @@ export class NotasService {
       filas: estudiantes.map((e) => ({
         estudianteId: e.id,
         estudiante: `${e.apellidos}, ${e.nombres}`,
-        valor: porEstudiante.get(e.id) ?? null,
+        valor: porEstudiante.get(e.id)?.valor ?? null,
+        // La web lo usa para corregir la nota (US-04) y ver su historial.
+        notaId: porEstudiante.get(e.id)?.id ?? null,
       })),
     };
   }

@@ -192,30 +192,6 @@ describe('Estudiantes (US-18, criterio 3)', () => {
     ).toBeInTheDocument();
   });
 
-  it('debe registrar y mostrar el CI del estudiante junto al RUDE', async () => {
-    vi.spyOn(api, 'listarEstudiantes').mockResolvedValue([ESTUDIANTE]);
-    const crear = vi.spyOn(api, 'crearEstudiante').mockResolvedValue({
-      ...ESTUDIANTE,
-      id: 15,
-      codigoRude: '90900012345678',
-    });
-    abrir('/secretaria/estudiantes', 'SECRETARIA');
-    fireEvent.click(await screen.findByRole('button', { name: 'Nuevo estudiante' }));
-    const d = screen.getByRole('dialog');
-    fireEvent.change(within(d).getByLabelText('Apellidos'), { target: { value: 'Perez' } });
-    fireEvent.change(within(d).getByLabelText('Nombres'), { target: { value: 'Juan' } });
-    fireEvent.change(within(d).getByLabelText(/Cédula de Identidad/), {
-      target: { value: '8492011 LP' },
-    });
-    fireEvent.change(within(d).getByLabelText(/Código RUDE/), {
-      target: { value: '90900012345678' },
-    });
-    fireEvent.change(within(d).getByLabelText('Curso'), { target: { value: '1' } });
-    fireEvent.click(within(d).getByRole('button', { name: 'Guardar estudiante' }));
-    await waitFor(() => expect(crear).toHaveBeenCalled());
-    expect(screen.getByText('CI')).toBeInTheDocument();
-  });
-
   it('debe mostrar la advertencia de impacto de borrado seguro con técnica de burbuja', async () => {
     vi.spyOn(api, 'listarEstudiantes').mockResolvedValue([ESTUDIANTE]);
     abrir('/secretaria/estudiantes', 'SECRETARIA');
@@ -358,8 +334,8 @@ describe('Control de entrega de notas (US-10, criterio 1)', () => {
 
   beforeEach(() => {
     vi.spyOn(api, 'listarTrimestres').mockResolvedValue([
-      { id: 1, numero: 1, gestionId: 1, cerrado: false },
-      { id: 2, numero: 2, gestionId: 1, cerrado: false },
+      { id: 1, numero: 1, cerrado: false },
+      { id: 2, numero: 2, cerrado: false },
     ]);
     vi.spyOn(api, 'obtenerControlEntregas').mockResolvedValue(entregasMock);
   });

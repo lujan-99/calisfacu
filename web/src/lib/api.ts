@@ -1,5 +1,5 @@
-// Cliente HTTP hacia la API. El token JWT vive solo en memoria (no en localStorage): al recargar la página hay que
-// volver a ingresar, y un script inyectado no puede leerlo del almacenamiento del navegador.
+// Cliente HTTP hacia la API. El token JWT lo entrega SesionProvider (lib/sesion.tsx), que lo guarda en
+// localStorage hasta 30 minutos para que una recarga de la página no cierre la sesión (US-17, D11).
 const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
 export type Rol = 'ADMINISTRADOR' | 'SECRETARIA' | 'PROFESOR' | 'PADRE';
@@ -314,7 +314,6 @@ export interface HistorialAcademicoEstudiante {
   estudiante: {
     id: number;
     codigoRude: string;
-    ci?: string | null;
     nombres: string;
     apellidos: string;
     curso: Resumen;

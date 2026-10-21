@@ -44,7 +44,10 @@ export function AsistenciaMateria() {
   const [cargandoPorcentajes, setCargandoPorcentajes] = useState(false);
 
   // Carga de información de la materia
-  const { carga: materiaCarga } = useCarga(() => obtenerMateria(materiaId), [materiaId]);
+  const { carga: materiaCarga, recargar: recargarMateria } = useCarga(
+    () => obtenerMateria(materiaId),
+    [materiaId],
+  );
 
   // Carga de la lista de asistencia para la fecha seleccionada
   const {
@@ -110,7 +113,7 @@ export function AsistenciaMateria() {
   }
 
   if (materiaCarga.estado === 'error') {
-    return <ErrorCarga mensaje={materiaCarga.mensaje} />;
+    return <ErrorCarga mensaje={materiaCarga.mensaje} reintentar={recargarMateria} />;
   }
 
   const materia = materiaCarga.datos;

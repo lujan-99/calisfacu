@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Aviso, Cargando, ErrorCarga } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
 import {
@@ -126,15 +125,6 @@ export function Dimensiones() {
           </span>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-          <Link
-            to="/admin/solicitudes-edicion"
-            className="boton boton-secundario"
-            data-cy="btn-bandeja-solicitudes"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            <Icono nombre="portapapeles" tam={16} />
-            Bandeja de solicitudes
-          </Link>
           <label className="campo" style={{ minWidth: 160 }}>
             Gestión
             <select

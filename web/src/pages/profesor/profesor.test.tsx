@@ -169,7 +169,13 @@ describe('Planilla de notas (US-01, criterios 1 a 3)', () => {
   });
 
   it('debe guardar todas las notas pendientes juntas y mostrarlas como registradas', async () => {
-    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planilla());
+    // Después de guardar, la pantalla vuelve a leer la planilla para tener el id de cada nota (US-04).
+    const guardada = planilla();
+    guardada.filas[1] = { ...guardada.filas[1], valor: 72.5, notaId: 12 };
+    guardada.filas[3] = { ...guardada.filas[3], valor: 51, notaId: 14 };
+    vi.spyOn(api, 'obtenerPlanilla')
+      .mockResolvedValueOnce(planilla())
+      .mockResolvedValueOnce(guardada);
     const guardar = vi.spyOn(api, 'guardarPlanilla').mockResolvedValue({ guardadas: 2 });
     abrir(ruta, 'PROFESOR');
     expect(screen.queryByRole('button', { name: 'Guardar notas' })).not.toBeInTheDocument();
@@ -328,10 +334,6 @@ describe('Corrección auditable de notas (US-04, T-032, RNF-04)', () => {
   });
   const ruta = '/profesor/materias/7/actividades/5';
 
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
   it('debe abrir el modal de corrección y exigir el motivo obligatorio antes de guardar (US-04, criterio 1)', async () => {
     vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
     abrir(ruta, 'PROFESOR');
@@ -424,14 +426,26 @@ describe('Corrección auditable de notas (US-04, T-032, RNF-04)', () => {
     expect(screen.queryByRole('button', { name: /Eliminar/i })).not.toBeInTheDocument();
   });
 
-  it('debe abrir el panel de auditoría consolidada de la actividad', async () => {
+  it('debe avisar si no se pudo leer el historial en vez de mostrarlo vacío', async () => {
     vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    vi.spyOn(api, 'historialNota').mockRejectedValue(
+      new api.ErrorApi(403, 'Usted no es el profesor asignado a esta materia'),
+    );
     abrir(ruta, 'PROFESOR');
-    fireEvent.click(await screen.findByRole('button', { name: 'Auditoría de cambios' }));
+    fireEvent.click(await screen.findByRole('button', { name: /Historial/i }));
     expect(
-      await screen.findByText(/Auditoría de Cambios — Práctica: funciones cuadráticas/),
+      await screen.findByText('Usted no es el profesor asignado a esta materia'),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
+    expect(screen.queryByText(/No se registran correcciones/)).not.toBeInTheDocument();
+  });
+
+  it('debe ocultar la corrección mientras la nota no tenga id', async () => {
+    const sinId = planillaConNota();
+    sinId.filas[0] = { ...sinId.filas[0], notaId: null };
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(sinId);
+    abrir(ruta, 'PROFESOR');
+    expect(await screen.findByText('78')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Corregir/i })).not.toBeInTheDocument();
   });
 });
 
@@ -440,7 +454,6 @@ describe('Historial académico del estudiante (US-03, T-035)', () => {
     estudiante: {
       id: 1,
       codigoRude: '809800012026001',
-      ci: '12345678',
       nombres: 'Miguel',
       apellidos: 'Apaza Condori',
       curso: { id: 3, nombre: 'Secundaria 4.º «A»' },
@@ -508,7 +521,6 @@ describe('Historial académico del estudiante (US-03, T-035)', () => {
 
     expect(await screen.findByText('Apaza Condori, Miguel')).toBeInTheDocument();
     expect(screen.getByText('809800012026001')).toBeInTheDocument();
-    expect(screen.getByText('12345678')).toBeInTheDocument();
     expect(screen.getByText('78,5')).toBeInTheDocument(); // Promedio Anual
 
     // Comprobar orden cronológico de trimestres en pestañas/tarjetas

@@ -93,6 +93,24 @@ describe('Registro de notas (US-01) y cálculo trimestral (US-02)', () => {
     await planilla(e.actividades.ser.id, todos(90)).expect(422);
   });
 
+  it('debe devolver el id de cada nota registrada para poder corregirla (US-04)', async () => {
+    const r = await http()
+      .get(`/api/notas/actividades/${e.actividades.ser.id}`)
+      .set('Authorization', `Bearer ${tk}`)
+      .expect(200);
+    const notas = await ds.getRepository(Nota).find({ relations: { estudiante: true } });
+    const idDe = new Map(notas.map((n) => [n.estudiante.id, n.id]));
+    for (const f of (r.body as { filas: { estudianteId: number; notaId: number; valor: number }[] })
+      .filas) {
+      expect(f).toEqual(expect.objectContaining({ notaId: idDe.get(f.estudianteId), valor: 80 }));
+    }
+    const sinNotas = await http()
+      .get(`/api/notas/actividades/${e.actividades.hacer.id}`)
+      .set('Authorization', `Bearer ${tk}`)
+      .expect(200);
+    expect((sinNotas.body as { filas: { notaId: unknown }[] }).filas[0].notaId).toBeNull();
+  });
+
   it('debe calcular la nota trimestral con las dimensiones de la gestión (RM 001/2026)', async () => {
     const todos = (valor: number) => e.estudiantes.map((s) => ({ estudianteId: s.id, valor }));
     await planilla(e.actividades.saber1.id, todos(70)).expect(201);

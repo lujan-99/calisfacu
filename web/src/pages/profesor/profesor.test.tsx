@@ -434,3 +434,117 @@ describe('Corrección auditable de notas (US-04, T-032, RNF-04)', () => {
     expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
   });
 });
+
+describe('Historial académico del estudiante (US-03, T-035)', () => {
+  const historialMock: api.HistorialAcademicoEstudiante = {
+    estudiante: {
+      id: 1,
+      codigoRude: '809800012026001',
+      ci: '12345678',
+      nombres: 'Miguel',
+      apellidos: 'Apaza Condori',
+      curso: { id: 3, nombre: 'Secundaria 4.º «A»' },
+      gestion: { id: 1, anio: 2026 },
+    },
+    promedioAnual: 78.5,
+    tendencia: 'ASCENDENTE',
+    estadoAnual: 'PROMOVIDO',
+    trimestres: [
+      {
+        trimestreId: 21,
+        numero: 1,
+        cerrado: true,
+        promedioTrimestral: 74,
+        materias: [
+          {
+            materiaId: 7,
+            materia: 'Matemática',
+            profesor: 'Rosa Mamani Condori',
+            dimensiones: [
+              { codigo: 'SER', nombre: 'Ser', puntos: 8, puntajeMaximo: 10 },
+              { codigo: 'SABER', nombre: 'Saber', puntos: 32, puntajeMaximo: 45 },
+              { codigo: 'HACER', nombre: 'Hacer', puntos: 30, puntajeMaximo: 40 },
+              { codigo: 'AUTOEVALUACION', nombre: 'Autoevaluación', puntos: 4, puntajeMaximo: 5 },
+            ],
+            nota: 74,
+            aprobado: true,
+          },
+        ],
+      },
+      {
+        trimestreId: 22,
+        numero: 2,
+        cerrado: false,
+        promedioTrimestral: 83,
+        materias: [
+          {
+            materiaId: 7,
+            materia: 'Matemática',
+            profesor: 'Rosa Mamani Condori',
+            dimensiones: [
+              { codigo: 'SER', nombre: 'Ser', puntos: 9, puntajeMaximo: 10 },
+              { codigo: 'SABER', nombre: 'Saber', puntos: 38, puntajeMaximo: 45 },
+              { codigo: 'HACER', nombre: 'Hacer', puntos: 32, puntajeMaximo: 40 },
+              { codigo: 'AUTOEVALUACION', nombre: 'Autoevaluación', puntos: 4, puntajeMaximo: 5 },
+            ],
+            nota: 83,
+            aprobado: true,
+          },
+        ],
+      },
+      {
+        trimestreId: 23,
+        numero: 3,
+        cerrado: false,
+        promedioTrimestral: null,
+        materias: [],
+      },
+    ],
+  };
+
+  it('debe mostrar las notas y promedios de cada trimestre en orden cronológico (US-03, criterio 1)', async () => {
+    vi.spyOn(api, 'obtenerHistorialAcademicoEstudiante').mockResolvedValue(historialMock);
+    abrir('/profesor/estudiantes/1/historial', 'PROFESOR');
+
+    expect(await screen.findByText('Apaza Condori, Miguel')).toBeInTheDocument();
+    expect(screen.getByText('809800012026001')).toBeInTheDocument();
+    expect(screen.getByText('12345678')).toBeInTheDocument();
+    expect(screen.getByText('78,5')).toBeInTheDocument(); // Promedio Anual
+
+    // Comprobar orden cronológico de trimestres en pestañas/tarjetas
+    expect(screen.getByText('1.er trimestre')).toBeInTheDocument();
+    expect(screen.getByText('2.º trimestre')).toBeInTheDocument();
+    expect(screen.getByText('3.er trimestre')).toBeInTheDocument();
+
+    // Ver notas del 1.er trimestre
+    expect(screen.getAllByText('74').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Aprueba')).toBeInTheDocument();
+  });
+
+  it('debe cambiar de trimestre y ver sus materias correspondientes', async () => {
+    vi.spyOn(api, 'obtenerHistorialAcademicoEstudiante').mockResolvedValue(historialMock);
+    abrir('/profesor/estudiantes/1/historial', 'PROFESOR');
+
+    expect(await screen.findByText('Apaza Condori, Miguel')).toBeInTheDocument();
+
+    // Click en pestaña de 2.º trimestre
+    fireEvent.click(screen.getByRole('button', { name: /2.º trimestre/i }));
+    expect(screen.getAllByText('83').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('debe mostrar mensaje de acceso denegado (403) cuando el profesor no tiene autorización (US-03, criterio 2)', async () => {
+    vi.spyOn(api, 'obtenerHistorialAcademicoEstudiante').mockRejectedValue(
+      new api.ErrorApi(403, 'No tiene acceso a las calificaciones de este estudiante'),
+    );
+    abrir('/profesor/estudiantes/99/historial', 'PROFESOR');
+
+    expect(await screen.findByText(/Acceso Denegado \(HTTP 403\)/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Solo los profesores con materias asignadas a este estudiante/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Volver a mis materias/i })).toHaveAttribute(
+      'href',
+      '/profesor/materias',
+    );
+  });
+});

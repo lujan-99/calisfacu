@@ -485,7 +485,16 @@ export function Planilla() {
                     <span className="insignia-plomo">{i + 1}</span>
                   </td>
                   <th scope="row">
-                    <div>{f.estudiante}</div>
+                    <div>
+                      <Link
+                        to={`/profesor/estudiantes/${f.estudianteId}/historial`}
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                        data-cy="link-historial-estudiante"
+                        title="Ver historial académico anual del estudiante (US-03)"
+                      >
+                        {f.estudiante}
+                      </Link>
+                    </div>
                     {ticketInfo?.ticket &&
                       !edicionHabilitada &&
                       ticketInfo.ticket.estado === 'PENDIENTE' && (

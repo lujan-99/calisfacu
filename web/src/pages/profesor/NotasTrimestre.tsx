@@ -189,7 +189,16 @@ export function NotasTrimestre() {
             <tbody>
               {notas.datos.map((f) => (
                 <tr key={f.estudianteId} data-cy="fila-nota-trimestre">
-                  <th scope="row">{f.estudiante}</th>
+                  <th scope="row">
+                    <Link
+                      to={`/profesor/estudiantes/${f.estudianteId}/historial`}
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                      data-cy="link-historial-estudiante"
+                      title="Ver historial académico anual del estudiante (US-03)"
+                    >
+                      {f.estudiante}
+                    </Link>
+                  </th>
                   {dimensiones.map((d) => {
                     const puntos = f.dimensiones.find((x) => x.codigo === d.codigo)?.puntos ?? null;
                     return (

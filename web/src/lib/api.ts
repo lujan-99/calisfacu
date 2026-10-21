@@ -279,3 +279,42 @@ export const corregirNota = (notaId: number, datos: { valor: number; motivo: str
 
 export const historialNota = (notaId: number) =>
   solicitar<RegistroAuditoriaNota[]>(`/notas/${notaId}/historial`);
+
+// ---------- Historial Académico Anual del Estudiante (US-03) ----------
+
+export interface NotaMateriaHistorial {
+  materiaId: number;
+  materia: string;
+  profesor?: string;
+  dimensiones: { codigo: string; nombre: string; puntos: number | null; puntajeMaximo: number }[];
+  nota: number | null;
+  aprobado: boolean | null;
+  pendientes?: string[];
+}
+
+export interface TrimestreHistorial {
+  trimestreId: number;
+  numero: number;
+  cerrado: boolean;
+  promedioTrimestral: number | null;
+  materias: NotaMateriaHistorial[];
+}
+
+export interface HistorialAcademicoEstudiante {
+  estudiante: {
+    id: number;
+    codigoRude: string;
+    ci?: string | null;
+    nombres: string;
+    apellidos: string;
+    curso: Resumen;
+    gestion: Gestion;
+  };
+  trimestres: TrimestreHistorial[];
+  promedioAnual: number | null;
+  tendencia: 'ASCENDENTE' | 'DESCENDENTE' | 'ESTABLE' | 'PENDIENTE';
+  estadoAnual: 'PROMOVIDO' | 'EN_RIESGO' | 'PENDIENTE';
+}
+
+export const obtenerHistorialAcademicoEstudiante = (estudianteId: number) =>
+  solicitar<HistorialAcademicoEstudiante>(`/estudiantes/${estudianteId}/historial`);

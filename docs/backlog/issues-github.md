@@ -36,12 +36,12 @@
 | T-029 | [#29](https://github.com/lujan-99/calisfacu/issues/29) | Sprint 1 | Infra    | Galvan      | Lujan   | En revisión |
 | T-030 | [#30](https://github.com/lujan-99/calisfacu/issues/30) | Sprint 2 | Infra    | Galvan      | Lujan   | Por hacer   |
 | T-031 | [#31](https://github.com/lujan-99/calisfacu/issues/31) | Sprint 2 | US-04    | Lujan       | Galvan  | En revisión |
-| T-032 | [#32](https://github.com/lujan-99/calisfacu/issues/32) | Sprint 2 | US-04    | Galvan      | Lujan   | Por hacer   |
-| T-033 | [#33](https://github.com/lujan-99/calisfacu/issues/33) | Sprint 2 | US-04    | Galvan      | Lujan   | Por hacer   |
+| T-032 | [#32](https://github.com/lujan-99/calisfacu/issues/32) | Sprint 2 | US-04    | Galvan      | Lujan   | En revisión |
+| T-033 | [#33](https://github.com/lujan-99/calisfacu/issues/33) | Sprint 2 | US-04    | Galvan      | Lujan   | En revisión |
 | T-034 | [#34](https://github.com/lujan-99/calisfacu/issues/34) | Sprint 2 | US-03    | Lujan       | Galvan  | En revisión |
-| T-035 | [#35](https://github.com/lujan-99/calisfacu/issues/35) | Sprint 2 | US-03    | Galvan      | Lujan   | Por hacer   |
+| T-035 | [#35](https://github.com/lujan-99/calisfacu/issues/35) | Sprint 2 | US-03    | Galvan      | Lujan   | En revisión |
 | T-036 | [#36](https://github.com/lujan-99/calisfacu/issues/36) | Sprint 2 | US-19    | Lujan       | Galvan  | En revisión |
-| T-037 | [#37](https://github.com/lujan-99/calisfacu/issues/37) | Sprint 2 | US-19    | Galvan      | Lujan   | Por hacer   |
+| T-037 | [#37](https://github.com/lujan-99/calisfacu/issues/37) | Sprint 2 | US-19    | Galvan      | Lujan   | En revisión |
 | T-038 | [#38](https://github.com/lujan-99/calisfacu/issues/38) | Sprint 2 | US-05    | Lujan       | Galvan  | En revisión |
 | T-039 | [#39](https://github.com/lujan-99/calisfacu/issues/39) | Sprint 2 | US-05    | Galvan      | Lujan   | En revisión |
 | T-040 | [#40](https://github.com/lujan-99/calisfacu/issues/40) | Sprint 2 | US-10    | Galvan      | Lujan   | En revisión |

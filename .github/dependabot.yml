@@ -1,11 +1,14 @@
-# SQAP, Sección 11: Dependabot revisa una vez por semana
+# SQAP, Sección 11: Dependabot revisa una vez por semana. Los PR van a develop, porque main solo recibe el PR de
+# release (ADR-0008). Las alertas y las actualizaciones de seguridad están activadas en el repositorio (T-030).
 version: 2
 updates:
   - package-ecosystem: npm
     directory: '/'
+    target-branch: develop
     schedule: { interval: weekly }
     commit-message: { prefix: 'chore(deps)', include: scope }
   - package-ecosystem: github-actions
     directory: '/'
+    target-branch: develop
     schedule: { interval: weekly }
     commit-message: { prefix: 'chore(ci)' }

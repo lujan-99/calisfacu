@@ -225,6 +225,7 @@ export interface FilaPlanilla {
   estudianteId: number;
   estudiante: string;
   valor: number | null;
+  notaId?: number | null;
 }
 export interface Planilla {
   actividad: {
@@ -255,3 +256,26 @@ export interface NotaTrimestral {
 }
 export const notasTrimestrales = (materiaId: number, trimestreId: number) =>
   solicitar<NotaTrimestral[]>(`/calculo/materias/${materiaId}/trimestres/${trimestreId}`);
+
+// ---------- Auditoría y corrección de notas (US-04, RNF-04, M15) ----------
+
+export interface RegistroAuditoriaNota {
+  fecha: string;
+  usuario: string;
+  valorAnterior: number | null;
+  valorNuevo: number;
+  motivo: string | null;
+  origen: 'REGISTRO' | 'CORRECCION';
+}
+
+export interface ResultadoCorreccion {
+  notaId: number;
+  valorAnterior: number;
+  valorNuevo: number;
+}
+
+export const corregirNota = (notaId: number, datos: { valor: number; motivo: string }) =>
+  solicitar<ResultadoCorreccion>(`/notas/${notaId}/correccion`, enviar('PATCH', datos));
+
+export const historialNota = (notaId: number) =>
+  solicitar<RegistroAuditoriaNota[]>(`/notas/${notaId}/historial`);

@@ -309,3 +309,128 @@ describe('Notas del trimestre (US-02, T-024)', () => {
     ]);
   });
 });
+
+describe('Corrección auditable de notas (US-04, T-032, RNF-04)', () => {
+  const planillaConNota = (): api.Planilla => ({
+    actividad: {
+      id: 5,
+      nombre: 'Práctica: funciones cuadráticas',
+      dimension: 'Saber',
+      materia: 'Matemática',
+      materiaId: 7,
+      curso: 'Secundaria 4.º «A»',
+      trimestre: { id: 23, numero: 3, cerrado: false },
+    },
+    filas: [
+      { estudianteId: 1, estudiante: 'Apaza Condori, Miguel', valor: 78, notaId: 101 },
+      { estudianteId: 2, estudiante: 'Choque Huanca, Rosa', valor: null },
+    ],
+  });
+  const ruta = '/profesor/materias/7/actividades/5';
+
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('debe abrir el modal de corrección y exigir el motivo obligatorio antes de guardar (US-04, criterio 1)', async () => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    abrir(ruta, 'PROFESOR');
+    expect(await screen.findByText('78')).toBeInTheDocument();
+
+    const btnCorregir = screen.getByRole('button', { name: /Corregir/i });
+    fireEvent.click(btnCorregir);
+
+    expect(await screen.findByText(/Corregir nota de Apaza Condori, Miguel/)).toBeInTheDocument();
+    expect(screen.getAllByText('78')).toHaveLength(2);
+
+    const inputNueva = screen.getByLabelText(/Nueva calificación/);
+    const btnGuardar = screen.getByRole('button', { name: 'Guardar corrección' });
+
+    // Intento 1: sin nueva nota
+    fireEvent.click(btnGuardar);
+    expect(await screen.findByText('Ingrese una nota')).toBeInTheDocument();
+
+    // Intento 2: misma nota
+    fireEvent.change(inputNueva, { target: { value: '78' } });
+    fireEvent.click(btnGuardar);
+    expect(
+      await screen.findByText('La nota nueva debe ser diferente a la nota actual.'),
+    ).toBeInTheDocument();
+
+    // Intento 3: sin motivo
+    fireEvent.change(inputNueva, { target: { value: '88' } });
+    fireEvent.click(btnGuardar);
+    expect(
+      await screen.findByText('El motivo de la corrección es obligatorio.'),
+    ).toBeInTheDocument();
+  });
+
+  it('debe corregir la nota, actualizar la planilla y guardar el registro de auditoría (US-04, criterio 1 y 3)', async () => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    const patch = vi.spyOn(api, 'corregirNota').mockResolvedValue({
+      notaId: 101,
+      valorAnterior: 78,
+      valorNuevo: 88,
+    });
+    abrir(ruta, 'PROFESOR');
+
+    fireEvent.click(await screen.findByRole('button', { name: /Corregir/i }));
+    fireEvent.change(screen.getByLabelText(/Nueva calificación/), { target: { value: '88' } });
+    fireEvent.change(screen.getByLabelText(/Motivo justificado de la corrección/), {
+      target: { value: 'Error en la transcripción de la pregunta 3' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar corrección' }));
+
+    expect(
+      await screen.findByText(/Nota de Apaza Condori, Miguel corregida de 78 a 88/),
+    ).toBeInTheDocument();
+    expect(patch).toHaveBeenCalledWith(101, {
+      valor: 88,
+      motivo: 'Error en la transcripción de la pregunta 3',
+    });
+    expect(screen.getByText('88')).toBeInTheDocument();
+  });
+
+  it('debe mostrar el historial de auditoría de solo lectura con quién, cuándo y valor anterior (US-04, criterio 1 y 2)', async () => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    vi.spyOn(api, 'historialNota').mockResolvedValue([
+      {
+        fecha: '2026-10-20T14:30:00.000Z',
+        usuario: 'Ana Profesora',
+        valorAnterior: null,
+        valorNuevo: 78,
+        motivo: null,
+        origen: 'REGISTRO',
+      },
+      {
+        fecha: '2026-10-20T16:00:00.000Z',
+        usuario: 'Ana Profesora',
+        valorAnterior: 78,
+        valorNuevo: 88,
+        motivo: 'Revisión formal con el estudiante',
+        origen: 'CORRECCION',
+      },
+    ]);
+    abrir(ruta, 'PROFESOR');
+
+    fireEvent.click(await screen.findByRole('button', { name: /Historial/i }));
+    expect(
+      await screen.findByText(/Historial de Auditoría — Apaza Condori, Miguel/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Revisión formal con el estudiante/)).toBeInTheDocument();
+    expect(screen.getByText(/Registro inmutable de solo lectura/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
+    // Comprobar que no hay botones de editar ni eliminar la auditoría (solo lectura)
+    expect(screen.queryByRole('button', { name: /Eliminar/i })).not.toBeInTheDocument();
+  });
+
+  it('debe abrir el panel de auditoría consolidada de la actividad', async () => {
+    vi.spyOn(api, 'obtenerPlanilla').mockResolvedValue(planillaConNota());
+    abrir(ruta, 'PROFESOR');
+    fireEvent.click(await screen.findByRole('button', { name: 'Auditoría de cambios' }));
+    expect(
+      await screen.findByText(/Auditoría de Cambios — Práctica: funciones cuadráticas/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
+  });
+});

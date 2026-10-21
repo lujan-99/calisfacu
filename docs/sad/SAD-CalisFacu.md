@@ -135,6 +135,7 @@ Decisiones del modelo:
   de trimestre entre 1 y 3, una nota por estudiante y actividad, un profesor por materia.
 - La nota trimestral **no se guarda**: se calcula al consultarla, así que una corrección se refleja de inmediato.
 - `entregas_notas` tiene una fila por materia y trimestre (`UNIQUE`): la entrega no se repite ni se deshace (US-10, D13).
+- `estudiantes.ci` (cédula de identidad) es opcional y no identifica al estudiante (D15).
 - `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos
   de la misma gestión (US-18, criterio 3; D10). La fila guarda también la gestión del curso para que la base lo exija.
 - `unidades_educativas` guarda los colores de la web (`CHECK` de formato `#RRGGBB`) y el logo (`bytea`, máximo 256 KB):

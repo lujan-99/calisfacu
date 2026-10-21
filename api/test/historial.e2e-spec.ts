@@ -65,6 +65,7 @@ describe('Historial académico del estudiante (US-03)', () => {
     expect(r.body.estudiante).toMatchObject({
       id: e.estudiantes[0].id,
       codigoRude: 'RUDE000001',
+      ci: null,
       nombres: 'Ana',
       apellidos: 'Quispe',
       curso: { nombre: 'Secundaria 3.º «A»' },

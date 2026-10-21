@@ -62,6 +62,10 @@ export function Estudiantes() {
     if (!f.nombres.trim()) e.nombres = 'Escriba los nombres';
     if (!f.apellidos.trim()) e.apellidos = 'Escriba los apellidos';
     if (!f.cursoId) e.cursoId = 'Seleccione un curso';
+    const ci = f.ci.trim().toUpperCase();
+    if (ci && !/^[0-9A-Z][0-9A-Z -]{3,13}[0-9A-Z]$/.test(ci)) {
+      e.ci = 'El CI debe tener de 5 a 15 caracteres: números, letras, espacio o guion';
+    }
     setErrores(e);
     return Object.keys(e).length === 0;
   }
@@ -150,7 +154,13 @@ export function Estudiantes() {
           className="boton boton-primario"
           data-cy="btn-nuevo-estudiante"
           onClick={() =>
-            abrir({ cursoId: Number(cursoId) || 0, codigoRude: '', nombres: '', apellidos: '' })
+            abrir({
+              cursoId: Number(cursoId) || 0,
+              codigoRude: '',
+              ci: '',
+              nombres: '',
+              apellidos: '',
+            })
           }
         >
           <Icono nombre="mas" tam={18} />
@@ -221,6 +231,9 @@ export function Estudiantes() {
                   <th scope="col" className="ocultar-celular">
                     RUDE
                   </th>
+                  <th scope="col" className="ocultar-celular">
+                    CI
+                  </th>
                   <th scope="col">Curso</th>
                   <th scope="col" className="acciones">
                     <span className="solo-lector">Acciones</span>
@@ -237,6 +250,9 @@ export function Estudiantes() {
                     <td className="ocultar-celular" style={{ fontVariantNumeric: 'tabular-nums' }}>
                       <span className="insignia insignia-plomo">{e.codigoRude}</span>
                     </td>
+                    <td className="ocultar-celular" data-cy="estudiante-ci-celda">
+                      {e.ci ?? '—'}
+                    </td>
                     <td>
                       <span className="insignia insignia-curso">{e.curso.nombre}</span>
                     </td>
@@ -252,6 +268,7 @@ export function Estudiantes() {
                             id: e.id,
                             cursoId: e.curso.id,
                             codigoRude: e.codigoRude,
+                            ci: e.ci ?? '',
                             nombres: e.nombres,
                             apellidos: e.apellidos,
                           });
@@ -329,6 +346,20 @@ export function Estudiantes() {
                   autoCapitalize="characters"
                   aria-invalid={!!errores.codigoRude}
                   onChange={(e) => setForm({ ...form, codigoRude: e.target.value.toUpperCase() })}
+                />
+              </Campo>
+              <Campo
+                etiqueta="Cédula de identidad (CI)"
+                error={errores.ci}
+                ayuda="Opcional. Ej.: 7654321 o 7654321 LP"
+              >
+                <input
+                  data-cy="estudiante-ci"
+                  value={form.ci}
+                  maxLength={15}
+                  autoCapitalize="characters"
+                  aria-invalid={!!errores.ci}
+                  onChange={(e) => setForm({ ...form, ci: e.target.value.toUpperCase() })}
                 />
               </Campo>
               <Campo etiqueta="Curso" error={errores.cursoId}>

@@ -91,8 +91,14 @@ export function HistorialEstudiante() {
             {estudiante.apellidos}, {estudiante.nombres}
           </h2>
           <p>
-            RUDE: <strong>{estudiante.codigoRude}</strong> · Curso:{' '}
-            <strong>{estudiante.curso.nombre}</strong> · Gestión{' '}
+            RUDE: <strong>{estudiante.codigoRude}</strong>
+            {estudiante.ci && (
+              <>
+                {' '}
+                · CI: <strong>{estudiante.ci}</strong>
+              </>
+            )}{' '}
+            · Curso: <strong>{estudiante.curso.nombre}</strong> · Gestión{' '}
             <strong>{estudiante.gestion.anio}</strong>
           </p>
         </div>

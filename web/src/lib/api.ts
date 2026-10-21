@@ -136,6 +136,7 @@ export interface DatosCurso {
 export interface Estudiante {
   id: number;
   codigoRude: string;
+  ci: string | null;
   nombres: string;
   apellidos: string;
   curso: Resumen;
@@ -144,6 +145,8 @@ export interface Estudiante {
 export interface DatosEstudiante {
   cursoId: number;
   codigoRude: string;
+  /** Opcional (decisión D15); vacío lo borra. */
+  ci: string;
   nombres: string;
   apellidos: string;
 }
@@ -314,6 +317,7 @@ export interface HistorialAcademicoEstudiante {
   estudiante: {
     id: number;
     codigoRude: string;
+    ci: string | null;
     nombres: string;
     apellidos: string;
     curso: Resumen;

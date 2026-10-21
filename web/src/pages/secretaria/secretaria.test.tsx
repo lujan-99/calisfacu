@@ -127,6 +127,7 @@ describe('Estudiantes (US-18, criterio 3)', () => {
   const ESTUDIANTE: api.Estudiante = {
     id: 9,
     codigoRude: '80800012345678',
+    ci: '7654321 LP',
     nombres: 'Miguel',
     apellidos: 'Apaza Condori',
     curso: CURSO,
@@ -156,6 +157,41 @@ describe('Estudiantes (US-18, criterio 3)', () => {
     expect(screen.getByText('Escriba los nombres')).toBeInTheDocument();
     expect(
       screen.getByText('Seleccione un curso', { selector: '.campo-error' }),
+    ).toBeInTheDocument();
+    expect(crear).not.toHaveBeenCalled();
+  });
+
+  it('debe enviar el CI a la API y mostrarlo en la tabla (decisión D15)', async () => {
+    vi.spyOn(api, 'listarEstudiantes').mockResolvedValue([ESTUDIANTE]);
+    const crear = vi.spyOn(api, 'crearEstudiante').mockResolvedValue({ ...ESTUDIANTE, id: 15 });
+    abrir('/secretaria/estudiantes', 'SECRETARIA');
+    expect(await screen.findByText('7654321 LP')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Nuevo estudiante' }));
+    const d = screen.getByRole('dialog');
+    fireEvent.change(within(d).getByLabelText('Apellidos'), { target: { value: 'Perez' } });
+    fireEvent.change(within(d).getByLabelText('Nombres'), { target: { value: 'Juan' } });
+    fireEvent.change(within(d).getByLabelText(/Cédula de identidad/), {
+      target: { value: '8492011 lp' },
+    });
+    fireEvent.change(within(d).getByLabelText(/Código RUDE/), {
+      target: { value: '90900012345678' },
+    });
+    fireEvent.change(within(d).getByLabelText('Curso'), { target: { value: '1' } });
+    fireEvent.click(within(d).getByRole('button', { name: 'Guardar estudiante' }));
+    await waitFor(() =>
+      expect(crear).toHaveBeenCalledWith(expect.objectContaining({ ci: '8492011 LP' })),
+    );
+  });
+
+  it('debe rechazar un CI con formato inválido antes de enviar', async () => {
+    vi.spyOn(api, 'listarEstudiantes').mockResolvedValue([]);
+    const crear = vi.spyOn(api, 'crearEstudiante');
+    abrir('/secretaria/estudiantes', 'SECRETARIA');
+    fireEvent.click(await screen.findByRole('button', { name: 'Nuevo estudiante' }));
+    fireEvent.change(screen.getByLabelText(/Cédula de identidad/), { target: { value: '12$' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar estudiante' }));
+    expect(
+      screen.getByText('El CI debe tener de 5 a 15 caracteres: números, letras, espacio o guion'),
     ).toBeInTheDocument();
     expect(crear).not.toHaveBeenCalled();
   });

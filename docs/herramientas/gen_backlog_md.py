@@ -115,6 +115,10 @@ DECISIONES = [
          'Con la plantilla .xlsx del sistema (Código RUDE, Estudiante, Nota), una actividad por archivo, hasta 1 MB y 1000 filas. Se identifica al estudiante por su RUDE en el curso; las filas sin nota se ignoran. '
          'Una nota que ya existe no se reemplaza: la fila se rechaza y se corrige con motivo (US-04). Al confirmar, la API vuelve a validar el mismo archivo y guarda las filas válidas en una transacción.',
          '`validarFilas`, `ImportacionService` (US-05)'],
+        ['D15', '¿Se registra la cédula de identidad (CI) del estudiante?',
+         'Sí, opcional, a pedido del equipo de frontend (no la exige ninguna historia). De 5 a 15 caracteres: números, letras, espacio o guion, en mayúsculas. '
+         'No identifica al estudiante (lo hace el RUDE, D10) y no se valida contra el SEGIP. La ven la secretaria, el administrador y el profesor en el historial.',
+         '`DatosEstudianteDto.ci`, columna `estudiantes.ci` (US-18)'],
     ]), '',
 ]
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
@@ -72,6 +72,18 @@ export class DatosEstudianteDto {
     message: 'El código RUDE debe tener de 6 a 20 letras o números',
   })
   codigoRude: string;
+
+  @ApiPropertyOptional({
+    example: '7654321 LP',
+    description: 'Cédula de identidad, opcional (decisión D15); vacío la borra',
+  })
+  @Mayusculas()
+  @Transform(({ value }: { value: unknown }) => (value === '' ? null : value))
+  @IsOptional()
+  @Matches(/^[0-9A-Z][0-9A-Z -]{3,13}[0-9A-Z]$/, {
+    message: 'El CI debe tener de 5 a 15 caracteres: números, letras, espacio o guion',
+  })
+  ci?: string | null;
 
   @ApiProperty({ example: 'Ana' })
   @Recortar()

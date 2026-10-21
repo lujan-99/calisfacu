@@ -170,6 +170,10 @@ export class Estudiante {
   @Column({ length: 20 })
   codigoRude: string;
 
+  /** Cédula de identidad, opcional (decisión D15). Dato de un menor: solo lo ve el personal autorizado. */
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  ci: string | null;
+
   @Column()
   nombres: string;
 

@@ -97,6 +97,7 @@ export class HistorialService {
       estudiante: {
         id: estudiante.id,
         codigoRude: estudiante.codigoRude,
+        ci: estudiante.ci,
         nombres: estudiante.nombres,
         apellidos: estudiante.apellidos,
         curso: resumenCurso(estudiante.curso),

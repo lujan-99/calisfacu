@@ -463,6 +463,7 @@ describe('Historial académico del estudiante (US-03, T-035)', () => {
     estudiante: {
       id: 1,
       codigoRude: '809800012026001',
+      ci: '12345678',
       nombres: 'Miguel',
       apellidos: 'Apaza Condori',
       curso: { id: 3, nombre: 'Secundaria 4.º «A»' },
@@ -530,6 +531,7 @@ describe('Historial académico del estudiante (US-03, T-035)', () => {
 
     expect(await screen.findByText('Apaza Condori, Miguel')).toBeInTheDocument();
     expect(screen.getByText('809800012026001')).toBeInTheDocument();
+    expect(screen.getByText('12345678')).toBeInTheDocument();
     expect(screen.getByText('78,5')).toBeInTheDocument(); // Promedio Anual
 
     // Comprobar orden cronológico de trimestres en pestañas/tarjetas

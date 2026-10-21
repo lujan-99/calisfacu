@@ -256,12 +256,54 @@ describe('Gestión académica (US-18, T-016)', () => {
       expect(r.body).toEqual({
         id: expect.any(Number),
         codigoRude: 'RUDE200001',
+        ci: null,
         nombres: 'Sara',
         apellidos: 'Apaza',
         curso: { id: e.estudiantes[0].curso.id, nombre: 'Secundaria 3.º «A»' },
         gestion: { id: gestion, anio: 2026 },
       });
     });
+
+    it('debe guardar el CI opcional en mayúsculas y permitir borrarlo (decisión D15)', async () => {
+      const datos = {
+        cursoId: e.estudiantes[0].curso.id,
+        codigoRude: 'RUDE200002',
+        nombres: 'Rosa',
+        apellidos: 'Choque',
+      };
+      const r = await http()
+        .post('/api/estudiantes')
+        .set(como('secretaria'))
+        .send({ ...datos, ci: ' 7654321 lp ' })
+        .expect(201);
+      expect(r.body.ci).toBe('7654321 LP');
+      const sinCi = await http()
+        .put(`/api/estudiantes/${r.body.id}`)
+        .set(como('secretaria'))
+        .send({ ...datos, ci: '' })
+        .expect(200);
+      expect(sinCi.body.ci).toBeNull();
+    });
+
+    it.each(['123', 'ABC$1234', '1234567890123456'])(
+      'debe rechazar el CI con formato inválido %p',
+      async (ci) => {
+        const r = await http()
+          .post('/api/estudiantes')
+          .set(como('secretaria'))
+          .send({
+            cursoId: e.estudiantes[0].curso.id,
+            codigoRude: 'RUDE200003',
+            nombres: 'Eva',
+            apellidos: 'Mamani',
+            ci,
+          })
+          .expect(400);
+        expect(r.body.message).toContain(
+          'El CI debe tener de 5 a 15 caracteres: números, letras, espacio o guion',
+        );
+      },
+    );
 
     it('debe rechazar con un mensaje al estudiante ya inscrito en otro curso de la misma gestión', async () => {
       const r = await http()

@@ -51,6 +51,7 @@ export class EstudiantesService {
     const curso = await this.cursos.obtener(dto.cursoId);
     return this.guardar(this.db.manager, {
       codigoRude: dto.codigoRude,
+      ci: dto.ci ?? null,
       nombres: dto.nombres,
       apellidos: dto.apellidos,
       curso,
@@ -77,6 +78,7 @@ export class EstudiantesService {
       return this.guardar(tx, {
         ...actual,
         codigoRude: dto.codigoRude,
+        ci: dto.ci ?? null,
         nombres: dto.nombres,
         apellidos: dto.apellidos,
         curso,
@@ -134,6 +136,7 @@ export class EstudiantesService {
     return {
       id: e.id,
       codigoRude: e.codigoRude,
+      ci: e.ci,
       nombres: e.nombres,
       apellidos: e.apellidos,
       curso: resumenCurso(e.curso),

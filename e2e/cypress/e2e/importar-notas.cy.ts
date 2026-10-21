@@ -1,6 +1,7 @@
 // US-05, criterios 1 y 2 (T-039): importación de notas desde Excel.
 // El profesor sube su planilla .xlsx y previsualiza filas válidas y observadas antes de confirmar.
-// fixtures/importacion-notas.xlsx: un RUDE del seed con 85, un RUDE que no existe y uno con 120 (fuera de escala).
+// La planilla es la plantilla de la actividad que entrega la API, completada por la tarea llenarPlantilla
+// (cypress.config.ts): un estudiante con 85, otro con 120 (fuera de escala) y un RUDE que no existe.
 
 interface Sesion {
   token: string;
@@ -15,20 +16,30 @@ function prepararActividadParaImportar() {
       contrasena: String(Cypress.env('SEED_PASSWORD') ?? 'Calis2026!'),
     })
     .then(({ body }) => {
+      const auth = { Authorization: `Bearer ${body.token}` };
       return cy
         .request<{ id: number }>({
           method: 'POST',
           url: `${api}/api/notas/actividades`,
-          headers: { Authorization: `Bearer ${body.token}` },
+          headers: auth,
           body: { materiaId: 1, trimestreId: 1, dimensionId: 1, nombre },
         })
-        .then(() => nombre);
+        .then(({ body: actividad }) =>
+          cy.request<string>({
+            url: `${api}/api/importaciones/actividades/${actividad.id}/plantilla`,
+            headers: auth,
+            encoding: 'base64',
+          }),
+        )
+        .then(({ body: plantilla }) => cy.task<string>('llenarPlantilla', plantilla))
+        .then((archivo) => ({ nombre, archivo }));
     });
 }
 
 describe('Importación de calificaciones desde Excel (US-05, T-039)', () => {
   beforeEach(() => {
-    prepararActividadParaImportar().then((nombre) => {
+    prepararActividadParaImportar().then(({ nombre, archivo }) => {
+      cy.wrap(archivo).as('archivo');
       cy.ingresar(Cypress.env('profesorEmail') as string);
       cy.contains('[data-cy=materia-item]', 'Matemática').click();
       cy.get('[data-cy=trimestre-1]').click();
@@ -41,8 +52,15 @@ describe('Importación de calificaciones desde Excel (US-05, T-039)', () => {
 
   const subir = () =>
     cy
-      .get('[data-cy=input-archivo-excel]')
-      .selectFile('cypress/fixtures/importacion-notas.xlsx', { force: true });
+      .get<string>('@archivo')
+      .then((archivo) =>
+        cy
+          .get('[data-cy=input-archivo-excel]')
+          .selectFile(
+            { contents: Cypress.Buffer.from(archivo, 'base64'), fileName: 'notas.xlsx' },
+            { force: true },
+          ),
+      );
 
   it('debe previsualizar y discriminar filas válidas de filas con error antes de confirmar', () => {
     subir();

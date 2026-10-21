@@ -53,14 +53,26 @@ describe('Reglas de la importación desde Excel (US-05)', () => {
         [3, 'El estudiante no existe en este curso'],
         [4, 'La nota debe ser un número entre 1 y 100, con hasta dos decimales'],
         [5, 'Falta el código RUDE'],
-        [6, 'Falta la nota'],
       ]);
       expect(r.filasObservadas[1]).toMatchObject({
         identificador: 'RUDE000002',
         valorIngresado: '120',
       });
-      expect(r.resumen).toEqual({ total: 5, validas: 1, errores: 4 });
-      expect(r.totalFilas).toBe(5);
+      expect(r.resumen).toEqual({ total: 4, validas: 1, errores: 3 });
+      expect(r.totalFilas).toBe(4);
+    });
+
+    it('debe ignorar las filas sin nota: el profesor puede llenar solo una parte de la plantilla', () => {
+      const r = validarFilas(
+        [
+          { linea: 2, rude: 'RUDE000001', nota: 80 },
+          { linea: 3, rude: 'RUDE000002', nota: null },
+          { linea: 4, rude: 'RUDE000003', nota: '  ' },
+        ],
+        estudiantes,
+        new Set(),
+      );
+      expect(r.resumen).toEqual({ total: 1, validas: 1, errores: 0 });
     });
 
     it('debe rechazar al estudiante que ya tiene nota en la actividad (se corrige con motivo, US-04)', () => {

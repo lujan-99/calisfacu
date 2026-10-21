@@ -57,8 +57,9 @@ const vacia = (celda: unknown) =>
   celda === null || celda === undefined || (typeof celda === 'string' && celda.trim() === '');
 
 /**
- * US-05, criterios 1 y 2: cada fila es válida o se rechaza con su motivo. Una nota ya registrada no se reemplaza
- * desde un archivo: se corrige con motivo (US-04, decisión D14).
+ * US-05, criterios 1 y 2: cada fila con nota es válida o se rechaza con su motivo. Las filas sin nota se ignoran,
+ * porque el profesor puede llenar solo una parte de la plantilla. Una nota ya registrada no se reemplaza desde un
+ * archivo: se corrige con motivo (US-04, decisión D14).
  */
 export function validarFilas(
   filas: readonly FilaLeida[],
@@ -69,14 +70,15 @@ export function validarFilas(
   const vistos = new Map<number, number>();
   const filasValidas: FilaValida[] = [];
   const filasObservadas: FilaObservada[] = [];
+  const conValor = filas.filter((f) => !vacia(f.nota));
 
-  for (const f of filas) {
+  for (const f of conValor) {
     const rude = f.rude.trim().toUpperCase();
     const observar = (motivo: string) =>
       filasObservadas.push({
         linea: f.linea,
         identificador: rude,
-        valorIngresado: vacia(f.nota) ? '' : String(f.nota),
+        valorIngresado: String(f.nota),
         motivo,
         valida: false,
       });
@@ -87,10 +89,6 @@ export function validarFilas(
     const estudiante = porRude.get(rude);
     if (!estudiante) {
       observar('El estudiante no existe en este curso');
-      continue;
-    }
-    if (vacia(f.nota)) {
-      observar('Falta la nota');
       continue;
     }
     const valor = leerNota(f.nota);
@@ -122,9 +120,13 @@ export function validarFilas(
   }
 
   return {
-    totalFilas: filas.length,
+    totalFilas: conValor.length,
     filasValidas,
     filasObservadas,
-    resumen: { total: filas.length, validas: filasValidas.length, errores: filasObservadas.length },
+    resumen: {
+      total: conValor.length,
+      validas: filasValidas.length,
+      errores: filasObservadas.length,
+    },
   };
 }

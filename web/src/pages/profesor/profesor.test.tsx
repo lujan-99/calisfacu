@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../lib/api';
+import * as riesgoLib from '../../lib/riesgo';
 import { abrir, DIMENSIONES, MATERIA, TRIMESTRES } from '../../prueba-utils';
 import { trimestrePorDefecto } from './MateriaActividades';
 import { textoPendiente } from './NotasTrimestre';
@@ -993,5 +994,125 @@ describe('Entrega de notas por materia (US-10, criterio 2)', () => {
     expect(
       screen.queryByRole('button', { name: /Marcar trimestre como entregado/i }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('Panel de Riesgo Académico (US-06, T-044)', () => {
+  const PANEL_MOCK: riesgoLib.PanelRiesgoData = {
+    materia: { id: 7, nombre: 'Matemática' },
+    curso: { id: 1, nombre: 'Secundaria 4.º «A»' },
+    trimestre: { id: 21, numero: 1 },
+    umbralAsistencia: 80.0,
+    umbralNotaMinima: 51,
+    resumen: {
+      totalEstudiantes: 3,
+      enRiesgoTotal: 2,
+      enRiesgoPromedio: 1,
+      enRiesgoAsistencia: 0,
+      enRiesgoAmbos: 1,
+      regulares: 1,
+      pendientes: 0,
+      promedioGeneral: 56.7,
+      asistenciaGeneral: 82.3,
+    },
+    estudiantes: [
+      {
+        estudianteId: 101,
+        codigoRude: '90000000001',
+        ci: '10203040',
+        estudiante: 'Condori Ramos, Lucia',
+        promedio: 45.0,
+        porcentajeAsistencia: 90.0,
+        clasesDictadas: 10,
+        asistencias: 9,
+        enRiesgo: true,
+        motivoRiesgo: 'PROMEDIO',
+        estado: 'EN_RIESGO',
+      },
+      {
+        estudianteId: 102,
+        codigoRude: '90000000002',
+        ci: null,
+        estudiante: 'Flores Choque, Maria',
+        promedio: 40.0,
+        porcentajeAsistencia: 62.0,
+        clasesDictadas: 10,
+        asistencias: 6,
+        enRiesgo: true,
+        motivoRiesgo: 'AMBOS',
+        estado: 'EN_RIESGO',
+      },
+      {
+        estudianteId: 103,
+        codigoRude: '90000000003',
+        ci: '8899001',
+        estudiante: 'Mamani Quispe, Rodrigo',
+        promedio: 85.0,
+        porcentajeAsistencia: 95.0,
+        clasesDictadas: 10,
+        asistencias: 10,
+        enRiesgo: false,
+        motivoRiesgo: null,
+        estado: 'REGULAR',
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    vi.spyOn(api, 'obtenerMateria').mockResolvedValue(MATERIA);
+    vi.spyOn(api, 'listarTrimestres').mockResolvedValue(TRIMESTRES);
+    vi.spyOn(riesgoLib, 'obtenerPanelRiesgoMateria').mockResolvedValue(PANEL_MOCK);
+  });
+
+  it('debe mostrar el listado de estudiantes con su promedio y asistencia (US-06, criterio 1)', async () => {
+    abrir('/profesor/materias/7/riesgo', 'PROFESOR');
+
+    expect(
+      await screen.findByRole('heading', { name: /Panel de Riesgo Académico/i }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Condori Ramos, Lucia')).toBeInTheDocument();
+    expect(screen.getByText('Flores Choque, Maria')).toBeInTheDocument();
+    expect(screen.getByText('Mamani Quispe, Rodrigo')).toBeInTheDocument();
+
+    // Promedios y asistencias
+    expect(screen.getByText('45')).toBeInTheDocument();
+    expect(screen.getByText('90,0 %')).toBeInTheDocument();
+    expect(screen.getByText('62,0 %')).toBeInTheDocument();
+    expect(screen.getByText('85')).toBeInTheDocument();
+  });
+
+  it('debe marcar como "en riesgo" a los estudiantes con promedio < 51 o asistencia < 80 % (US-06, criterio 2, D6)', async () => {
+    abrir('/profesor/materias/7/riesgo', 'PROFESOR');
+
+    expect(await screen.findByText('Condori Ramos, Lucia')).toBeInTheDocument();
+
+    // Insignias descriptivas de riesgo
+    expect(screen.getByText(/En riesgo \(Promedio < 51 pts\)/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/En riesgo crítico \(Notas < 51 y Asistencia < 80%\)/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Regular \(Sin riesgo\)/i)).toBeInTheDocument();
+
+    // Métricas del Hero
+    expect(screen.getByText('En riesgo académico')).toBeInTheDocument();
+  });
+
+  it('debe permitir filtrar estudiantes por condición de riesgo y buscar por nombre', async () => {
+    abrir('/profesor/materias/7/riesgo', 'PROFESOR');
+
+    expect(await screen.findByText('Condori Ramos, Lucia')).toBeInTheDocument();
+
+    // Filtrar por regulares
+    fireEvent.click(screen.getByRole('button', { name: /Regulares \(1\)/i }));
+    expect(screen.getByText('Mamani Quispe, Rodrigo')).toBeInTheDocument();
+    expect(screen.queryByText('Condori Ramos, Lucia')).not.toBeInTheDocument();
+
+    // Filtrar por todos y buscar
+    fireEvent.click(screen.getByRole('button', { name: /Todos \(3\)/i }));
+    const inputBusqueda = screen.getByPlaceholderText(/Buscar por nombre, RUDE o CI…/i);
+    fireEvent.change(inputBusqueda, { target: { value: 'Flores' } });
+
+    expect(screen.getByText('Flores Choque, Maria')).toBeInTheDocument();
+    expect(screen.queryByText('Condori Ramos, Lucia')).not.toBeInTheDocument();
   });
 });

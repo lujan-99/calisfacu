@@ -15,6 +15,7 @@ import { ImportarNotas } from './pages/profesor/ImportarNotas';
 import { MateriaActividades } from './pages/profesor/MateriaActividades';
 import { MisMaterias } from './pages/profesor/MisMaterias';
 import { NotasTrimestre } from './pages/profesor/NotasTrimestre';
+import { PanelRiesgo } from './pages/profesor/PanelRiesgo';
 import { Planilla } from './pages/profesor/Planilla';
 import { ControlEntregas } from './pages/secretaria/ControlEntregas';
 import { Cursos } from './pages/secretaria/Cursos';
@@ -46,6 +47,7 @@ export const rutas = [
           },
           { path: '/profesor/materias/:materiaId/asistencia', element: <AsistenciaMateria /> },
           { path: '/profesor/materias/:materiaId/notas', element: <NotasTrimestre /> },
+          { path: '/profesor/materias/:materiaId/riesgo', element: <PanelRiesgo /> },
           {
             path: '/profesor/estudiantes/:estudianteId/historial',
             element: <HistorialEstudiante />,

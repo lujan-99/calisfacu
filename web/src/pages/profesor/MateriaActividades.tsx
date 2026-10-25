@@ -152,6 +152,15 @@ export function MateriaActividades() {
             <Icono nombre="personas" tam={18} />
             Control de asistencia
           </Link>
+          <Link
+            to={`/profesor/materias/${materiaId}/riesgo`}
+            className="boton boton-secundario"
+            data-cy="link-panel-riesgo"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Icono nombre="alerta" tam={18} />
+            Panel de riesgo
+          </Link>
           {trimestre && (
             <Link
               to={`/profesor/materias/${materiaId}/notas?trimestre=${trimestre.id}`}

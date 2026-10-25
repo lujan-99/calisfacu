@@ -524,3 +524,12 @@ export const rechazarSolicitud = (id: number, observacion: string) =>
     `/solicitudes-edicion/${id}/rechazar`,
     enviar('PATCH', { observacion }),
   );
+
+// ---------- Panel de Riesgo Académico (US-06, T-043) ----------
+export const obtenerPanelRiesgoMateriaApi = <T = unknown>(
+  materiaId: number,
+  trimestreId?: number,
+) => {
+  const qs = trimestreId ? `?trimestreId=${trimestreId}` : '';
+  return solicitar<T>(`/materias/${materiaId}/riesgo${qs}`);
+};

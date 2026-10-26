@@ -161,6 +161,15 @@ export function MateriaActividades() {
             <Icono nombre="alerta" tam={18} />
             Panel de riesgo
           </Link>
+          <Link
+            to={`/profesor/materias/${materiaId}/boletines`}
+            className="boton boton-secundario"
+            data-cy="link-generar-boletines"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Icono nombre="documento" tam={18} />
+            Generar boletines
+          </Link>
           {trimestre && (
             <Link
               to={`/profesor/materias/${materiaId}/notas?trimestre=${trimestre.id}`}

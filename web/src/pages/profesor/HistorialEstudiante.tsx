@@ -9,6 +9,7 @@ import {
   type TrimestreHistorial,
 } from '../../lib/api';
 import { formatoNumero, nombreTrimestre } from '../../lib/formato';
+import { descargarBoletinEstudiante } from '../../lib/boletin';
 import { useCarga } from '../../lib/useCarga';
 
 /**
@@ -145,6 +146,23 @@ export function HistorialEstudiante() {
             Registro cronológico oficial del estudiante conforme a la normativa ministerial RM
             001/2026
           </span>
+        </div>
+        <div>
+          <button
+            type="button"
+            className="boton boton-secundario"
+            data-cy="btn-descargar-boletin-pdf"
+            onClick={() =>
+              void descargarBoletinEstudiante(
+                estudiante.id,
+                `Boletin_${estudiante.apellidos}_${estudiante.nombres}.pdf`,
+              )
+            }
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Icono nombre="documento" tam={16} />
+            Descargar Boletín (PDF)
+          </button>
         </div>
       </div>
 

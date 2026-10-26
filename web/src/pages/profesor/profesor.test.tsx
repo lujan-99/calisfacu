@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../lib/api';
+import * as boletinLib from '../../lib/boletin';
 import * as riesgoLib from '../../lib/riesgo';
 import { abrir, DIMENSIONES, MATERIA, TRIMESTRES } from '../../prueba-utils';
 import { trimestrePorDefecto } from './MateriaActividades';
@@ -1114,5 +1115,119 @@ describe('Panel de Riesgo Académico (US-06, T-044)', () => {
 
     expect(screen.getByText('Flores Choque, Maria')).toBeInTheDocument();
     expect(screen.queryByText('Condori Ramos, Lucia')).not.toBeInTheDocument();
+  });
+});
+
+describe('Generación de Boletines en PDF (US-07, T-047)', () => {
+  const RESUMEN_BOLETINES_MOCK: boletinLib.ResumenBoletinesCurso = {
+    cursoId: 1,
+    cursoNombre: 'Secundaria 4.º «A»',
+    materiaId: 7,
+    materiaNombre: 'Matemática',
+    totalEstudiantes: 2,
+    requiereCola: false,
+    boletinesListos: 1,
+    estudiantes: [
+      {
+        estudianteId: 101,
+        codigoRude: '90000000001',
+        ci: '10203040',
+        estudiante: 'Perez Ramos, Alejandro',
+        promedioAnual: 84.0,
+        porcentajeAsistencia: 95.0,
+        clasesDictadas: 20,
+        asistencias: 19,
+        estadoBoletin: 'LISTO',
+        trimestres: [
+          { numero: 1, nota: 80 },
+          { numero: 2, nota: 88 },
+          { numero: 3, nota: 84 },
+        ],
+      },
+      {
+        estudianteId: 102,
+        codigoRude: '90000000002',
+        ci: null,
+        estudiante: 'Morales Soliz, Mateo',
+        promedioAnual: null,
+        porcentajeAsistencia: null,
+        clasesDictadas: 0,
+        asistencias: 0,
+        estadoBoletin: 'PENDIENTE_NOTAS',
+        trimestres: [
+          { numero: 1, nota: null },
+          { numero: 2, nota: null },
+          { numero: 3, nota: null },
+        ],
+      },
+    ],
+  };
+
+  const RESUMEN_CURSO_NUMEROSO_MOCK: boletinLib.ResumenBoletinesCurso = {
+    ...RESUMEN_BOLETINES_MOCK,
+    totalEstudiantes: 60,
+    requiereCola: true,
+  };
+
+  beforeEach(() => {
+    vi.spyOn(boletinLib, 'obtenerResumenBoletinesCurso').mockResolvedValue(RESUMEN_BOLETINES_MOCK);
+  });
+
+  it('debe mostrar el listado de boletines con notas y asistencia (US-07, criterio 1)', async () => {
+    abrir('/profesor/materias/7/boletines', 'PROFESOR');
+
+    expect(
+      await screen.findByRole('heading', {
+        name: /Generación de Boletines Centralizados en PDF/i,
+      }),
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Perez Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.getByText('Morales Soliz, Mateo')).toBeInTheDocument();
+
+    // Notas y asistencia
+    expect(screen.getAllByText('84')[0]).toBeInTheDocument();
+    expect(screen.getByText('95,0 %')).toBeInTheDocument();
+    expect(screen.getByText(/Listo para emitir/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pendiente de notas/i)).toBeInTheDocument();
+  });
+
+  it('debe detectar cursos con más de 50 estudiantes y advertir sobre la cola BullMQ (US-07, criterio 3, R05 / CAL-001)', async () => {
+    vi.spyOn(boletinLib, 'obtenerResumenBoletinesCurso').mockResolvedValue(
+      RESUMEN_CURSO_NUMEROSO_MOCK,
+    );
+    abrir('/profesor/materias/7/boletines', 'PROFESOR');
+
+    expect(
+      await screen.findByText(/Curso numeroso detectado \(60 estudiantes > 50\)/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Generar todos en cola \(BullMQ\)/i }),
+    ).toBeInTheDocument();
+  });
+
+  it('debe permitir descargar el boletín en PDF individualmente (US-07, criterio 1)', async () => {
+    const descargarSpy = vi
+      .spyOn(boletinLib, 'descargarBoletinEstudiante')
+      .mockResolvedValue(undefined);
+
+    abrir('/profesor/materias/7/boletines', 'PROFESOR');
+    expect(await screen.findByText('Perez Ramos, Alejandro')).toBeInTheDocument();
+
+    const btnPdf = screen.getAllByRole('button', { name: /PDF/i })[0];
+    fireEvent.click(btnPdf);
+
+    await waitFor(() => {
+      expect(descargarSpy).toHaveBeenCalledWith(101, expect.stringContaining('Perez_Ramos'));
+    });
+  });
+
+  it('debe filtrar estudiantes por estado de boletín', async () => {
+    abrir('/profesor/materias/7/boletines', 'PROFESOR');
+    expect(await screen.findByText('Perez Ramos, Alejandro')).toBeInTheDocument();
+
+    // Filtrar por pendientes
+    fireEvent.click(screen.getByRole('button', { name: /Sin notas \(1\)/i }));
+    expect(screen.getByText('Morales Soliz, Mateo')).toBeInTheDocument();
+    expect(screen.queryByText('Perez Ramos, Alejandro')).not.toBeInTheDocument();
   });
 });

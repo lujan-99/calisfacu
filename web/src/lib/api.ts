@@ -533,3 +533,21 @@ export const obtenerPanelRiesgoMateriaApi = <T = unknown>(
   const qs = trimestreId ? `?trimestreId=${trimestreId}` : '';
   return solicitar<T>(`/materias/${materiaId}/riesgo${qs}`);
 };
+
+// ---------- Boletines en PDF (US-07, T-045, T-046) ----------
+export const descargarBoletinPdfApi = (estudianteId: number): Promise<Blob> =>
+  solicitarArchivo(`/boletines/estudiantes/${estudianteId}/pdf`);
+
+export const iniciarGeneracionBoletinesColaApi = (cursoId: number) =>
+  solicitar<{ jobId: string; totalEstudiantes: number; estado: string }>(
+    `/boletines/cursos/${cursoId}/cola`,
+    enviar('POST'),
+  );
+
+export const consultarEstadoTrabajoBoletinesApi = (jobId: string) =>
+  solicitar<{
+    jobId: string;
+    estado: 'ENCOLADO' | 'PROCESANDO' | 'COMPLETADO' | 'FALLIDO';
+    progreso: number;
+    urlDescarga?: string;
+  }>(`/boletines/trabajos/${jobId}`);

@@ -10,6 +10,7 @@ import { Login } from './pages/Login';
 import { NoEncontrada } from './pages/NoEncontrada';
 import { AsistenciaMateria } from './pages/profesor/AsistenciaMateria';
 import { Boletin } from './pages/padre/Boletin';
+import { GenerarBoletines } from './pages/profesor/GenerarBoletines';
 import { HistorialEstudiante } from './pages/profesor/HistorialEstudiante';
 import { ImportarNotas } from './pages/profesor/ImportarNotas';
 import { MateriaActividades } from './pages/profesor/MateriaActividades';
@@ -48,6 +49,7 @@ export const rutas = [
           { path: '/profesor/materias/:materiaId/asistencia', element: <AsistenciaMateria /> },
           { path: '/profesor/materias/:materiaId/notas', element: <NotasTrimestre /> },
           { path: '/profesor/materias/:materiaId/riesgo', element: <PanelRiesgo /> },
+          { path: '/profesor/materias/:materiaId/boletines', element: <GenerarBoletines /> },
           {
             path: '/profesor/estudiantes/:estudianteId/historial',
             element: <HistorialEstudiante />,

@@ -551,3 +551,58 @@ export const consultarEstadoTrabajoBoletinesApi = (jobId: string) =>
     progreso: number;
     urlDescarga?: string;
   }>(`/boletines/trabajos/${jobId}`);
+
+// ---------- Vinculación Padre-Estudiante (US-20, T-048, T-049) ----------
+export interface PadreTutor {
+  id: number;
+  nombre: string;
+  email: string;
+  ci?: string;
+  telefono?: string;
+}
+
+export interface VinculoFamiliar {
+  id?: number;
+  padreId: number;
+  estudianteId: number;
+  parentesco?: string;
+  creadoEn?: string;
+  padre?: PadreTutor;
+  estudiante?: {
+    id: number;
+    nombres: string;
+    apellidos: string;
+    codigoRude: string;
+    ci?: string;
+    curso?: {
+      id: number;
+      nombre: string;
+      nivel?: string;
+    };
+  };
+}
+
+export const listarPadresApi = () => solicitar<PadreTutor[]>('/padres');
+
+export const listarVinculosFamiliaresApi = (
+  filtro: { cursoId?: number; padreId?: number; estudianteId?: number } = {},
+) => {
+  const params = new URLSearchParams();
+  if (filtro.cursoId) params.set('cursoId', String(filtro.cursoId));
+  if (filtro.padreId) params.set('padreId', String(filtro.padreId));
+  if (filtro.estudianteId) params.set('estudianteId', String(filtro.estudianteId));
+  const qs = params.toString();
+  return solicitar<VinculoFamiliar[]>(`/vinculos-familiares${qs ? `?${qs}` : ''}`);
+};
+
+export const crearVinculoFamiliarApi = (datos: {
+  padreId: number;
+  estudianteId: number;
+  parentesco?: string;
+}) => solicitar<VinculoFamiliar>('/vinculos-familiares', enviar('POST', datos));
+
+export const eliminarVinculoFamiliarApi = (padreId: number, estudianteId: number, id?: number) =>
+  solicitar<void>(
+    id ? `/vinculos-familiares/${id}` : `/vinculos-familiares/${padreId}/${estudianteId}`,
+    enviar('DELETE'),
+  );

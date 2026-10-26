@@ -421,3 +421,171 @@ describe('Control de entrega de notas (US-10, criterio 1)', () => {
     expect(screen.queryByText('Lenguaje')).not.toBeInTheDocument();
   });
 });
+
+describe('Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049)', () => {
+  const PADRES_PRUEBA: api.PadreTutor[] = [
+    { id: 10, nombre: 'Juan Pérez Ramos', email: 'padre1@calisfacu.test', ci: '4567890' },
+    { id: 11, nombre: 'Carmen Morales Soliz', email: 'carmen@correo.test', ci: '1234567' },
+  ];
+
+  const ESTUDIANTES_PRUEBA: api.Estudiante[] = [
+    {
+      id: 101,
+      codigoRude: '90000000015',
+      nombres: 'Alejandro',
+      apellidos: 'Pérez Condori',
+      ci: '9988776',
+      curso: CURSOS[0],
+      gestion: GESTION,
+    },
+    {
+      id: 102,
+      codigoRude: '90000000088',
+      nombres: 'Mateo',
+      apellidos: 'Morales Soliz',
+      ci: null,
+      curso: CURSOS[1],
+      gestion: GESTION,
+    },
+  ];
+
+  const VINCULOS_PRUEBA: api.VinculoFamiliar[] = [
+    {
+      id: 1,
+      padreId: 10,
+      estudianteId: 101,
+      parentesco: 'PADRE',
+      padre: PADRES_PRUEBA[0],
+      estudiante: {
+        id: 101,
+        nombres: 'Alejandro',
+        apellidos: 'Pérez Condori',
+        codigoRude: '90000000015',
+        ci: '9988776',
+        curso: { id: 1, nombre: 'Secundaria 4.º «A»' },
+      },
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'listarVinculosFamiliaresApi').mockResolvedValue(VINCULOS_PRUEBA);
+    vi.spyOn(api, 'listarPadresApi').mockResolvedValue(PADRES_PRUEBA);
+    vi.spyOn(api, 'listarEstudiantes').mockResolvedValue(ESTUDIANTES_PRUEBA);
+  });
+
+  it('debe listar los vínculos familiares y mostrar estadísticas de cobertura (US-20, CA 1)', async () => {
+    abrir('/secretaria/vinculos-familiares', 'SECRETARIA');
+    expect(
+      await screen.findByRole('heading', { name: /Vinculación Padre–Estudiante/i }),
+    ).toBeInTheDocument();
+
+    // Comprobar datos en tabla
+    expect(screen.getByText('Juan Pérez Ramos')).toBeInTheDocument();
+    expect(screen.getByText('padre1@calisfacu.test')).toBeInTheDocument();
+    expect(screen.getByText('Pérez Condori, Alejandro')).toBeInTheDocument();
+    expect(screen.getByText('RUDE: 90000000015')).toBeInTheDocument();
+    expect(screen.getAllByText('Secundaria 4.º «A»').length).toBeGreaterThan(0);
+
+    // Comprobar estadísticas
+    expect(screen.getByText('Total de Vínculos Activos')).toBeInTheDocument();
+    expect(screen.getByText('Estudiantes con Tutor')).toBeInTheDocument();
+  });
+
+  it('debe filtrar vínculos mediante el buscador de texto (US-20, CA 1)', async () => {
+    abrir('/secretaria/vinculos-familiares', 'SECRETARIA');
+    await screen.findByRole('heading', { name: /Vinculación Padre–Estudiante/i });
+
+    expect(screen.getByText('Juan Pérez Ramos')).toBeInTheDocument();
+
+    const inputBusqueda = screen.getByPlaceholderText(
+      /Buscar por padre, email, estudiante o RUDE/i,
+    );
+    fireEvent.change(inputBusqueda, { target: { value: 'Inexistente' } });
+
+    expect(screen.queryByText('Juan Pérez Ramos')).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Ningún vínculo familiar coincide con los filtros/i),
+    ).toBeInTheDocument();
+
+    fireEvent.change(inputBusqueda, { target: { value: 'Pérez' } });
+    expect(screen.getByText('Juan Pérez Ramos')).toBeInTheDocument();
+  });
+
+  it('debe abrir el diálogo y registrar una nueva vinculación padre-estudiante (US-20, CA 1)', async () => {
+    const crearSpy = vi.spyOn(api, 'crearVinculoFamiliarApi').mockResolvedValue({
+      id: 2,
+      padreId: 11,
+      estudianteId: 102,
+      parentesco: 'MADRE',
+    });
+
+    abrir('/secretaria/vinculos-familiares', 'SECRETARIA');
+    await screen.findByRole('heading', { name: /Vinculación Padre–Estudiante/i });
+
+    fireEvent.click(screen.getByRole('button', { name: /Vincular Padre y Estudiante/i }));
+
+    const dialogo = await screen.findByRole('dialog', {
+      name: /Vincular Padre de Familia con Estudiante/i,
+    });
+    expect(dialogo).toBeInTheDocument();
+
+    // Seleccionar padre
+    fireEvent.change(within(dialogo).getByLabelText(/Padre de familia o tutor/i), {
+      target: { value: '11' },
+    });
+
+    // Seleccionar parentesco
+    fireEvent.change(within(dialogo).getByLabelText(/Relación o parentesco/i), {
+      target: { value: 'MADRE' },
+    });
+
+    // Seleccionar estudiante
+    fireEvent.change(within(dialogo).getByLabelText(/Estudiante \(Hijo \/ Tutelado\)/i), {
+      target: { value: '102' },
+    });
+
+    // Guardar
+    fireEvent.click(within(dialogo).getByRole('button', { name: /Guardar vinculación/i }));
+
+    await waitFor(() => {
+      expect(crearSpy).toHaveBeenCalledWith({
+        padreId: 11,
+        estudianteId: 102,
+        parentesco: 'MADRE',
+      });
+    });
+
+    expect(
+      await screen.findByText(
+        /Se vinculó exitosamente a Carmen Morales Soliz con el estudiante Morales Soliz, Mateo/i,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('debe confirmar y eliminar un vínculo familiar (US-20, CA 1, RNF-04)', async () => {
+    const eliminarSpy = vi.spyOn(api, 'eliminarVinculoFamiliarApi').mockResolvedValue(undefined);
+
+    abrir('/secretaria/vinculos-familiares', 'SECRETARIA');
+    await screen.findByRole('heading', { name: /Vinculación Padre–Estudiante/i });
+
+    const btnEliminar = screen.getByRole('button', {
+      name: /Desvincular a Juan Pérez Ramos de Pérez Condori, Alejandro/i,
+    });
+    fireEvent.click(btnEliminar);
+
+    const dialogoConfirmar = await screen.findByRole('alertdialog', {
+      name: /Eliminar vínculo familiar/i,
+    });
+    expect(dialogoConfirmar).toBeInTheDocument();
+
+    fireEvent.click(within(dialogoConfirmar).getByRole('button', { name: /Eliminar/i }));
+
+    await waitFor(() => {
+      expect(eliminarSpy).toHaveBeenCalledWith(10, 101, 1);
+    });
+
+    expect(
+      await screen.findByText(/Se eliminó el vínculo familiar satisfactoriamente/i),
+    ).toBeInTheDocument();
+  });
+});

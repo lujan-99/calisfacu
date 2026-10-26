@@ -23,6 +23,7 @@ import { Cursos } from './pages/secretaria/Cursos';
 import { Estudiantes } from './pages/secretaria/Estudiantes';
 import { Materias } from './pages/secretaria/Materias';
 import { UnidadEducativa } from './pages/secretaria/UnidadEducativa';
+import { VinculacionPadres } from './pages/secretaria/VinculacionPadres';
 
 function Inicio() {
   const { usuario } = useSesion();
@@ -63,6 +64,7 @@ export const rutas = [
           { path: '/secretaria/estudiantes', element: <Estudiantes /> },
           { path: '/secretaria/materias', element: <Materias /> },
           { path: '/secretaria/control-entregas', element: <ControlEntregas /> },
+          { path: '/secretaria/vinculos-familiares', element: <VinculacionPadres /> },
           { path: '/secretaria/unidad-educativa', element: <UnidadEducativa /> },
         ],
       },

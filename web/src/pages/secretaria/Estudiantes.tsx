@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { ConfirmarBorrado, Dialogo } from '../../componentes/Dialogo';
 import { Campo } from '../../componentes/Campo';
 import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
@@ -149,23 +150,33 @@ export function Estudiantes() {
             {gestion ? `Gestión ${gestion} · ` : ''}cada estudiante está inscrito en un solo curso.
           </span>
         </div>
-        <button
-          type="button"
-          className="boton boton-primario"
-          data-cy="btn-nuevo-estudiante"
-          onClick={() =>
-            abrir({
-              cursoId: Number(cursoId) || 0,
-              codigoRude: '',
-              ci: '',
-              nombres: '',
-              apellidos: '',
-            })
-          }
-        >
-          <Icono nombre="mas" tam={18} />
-          Nuevo estudiante
-        </button>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Link
+            to="/secretaria/vinculos-familiares"
+            className="boton boton-secundario"
+            data-cy="link-vinculos-familiares"
+          >
+            <Icono nombre="personas" tam={18} />
+            Vínculos familiares
+          </Link>
+          <button
+            type="button"
+            className="boton boton-primario"
+            data-cy="btn-nuevo-estudiante"
+            onClick={() =>
+              abrir({
+                cursoId: Number(cursoId) || 0,
+                codigoRude: '',
+                ci: '',
+                nombres: '',
+                apellidos: '',
+              })
+            }
+          >
+            <Icono nombre="mas" tam={18} />
+            Nuevo estudiante
+          </button>
+        </div>
       </div>
       {mensaje && (
         <Aviso tipo="exito" cy="mensaje-exito">

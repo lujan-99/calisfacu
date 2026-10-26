@@ -38,6 +38,12 @@ export const MENU_POR_ROL: Record<Rol, OpcionMenu[]> = {
       cy: 'menu-control-entregas',
     },
     {
+      a: '/secretaria/vinculos-familiares',
+      texto: 'Vínculos familiares',
+      icono: 'personas',
+      cy: 'menu-vinculos-familiares',
+    },
+    {
       a: '/secretaria/unidad-educativa',
       texto: 'Unidad educativa',
       icono: 'edificio',

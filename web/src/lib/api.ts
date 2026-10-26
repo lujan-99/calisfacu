@@ -606,3 +606,54 @@ export const eliminarVinculoFamiliarApi = (padreId: number, estudianteId: number
     id ? `/vinculos-familiares/${id}` : `/vinculos-familiares/${padreId}/${estudianteId}`,
     enviar('DELETE'),
   );
+
+// ---------- Portal del Padre de Familia: Consulta de Boletín (US-11, T-050, T-051) ----------
+export interface HijoTutor {
+  id: number;
+  nombres: string;
+  apellidos: string;
+  codigoRude: string;
+  ci?: string | null;
+  curso: {
+    id: number;
+    nombre: string;
+    nivel?: string;
+    paralelo?: string;
+    anioEscolaridad?: number;
+  };
+  gestion?: {
+    id: number;
+    anio: number;
+  };
+}
+
+export interface MateriaBoletinPadre {
+  materiaId: number;
+  nombre: string;
+  profesorNombre?: string;
+  notaT1: number | null;
+  notaT2: number | null;
+  notaT3: number | null;
+  promedioFinal: number | null;
+  estado: 'APROBADO' | 'REPROBADO' | 'EN_CURSO';
+}
+
+export interface BoletinPadreDetalle {
+  estudiante: HijoTutor;
+  publicado: boolean;
+  estadoPeriodo: 'PUBLICADO' | 'EN_ELABORACION' | 'PENDIENTE';
+  mensajeEstado?: string;
+  promedioAnual: number | null;
+  porcentajeAsistencia: number | null;
+  estadoAnual: 'PROMOVIDO' | 'RETENIDO' | 'EN_CURSO';
+  fechaPublicacion?: string;
+  materias: MateriaBoletinPadre[];
+}
+
+export const listarHijosTutorApi = () => solicitar<HijoTutor[]>('/padre/hijos');
+
+export const obtenerBoletinHijoApi = (estudianteId: number) =>
+  solicitar<BoletinPadreDetalle>(`/padre/hijos/${estudianteId}/boletin`);
+
+export const descargarBoletinHijoPdfApi = (estudianteId: number): Promise<Blob> =>
+  solicitarArchivo(`/padre/hijos/${estudianteId}/boletin/pdf`);

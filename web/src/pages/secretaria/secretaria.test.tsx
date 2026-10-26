@@ -568,7 +568,7 @@ describe('Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049)', () =
     abrir('/secretaria/vinculos-familiares', 'SECRETARIA');
     await screen.findByRole('heading', { name: /Vinculación Padre–Estudiante/i });
 
-    const btnEliminar = screen.getByRole('button', {
+    const btnEliminar = await screen.findByRole('button', {
       name: /Desvincular a Juan Pérez Ramos de Pérez Condori, Alejandro/i,
     });
     fireEvent.click(btnEliminar);

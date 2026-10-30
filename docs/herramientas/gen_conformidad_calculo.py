@@ -51,7 +51,7 @@ PENDIENTE = ('Ser 80 · Saber 70 · Hacer 80 · Autoevaluación sin notas', 'Pen
 
 ENCABEZADO = [
     ('Proyecto', 'CalisFacu v1.0 · Equipo L-001 · COM450 Calidad de Software'),
-    ('Cliente', '[Nombre de la unidad educativa piloto]'),
+    ('Cliente', 'Unidad Educativa Nazareno'),
     ('Tarea y riesgo', 'T-004 · R02 (cálculo distinto al reglamento) · US-02'),
     ('Reglas', 'docs/backlog/reglas-ministerio.md (RM 001/2026, decisiones del 13/10/2026)'),
     ('Pruebas que lo verifican', 'calculo.casos.spec.ts y calculo.service.spec.ts, en cada build de Jenkins (M01)'),
@@ -70,8 +70,8 @@ FORMULA = [
     'Aprueba si la nota es 51 o más. Escala de cada actividad: 1 a 100.',
 ]
 FIRMAS = [
-    ('', 'Cliente: profesor(a) representante'),
-    ('', 'Cliente: dirección o secretaría'),
+    ('Fatima Carreño', 'Cliente: profesora representante'),
+    ('Fabiana Parrado', 'Cliente: directora'),
     ('Lujan', 'Autor (Líder y Arquitecto)'),
     ('Galvan', 'Responsable SQA'),
 ]

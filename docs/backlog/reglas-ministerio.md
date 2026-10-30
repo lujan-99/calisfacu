@@ -54,13 +54,21 @@ con una solicitud de cambio (SQAP, Sección 16) y se agrega el caso a `casos-cal
 
 Son los mismos casos de `api/test/fixtures/casos-calculo.json`, que verifica la prueba `calculo.casos.spec.ts` (M01).
 
-| Caso                                       | Ser | Saber | Hacer | Autoev. | Pts Ser | Pts Saber | Pts Hacer | Pts Autoev. | Sin redondear | Nota | Resultado |
-| ------------------------------------------ | --- | ----- | ----- | ------- | ------- | --------- | --------- | ----------- | ------------- | ---- | --------- |
-| Caso típico                                | 80  | 80    | 80    | 100     | 8       | 36        | 32        | 5           | 81            | 81   | Aprueba   |
-| Frontera: 50,5 se redondea a 51 (aprueba)  | 100 | 50    | 40    | 40      | 10      | 22.5      | 16        | 2           | 50.5          | 51   | Aprueba   |
-| Frontera: 50,4 se redondea a 50 (reprueba) | 80  | 52    | 40    | 60      | 8       | 23.4      | 16        | 3           | 50.4          | 50   | Reprueba  |
-| Todo al máximo                             | 100 | 100   | 100   | 100     | 10      | 45        | 40        | 5           | 100           | 100  | Aprueba   |
-| Todo al mínimo de la escala                | 1   | 1     | 1     | 1       | 0.1     | 0.45      | 0.4       | 0.05        | 1             | 1    | Reprueba  |
+| Caso                                                                         | Ser  | Saber | Hacer | Autoev. | Pts Ser | Pts Saber | Pts Hacer | Pts Autoev. | Sin redondear | Nota | Resultado |
+| ---------------------------------------------------------------------------- | ---- | ----- | ----- | ------- | ------- | --------- | --------- | ----------- | ------------- | ---- | --------- |
+| Caso típico                                                                  | 80   | 80    | 80    | 100     | 8       | 36        | 32        | 5           | 81            | 81   | Aprueba   |
+| Frontera: 50,5 se redondea a 51 (aprueba)                                    | 100  | 50    | 40    | 40      | 10      | 22.5      | 16        | 2           | 50.5          | 51   | Aprueba   |
+| Frontera: 50,4 se redondea a 50 (reprueba)                                   | 80   | 52    | 40    | 60      | 8       | 23.4      | 16        | 3           | 50.4          | 50   | Reprueba  |
+| Todo al máximo                                                               | 100  | 100   | 100   | 100     | 10      | 45        | 40        | 5           | 100           | 100  | Aprueba   |
+| Todo al mínimo de la escala                                                  | 1    | 1     | 1     | 1       | 0.1     | 0.45      | 0.4       | 0.05        | 1             | 1    | Reprueba  |
+| Exactamente 51 sin redondear (aprueba justo)                                 | 50   | 60    | 40    | 60      | 5       | 27        | 16        | 3           | 51            | 51   | Aprueba   |
+| D2: 50,45 se redondea solo al final (reprueba); por dimensión daría 51       | 100  | 51    | 40    | 30      | 10      | 22.95     | 16        | 1.5         | 50.45         | 50   | Reprueba  |
+| Frontera: 50,55 se redondea a 51 (aprueba)                                   | 100  | 51    | 40    | 32      | 10      | 22.95     | 16        | 1.6         | 50.55         | 51   | Aprueba   |
+| Frontera alta: 99,5 se redondea a 100                                        | 100  | 100   | 100   | 90      | 10      | 45        | 40        | 4.5         | 99.5          | 100  | Aprueba   |
+| Promedios con decimales (Ser 85,5; Saber 72,25; Hacer 68,75)                 | 85.5 | 72.25 | 68.75 | 90      | 8.55    | 32.5125   | 27.5      | 4.5         | 73.0625       | 73   | Aprueba   |
+| Saber y Hacer al máximo con Ser y Autoevaluación en 1 (aprueba)              | 1    | 100   | 100   | 1       | 0.1     | 45        | 40        | 0.05        | 85.15         | 85   | Aprueba   |
+| Saber y Hacer en 50 con Ser y Autoevaluación al máximo (aprueba)             | 100  | 50    | 50    | 100     | 10      | 22.5      | 20        | 5           | 57.5          | 58   | Aprueba   |
+| D1: actividades no presentadas registradas con 1 en Saber y Hacer (reprueba) | 90   | 1     | 1     | 100     | 9       | 0.45      | 0.4       | 5           | 14.85         | 15   | Reprueba  |
 
 ## Fuentes
 

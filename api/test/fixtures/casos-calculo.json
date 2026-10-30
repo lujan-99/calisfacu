@@ -58,5 +58,101 @@
     "sinRedondear": 1,
     "nota": 1,
     "resultado": "Reprueba"
+  },
+  {
+    "caso": "Exactamente 51 sin redondear (aprueba justo)",
+    "promedios": {
+      "SER": 50,
+      "SABER": 60,
+      "HACER": 40,
+      "AUTOEVALUACION": 60
+    },
+    "sinRedondear": 51,
+    "nota": 51,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "D2: 50,45 se redondea solo al final (reprueba); por dimensión daría 51",
+    "promedios": {
+      "SER": 100,
+      "SABER": 51,
+      "HACER": 40,
+      "AUTOEVALUACION": 30
+    },
+    "sinRedondear": 50.45,
+    "nota": 50,
+    "resultado": "Reprueba"
+  },
+  {
+    "caso": "Frontera: 50,55 se redondea a 51 (aprueba)",
+    "promedios": {
+      "SER": 100,
+      "SABER": 51,
+      "HACER": 40,
+      "AUTOEVALUACION": 32
+    },
+    "sinRedondear": 50.55,
+    "nota": 51,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Frontera alta: 99,5 se redondea a 100",
+    "promedios": {
+      "SER": 100,
+      "SABER": 100,
+      "HACER": 100,
+      "AUTOEVALUACION": 90
+    },
+    "sinRedondear": 99.5,
+    "nota": 100,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Promedios con decimales (Ser 85,5; Saber 72,25; Hacer 68,75)",
+    "promedios": {
+      "SER": 85.5,
+      "SABER": 72.25,
+      "HACER": 68.75,
+      "AUTOEVALUACION": 90
+    },
+    "sinRedondear": 73.0625,
+    "nota": 73,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Saber y Hacer al máximo con Ser y Autoevaluación en 1 (aprueba)",
+    "promedios": {
+      "SER": 1,
+      "SABER": 100,
+      "HACER": 100,
+      "AUTOEVALUACION": 1
+    },
+    "sinRedondear": 85.15,
+    "nota": 85,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "Saber y Hacer en 50 con Ser y Autoevaluación al máximo (aprueba)",
+    "promedios": {
+      "SER": 100,
+      "SABER": 50,
+      "HACER": 50,
+      "AUTOEVALUACION": 100
+    },
+    "sinRedondear": 57.5,
+    "nota": 58,
+    "resultado": "Aprueba"
+  },
+  {
+    "caso": "D1: actividades no presentadas registradas con 1 en Saber y Hacer (reprueba)",
+    "promedios": {
+      "SER": 90,
+      "SABER": 1,
+      "HACER": 1,
+      "AUTOEVALUACION": 100
+    },
+    "sinRedondear": 14.85,
+    "nota": 15,
+    "resultado": "Reprueba"
   }
 ]

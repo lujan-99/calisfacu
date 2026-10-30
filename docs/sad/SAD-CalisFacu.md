@@ -78,6 +78,8 @@ api/src/
     boletin/      boletín en PDF con pdfkit (GET /api/boletines/estudiantes/:id/pdf) US-07 (T-045, T-046)
                   y cola BullMQ + Redis para un curso (POST /api/boletines/cursos/:id/cola,
                   GET /api/boletines/trabajos/:id[/pdf]); D19, ADR-0006
+                  publicación por curso y trimestre (/api/boletines/publicaciones, US-11 (T-050)
+                  D20) y boletín del padre (/api/padre/hijos/:id/boletin[/pdf])
     familias/     vinculación padre–estudiante con parentesco y guard     US-20 (T-048)
                   de pertenencia AccesoFamiliarService (D17): /api/padres,
                   /api/vinculos-familiares, /api/padre/hijos
@@ -123,6 +125,7 @@ erDiagram
   cursos ||--o{ estudiantes : inscribe
   materias ||--|| asignaciones_materia : "un profesor"
   usuarios ||--o{ asignaciones_materia : dicta
+  cursos ||--o{ publicaciones_boletin : "por trimestre"
   usuarios ||--o{ vinculos_padre : "padre de (con parentesco)"
   estudiantes ||--o{ vinculos_padre : ""
   materias ||--o{ actividades : tiene

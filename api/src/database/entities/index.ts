@@ -14,6 +14,7 @@ import {
   Asistencia,
   EntregaNotas,
   Nota,
+  PublicacionBoletin,
   RegistroAuditoria,
   SolicitudEdicion,
   SolicitudEdicionEstudiante,
@@ -41,6 +42,7 @@ export const ENTIDADES = [
   RegistroAuditoria,
   Asistencia,
   EntregaNotas,
+  PublicacionBoletin,
   SolicitudEdicion,
   SolicitudEdicionEstudiante,
 ];

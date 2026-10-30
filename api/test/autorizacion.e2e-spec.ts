@@ -278,6 +278,28 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
     },
     { metodo: 'get', url: '/api/boletines/trabajos/1', noPermitidos: ['padre'] },
     { metodo: 'get', url: '/api/boletines/trabajos/1/pdf', noPermitidos: ['padre'] },
+    {
+      metodo: 'get',
+      url: `/api/boletines/publicaciones?cursoId=${e.ajeno.curso.id}`,
+      noPermitidos: secretariaYAdmin,
+    },
+    { metodo: 'post', url: '/api/boletines/publicaciones', noPermitidos: secretariaYAdmin },
+    {
+      metodo: 'delete',
+      url: `/api/boletines/publicaciones/${e.ajeno.curso.id}/${e.t1.id}`,
+      noPermitidos: secretariaYAdmin,
+    },
+    // El padre del escenario no está vinculado a e.ajeno (US-20).
+    {
+      metodo: 'get',
+      url: `/api/padre/hijos/${e.ajeno.id}/boletin`,
+      noPermitidos: ['profesor', 'secretaria', 'admin', 'padre'],
+    },
+    {
+      metodo: 'get',
+      url: `/api/padre/hijos/${e.ajeno.id}/boletin/pdf`,
+      noPermitidos: ['profesor', 'secretaria', 'admin', 'padre'],
+    },
     { metodo: 'get', url: '/api/padres', noPermitidos: secretariaYAdmin },
     { metodo: 'get', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },
     { metodo: 'post', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },

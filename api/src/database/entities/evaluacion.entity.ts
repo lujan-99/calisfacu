@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { decimal } from '../decimal.transformer';
-import { DimensionEvaluacion, Estudiante, Materia, Trimestre } from './academico.entity';
+import { Curso, DimensionEvaluacion, Estudiante, Materia, Trimestre } from './academico.entity';
 import { EstadoAsistencia, EstadoSolicitud, OrigenCambio } from './enums';
 import { Usuario } from './usuario.entity';
 
@@ -122,6 +122,29 @@ export class EntregaNotas {
 
   @CreateDateColumn({ type: 'timestamptz' })
   entregadoEn: Date;
+}
+
+/**
+ * Publicación del boletín de un curso en un trimestre (US-11, decisión D20): desde entonces el padre ve las notas de
+ * ese trimestre. La hace la secretaria o el administrador cuando todas las materias del curso entregaron sus notas.
+ */
+@Entity('publicaciones_boletin')
+@Unique(['curso', 'trimestre'])
+export class PublicacionBoletin {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Curso, { nullable: false })
+  curso: Curso;
+
+  @ManyToOne(() => Trimestre, { nullable: false })
+  trimestre: Trimestre;
+
+  @ManyToOne(() => Usuario, { nullable: false })
+  publicadoPor: Usuario;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  publicadoEn: Date;
 }
 
 /**

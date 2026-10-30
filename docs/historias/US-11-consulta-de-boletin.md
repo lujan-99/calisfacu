@@ -1,6 +1,6 @@
 # US-11 · Consulta de Boletín
 
-- **Sprint:** Sprint 3 · **Prioridad:** MEDIA · **Puntos:** valor 8, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 3 · **Prioridad:** MEDIA · **Puntos:** valor 8, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 
@@ -26,6 +26,6 @@ Depende de US-07 y US-20 (mismo sprint: hacer primero US-07 y US-20). (Valores e
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

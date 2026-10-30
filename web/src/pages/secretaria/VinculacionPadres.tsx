@@ -9,8 +9,6 @@ import {
   listarEstudiantes,
   listarPadresApi,
   listarVinculosFamiliaresApi,
-  type Estudiante,
-  type PadreTutor,
   type VinculoFamiliar,
 } from '../../lib/api';
 import { useCarga } from '../../lib/useCarga';
@@ -61,9 +59,9 @@ export function VinculacionPadres() {
   const { carga, recargar } = useCarga(async () => {
     const [cursos, vinculos, padres, estudiantes] = await Promise.all([
       listarCursos({}),
-      listarVinculosFamiliaresApi().catch(() => [] as VinculoFamiliar[]),
-      listarPadresApi().catch(() => [] as PadreTutor[]),
-      listarEstudiantes({}).catch(() => [] as Estudiante[]),
+      listarVinculosFamiliaresApi(),
+      listarPadresApi(),
+      listarEstudiantes({}),
     ]);
 
     return { cursos, vinculos, padres, estudiantes };

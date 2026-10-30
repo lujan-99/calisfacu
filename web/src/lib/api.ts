@@ -549,8 +549,56 @@ export const consultarEstadoTrabajoBoletinesApi = (jobId: string) =>
     jobId: string;
     estado: 'ENCOLADO' | 'PROCESANDO' | 'COMPLETADO' | 'FALLIDO';
     progreso: number;
+    total: number;
+    mensaje?: string;
+    /** Ruta relativa a la API, por ejemplo /boletines/trabajos/12/pdf (decisión D19). */
     urlDescarga?: string;
   }>(`/boletines/trabajos/${jobId}`);
+
+/** PDF de un trabajo de la cola ya completado, con un boletín por página. */
+export const descargarArchivoApi = (ruta: string): Promise<Blob> => solicitarArchivo(ruta);
+
+export interface BoletinEstudianteApi {
+  estudianteId: number;
+  codigoRude: string;
+  ci: string | null;
+  estudiante: string;
+  promedioAnual: number | null;
+  porcentajeAsistencia: number | null;
+  clasesDictadas: number;
+  asistencias: number;
+  estadoBoletin: 'LISTO' | 'PENDIENTE_NOTAS';
+  trimestres: { numero: number; nota: number | null }[];
+}
+
+/** Estudiantes del curso para la pantalla de boletines; el profesor no puede usar /estudiantes (US-07). */
+export const listarBoletinesCursoApi = (cursoId: number) =>
+  solicitar<BoletinEstudianteApi[]>(`/boletines/cursos/${cursoId}/estudiantes`);
+
+// ---------- Publicación del boletín (US-11, T-050, decisión D20) ----------
+export interface PublicacionTrimestre {
+  trimestreId: number;
+  numero: number;
+  cerrado: boolean;
+  materias: number;
+  /** Materias que todavía no entregaron sus notas del trimestre (US-10): mientras haya alguna, no se publica. */
+  materiasPendientes: string[];
+  publicado: boolean;
+  publicadoEn: string | null;
+  publicadoPor: { id: number; nombre: string } | null;
+}
+
+export const listarPublicacionesApi = (cursoId: number) =>
+  solicitar<PublicacionTrimestre[]>(`/boletines/publicaciones?cursoId=${cursoId}`);
+
+export const publicarBoletinApi = (cursoId: number, trimestreId: number) =>
+  solicitar<PublicacionTrimestre>(
+    '/boletines/publicaciones',
+    enviar('POST', { cursoId, trimestreId }),
+  );
+
+export const despublicarBoletinApi = (cursoId: number, trimestreId: number) =>
+  solicitar<void>(`/boletines/publicaciones/${cursoId}/${trimestreId}`, enviar('DELETE'));
 
 // ---------- Vinculación Padre-Estudiante (US-20, T-048, T-049) ----------
 export interface PadreTutor {

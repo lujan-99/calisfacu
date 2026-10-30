@@ -41,6 +41,8 @@ const datos: DatosBoletin = {
   promedioAnual: 75,
   estadoAnual: 'PROMOVIDO',
   porcentajeAsistencia: 95.5,
+  clasesDictadas: 20,
+  asistencias: 19,
 };
 
 describe('contenidoBoletin (US-07, criterio 1)', () => {

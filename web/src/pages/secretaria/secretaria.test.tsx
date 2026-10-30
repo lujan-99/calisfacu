@@ -589,3 +589,84 @@ describe('Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049)', () =
     ).toBeInTheDocument();
   });
 });
+
+describe('Publicación de boletines (US-11, T-050, decisión D20)', () => {
+  const TRIMESTRES_PUBLICACION: api.PublicacionTrimestre[] = [
+    {
+      trimestreId: 11,
+      numero: 1,
+      cerrado: false,
+      materias: 2,
+      materiasPendientes: [],
+      publicado: false,
+      publicadoEn: null,
+      publicadoPor: null,
+    },
+    {
+      trimestreId: 12,
+      numero: 2,
+      cerrado: false,
+      materias: 2,
+      materiasPendientes: ['Lenguaje'],
+      publicado: false,
+      publicadoEn: null,
+      publicadoPor: null,
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'listarGestiones').mockResolvedValue([GESTION]);
+    vi.spyOn(api, 'listarCursos').mockResolvedValue(CURSOS);
+  });
+
+  it('debe publicar el trimestre cuyas materias entregaron todas y bloquear el que tiene entregas pendientes', async () => {
+    vi.spyOn(api, 'listarPublicacionesApi').mockResolvedValue(TRIMESTRES_PUBLICACION);
+    const publicar = vi
+      .spyOn(api, 'publicarBoletinApi')
+      .mockResolvedValue({ ...TRIMESTRES_PUBLICACION[0], publicado: true });
+    abrir('/secretaria/publicacion-boletines', 'SECRETARIA');
+
+    await screen.findByText('Falta: Lenguaje');
+    const filas = screen.getAllByRole('row').slice(1);
+    expect(within(filas[1]).getByText('Falta: Lenguaje')).toBeInTheDocument();
+    expect(within(filas[1]).getByRole('button', { name: 'Publicar boletín' })).toBeDisabled();
+
+    fireEvent.click(within(filas[0]).getByRole('button', { name: 'Publicar boletín' }));
+    await waitFor(() => expect(publicar).toHaveBeenCalledWith(1, 11));
+    expect(await screen.findByText(/los padres ya pueden verlo/)).toBeInTheDocument();
+  });
+
+  it('debe pedir confirmación antes de retirar una publicación', async () => {
+    vi.spyOn(api, 'listarPublicacionesApi').mockResolvedValue([
+      {
+        ...TRIMESTRES_PUBLICACION[0],
+        publicado: true,
+        publicadoEn: '2026-10-29T15:00:00Z',
+        publicadoPor: { id: 4, nombre: 'Rosa Secretaria' },
+      },
+    ]);
+    const despublicar = vi.spyOn(api, 'despublicarBoletinApi').mockResolvedValue(undefined);
+    abrir('/secretaria/publicacion-boletines', 'SECRETARIA');
+
+    expect(await screen.findByText(/por Rosa Secretaria/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Retirar publicación' }));
+    const dialogo = screen.getByRole('alertdialog');
+    fireEvent.click(within(dialogo).getByRole('button', { name: 'Retirar publicación' }));
+    await waitFor(() => expect(despublicar).toHaveBeenCalledWith(1, 11));
+  });
+
+  it('debe mostrar el error de la API si la publicación es rechazada', async () => {
+    vi.spyOn(api, 'listarPublicacionesApi').mockResolvedValue(TRIMESTRES_PUBLICACION);
+    vi.spyOn(api, 'publicarBoletinApi').mockRejectedValue(
+      new api.ErrorApi(409, 'El boletín de ese trimestre ya está publicado'),
+    );
+    abrir('/secretaria/publicacion-boletines', 'SECRETARIA');
+
+    await screen.findByText('Falta: Lenguaje');
+    const filas = screen.getAllByRole('row').slice(1);
+    fireEvent.click(within(filas[0]).getByRole('button', { name: 'Publicar boletín' }));
+    expect(
+      await screen.findByText('El boletín de ese trimestre ya está publicado'),
+    ).toBeInTheDocument();
+  });
+});

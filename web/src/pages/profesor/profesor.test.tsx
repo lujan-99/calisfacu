@@ -1221,6 +1221,56 @@ describe('Generación de Boletines en PDF (US-07, T-047)', () => {
     });
   });
 
+  it('debe consultar la cola hasta que termine, mostrar el aviso y descargar el PDF del curso (US-07, criterio 3)', async () => {
+    vi.spyOn(boletinLib, 'iniciarGeneracionMasivaBoletines').mockResolvedValue({
+      jobId: '41',
+      totalEstudiantes: 2,
+      estado: 'ENCOLADO',
+    });
+    vi.spyOn(boletinLib, 'consultarEstadoBoletinesCola').mockResolvedValue({
+      jobId: '41',
+      estado: 'COMPLETADO',
+      progreso: 100,
+      total: 2,
+      mensaje: 'Los 2 boletines de Secundaria 3.º «A» están listos para descargar.',
+      urlDescarga: '/boletines/trabajos/41/pdf',
+    });
+    const descargarSpy = vi
+      .spyOn(boletinLib, 'descargarBoletinesCurso')
+      .mockResolvedValue(undefined);
+
+    abrir('/profesor/materias/7/boletines', 'PROFESOR');
+    fireEvent.click(await screen.findByRole('button', { name: /Generar todos los boletines/i }));
+
+    expect(
+      await screen.findByText(
+        'Los 2 boletines de Secundaria 3.º «A» están listos para descargar.',
+        {},
+        { timeout: 3000 },
+      ),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', { name: /Descargar PDF del curso \(2 boletines\)/i }),
+    );
+    await waitFor(() =>
+      expect(descargarSpy).toHaveBeenCalledWith(
+        '/boletines/trabajos/41/pdf',
+        expect.stringMatching(/^Boletines_.*\.pdf$/),
+      ),
+    );
+  });
+
+  it('debe mostrar el error de la API al encolar, sin simular que terminó', async () => {
+    vi.spyOn(boletinLib, 'iniciarGeneracionMasivaBoletines').mockRejectedValue(
+      new api.ErrorApi(403, 'Usted no da clases a este estudiante'),
+    );
+    abrir('/profesor/materias/7/boletines', 'PROFESOR');
+    fireEvent.click(await screen.findByRole('button', { name: /Generar todos los boletines/i }));
+
+    expect(await screen.findByText('Usted no da clases a este estudiante')).toBeInTheDocument();
+    expect(screen.queryByText(/Emisión masiva completada/i)).not.toBeInTheDocument();
+  });
+
   it('debe filtrar estudiantes por estado de boletín', async () => {
     abrir('/profesor/materias/7/boletines', 'PROFESOR');
     expect(await screen.findByText('Perez Ramos, Alejandro')).toBeInTheDocument();

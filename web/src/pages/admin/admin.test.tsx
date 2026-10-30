@@ -68,6 +68,7 @@ describe('Dimensiones de evaluación (US-18, criterios 6 y 7)', () => {
 
 describe('Boletín del padre (US-11, Sprint 3)', () => {
   it('debe avisar que el boletín todavía no está disponible', async () => {
+    vi.spyOn(api, 'listarHijosTutorApi').mockResolvedValue([]);
     abrir('/padre/boletin', 'PADRE');
     expect(await screen.findByText('El boletín todavía no está disponible')).toBeInTheDocument();
   });

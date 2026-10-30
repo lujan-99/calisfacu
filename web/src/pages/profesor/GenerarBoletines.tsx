@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
@@ -6,6 +6,7 @@ import { formatoPorcentaje } from '../../lib/asistencia';
 import {
   consultarEstadoBoletinesCola,
   descargarBoletinEstudiante,
+  descargarBoletinesCurso,
   filtrarBoletinesEstudiantes,
   iniciarGeneracionMasivaBoletines,
   obtenerResumenBoletinesCurso,
@@ -13,6 +14,7 @@ import {
   type FiltroBoletin,
 } from '../../lib/boletin';
 import { formatoNumero } from '../../lib/formato';
+import { textoError } from '../../lib/useMensaje';
 import { useCarga } from '../../lib/useCarga';
 
 /**
@@ -38,6 +40,24 @@ export function GenerarBoletines() {
   const [iniciandoCola, setIniciandoCola] = useState(false);
 
   const datos = carga.estado === 'datos' ? carga.datos : null;
+
+  // Sondeo del trabajo mientras la cola lo procesa (Criterio 3): termina al completar, fallar o salir de la página.
+  const jobEnCurso =
+    trabajoCola && (trabajoCola.estado === 'ENCOLADO' || trabajoCola.estado === 'PROCESANDO')
+      ? trabajoCola.jobId
+      : null;
+  useEffect(() => {
+    if (!jobEnCurso) return;
+    const intervalo = setInterval(() => {
+      consultarEstadoBoletinesCola(jobEnCurso)
+        .then(setTrabajoCola)
+        .catch((err: unknown) => {
+          setErrorDescarga(textoError(err, 'No se pudo consultar el estado de la cola.'));
+          setTrabajoCola(null);
+        });
+    }, 1500);
+    return () => clearInterval(intervalo);
+  }, [jobEnCurso]);
 
   const estudiantesFiltrados = useMemo(() => {
     if (!datos) return [];
@@ -92,43 +112,22 @@ export function GenerarBoletines() {
         progreso: 0,
         total: res.totalEstudiantes,
       });
-
-      // Polling simulado/real para actualizar progreso de BullMQ
-      const intervalo = setInterval(() => {
-        void (async () => {
-          try {
-            const estado = await consultarEstadoBoletinesCola(res.jobId);
-            setTrabajoCola(estado);
-            if (estado.estado === 'COMPLETADO' || estado.estado === 'FALLIDO') {
-              clearInterval(intervalo);
-            }
-          } catch {
-            // Si el backend aún no expone la ruta en local, simulamos progreso completo
-            setTrabajoCola((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    estado: 'COMPLETADO',
-                    progreso: 100,
-                    mensaje: 'Se generaron exitosamente todos los boletines en la cola BullMQ.',
-                  }
-                : null,
-            );
-            clearInterval(intervalo);
-          }
-        })();
-      }, 1500);
-    } catch {
-      // Fallback local visual para desarrollo frontend
-      setTrabajoCola({
-        jobId: `job_${Date.now()}`,
-        estado: 'COMPLETADO',
-        progreso: 100,
-        total: totalEstudiantes,
-        mensaje: `Se encolaron y generaron ${totalEstudiantes} boletines exitosamente con BullMQ.`,
-      });
+    } catch (err) {
+      setErrorDescarga(textoError(err, 'No se pudo encolar la generación de los boletines.'));
     } finally {
       setIniciandoCola(false);
+    }
+  };
+
+  const alDescargarCurso = async (urlDescarga: string) => {
+    setErrorDescarga(null);
+    try {
+      await descargarBoletinesCurso(
+        urlDescarga,
+        `Boletines_${cursoNombre.replace(/[^\p{L}\p{N}]+/gu, '_')}.pdf`,
+      );
+    } catch (err) {
+      setErrorDescarga(textoError(err, 'No se pudo descargar el PDF del curso.'));
     }
   };
 
@@ -147,9 +146,8 @@ export function GenerarBoletines() {
           </div>
           <h2>Generación de Boletines Centralizados en PDF</h2>
           <p>
-            Emisión con formato ministerial oficial: código SIE, datos del estudiante, notas
-            trimestrales por materia, promedio anual, porcentaje de asistencia y firmas (RM
-            001/2026).
+            Boletín en PDF con la unidad educativa, el código SIE, los datos del estudiante, las
+            notas trimestrales y anual por materia y el porcentaje de asistencia (RM 001/2026).
           </p>
         </div>
         <div className="hero-rol-metricas">
@@ -193,7 +191,7 @@ export function GenerarBoletines() {
             type="button"
             className="boton boton-primario"
             data-cy="btn-emision-masiva"
-            disabled={iniciandoCola || trabajoCola?.estado === 'PROCESANDO'}
+            disabled={iniciandoCola || jobEnCurso !== null}
             onClick={() => void alIniciarColaMasiva()}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
           >
@@ -257,7 +255,9 @@ export function GenerarBoletines() {
               <strong style={{ fontSize: 14 }}>
                 {trabajoCola.estado === 'COMPLETADO'
                   ? '✓ Emisión masiva completada'
-                  : 'Procesando boletines en cola (BullMQ)…'}
+                  : trabajoCola.estado === 'FALLIDO'
+                    ? 'La generación de los boletines falló'
+                    : 'Procesando boletines en cola (BullMQ)…'}
               </strong>
               <div style={{ fontSize: 12, color: 'var(--texto-2)', marginTop: 4 }}>
                 Identificador de trabajo: <code>{trabajoCola.jobId}</code>
@@ -267,7 +267,9 @@ export function GenerarBoletines() {
               className={
                 trabajoCola.estado === 'COMPLETADO'
                   ? 'insignia insignia-exito'
-                  : 'insignia insignia-alerta'
+                  : trabajoCola.estado === 'FALLIDO'
+                    ? 'insignia insignia-error'
+                    : 'insignia insignia-alerta'
               }
             >
               {trabajoCola.estado}
@@ -298,9 +300,30 @@ export function GenerarBoletines() {
           </div>
 
           {trabajoCola.mensaje && (
-            <div style={{ fontSize: 13, color: '#15803d', marginTop: 10, fontWeight: 500 }}>
+            <div
+              data-cy="mensaje-estado-cola"
+              style={{
+                fontSize: 13,
+                color: trabajoCola.estado === 'FALLIDO' ? '#991b1b' : '#15803d',
+                marginTop: 10,
+                fontWeight: 500,
+              }}
+            >
               {trabajoCola.mensaje}
             </div>
+          )}
+
+          {trabajoCola.estado === 'COMPLETADO' && trabajoCola.urlDescarga && (
+            <button
+              type="button"
+              className="boton boton-primario"
+              data-cy="btn-descargar-boletines-curso"
+              onClick={() => void alDescargarCurso(trabajoCola.urlDescarga as string)}
+              style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 8 }}
+            >
+              <Icono nombre="documento" tam={16} />
+              Descargar PDF del curso ({trabajoCola.total} boletines)
+            </button>
           )}
         </div>
       )}

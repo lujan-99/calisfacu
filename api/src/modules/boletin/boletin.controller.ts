@@ -55,6 +55,15 @@ export class BoletinController {
     return pdf(await generarPdfBoletines([datos]), `Boletin_${datos.estudiante.codigoRude}.pdf`);
   }
 
+  /** Lista del curso para la pantalla de boletines del profesor. */
+  @Get('cursos/:id/estudiantes')
+  estudiantesDelCurso(
+    @Param('id', ParseIntPipe) id: number,
+    @UsuarioActual() usuario: UsuarioToken,
+  ) {
+    return this.boletines.resumenCurso(id, usuario);
+  }
+
   /** Criterio 3: los boletines del curso se generan en la cola; responde de inmediato con el trabajo. */
   @Post('cursos/:id/cola')
   @HttpCode(202)

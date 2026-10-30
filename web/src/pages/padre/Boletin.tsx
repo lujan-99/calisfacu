@@ -3,7 +3,6 @@ import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
 import {
   descargarBoletinHijoPdfApi,
-  descargarBoletinPdfApi,
   listarHijosTutorApi,
   obtenerBoletinHijoApi,
   type BoletinPadreDetalle,
@@ -30,13 +29,7 @@ export function Boletin() {
   const [errorDescarga, setErrorDescarga] = useState<string | null>(null);
 
   // Cargar lista de hijos asignados al tutor autenticado
-  const { carga: hijosCarga, recargar: recargarHijos } = useCarga(async () => {
-    try {
-      return await listarHijosTutorApi();
-    } catch {
-      return [];
-    }
-  }, []);
+  const { carga: hijosCarga, recargar: recargarHijos } = useCarga(() => listarHijosTutorApi(), []);
 
   const listaHijos: HijoTutor[] = hijosCarga.estado === 'datos' ? hijosCarga.datos : [];
 
@@ -66,15 +59,10 @@ export function Boletin() {
     setErrorDescarga(null);
 
     try {
-      let blob: Blob;
-      try {
-        blob = await descargarBoletinHijoPdfApi(hijoActivo.id);
-      } catch {
-        blob = await descargarBoletinPdfApi(hijoActivo.id);
-      }
-
+      const blob = await descargarBoletinHijoPdfApi(hijoActivo.id);
       const nombreLimpio = `${hijoActivo.apellidos}_${hijoActivo.nombres}`.replace(/\s+/g, '_');
-      descargarBlob(blob, `Boletin_${nombreLimpio}_2026.pdf`);
+      const anio = boletin?.estudiante.gestion?.anio ?? hijoActivo.gestion?.anio ?? '';
+      descargarBlob(blob, `Boletin_${nombreLimpio}${anio ? `_${anio}` : ''}.pdf`);
       setMensaje('Boletín descargado exitosamente en formato PDF oficial.');
     } catch (err) {
       setErrorDescarga(

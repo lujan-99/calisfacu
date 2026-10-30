@@ -1,11 +1,10 @@
 import {
   consultarEstadoTrabajoBoletinesApi,
+  descargarArchivoApi,
   descargarBoletinPdfApi,
   iniciarGeneracionBoletinesColaApi,
-  listarEstudiantes,
-  obtenerHistorialAcademicoEstudiante,
+  listarBoletinesCursoApi,
   obtenerMateria,
-  obtenerPorcentajesAsistencia,
 } from './api';
 
 /** Umbral de estudiantes para activar el procesamiento asíncrono en cola (US-07, CA 3, R05 / CAL-001). */
@@ -130,71 +129,27 @@ export async function consultarEstadoBoletinesCola(jobId: string): Promise<Estad
     jobId: res.jobId,
     estado: res.estado,
     progreso: res.progreso,
-    total: 100,
+    total: res.total,
     urlDescarga: res.urlDescarga,
+    mensaje: res.mensaje,
   };
 }
 
+/** Descarga el PDF con los boletines del curso cuando la cola terminó (US-07, criterio 3). */
+export async function descargarBoletinesCurso(urlDescarga: string, nombreArchivo: string) {
+  descargarBlob(await descargarArchivoApi(urlDescarga), nombreArchivo);
+}
+
 /**
- * Carga los datos de los estudiantes del curso para emisión de boletines.
+ * Carga los estudiantes del curso de la materia con sus promedios y asistencia, calculados por la API.
  */
 export async function obtenerResumenBoletinesCurso(
   materiaId: number,
 ): Promise<ResumenBoletinesCurso> {
   const materia = await obtenerMateria(materiaId);
   const cursoId = materia.curso.id;
-
-  // Cargar estudiantes del curso y porcentajes de asistencia
-  const [estudiantesCurso, asistencias] = await Promise.all([
-    listarEstudiantes({ cursoId }),
-    obtenerPorcentajesAsistencia(materiaId).catch(() => []),
-  ]);
-
-  const mapAsistencias = new Map(asistencias.map((a) => [a.estudianteId, a]));
-
-  // Recopilar el estado académico de cada estudiante
-  const estudiantes: BoletinEstudiante[] = await Promise.all(
-    estudiantesCurso.map(async (e) => {
-      const asist = mapAsistencias.get(e.id);
-      let promedioAnual: number | null = null;
-      let trimestres: NotaTrimestreResumen[] = [];
-
-      try {
-        const hist = await obtenerHistorialAcademicoEstudiante(e.id);
-        promedioAnual = hist.promedioAnual;
-        trimestres = hist.trimestres.map((t) => ({
-          numero: t.numero,
-          nota: t.promedioTrimestral,
-        }));
-      } catch {
-        // En caso de que no haya notas registradas aún
-        trimestres = [
-          { numero: 1, nota: null },
-          { numero: 2, nota: null },
-          { numero: 3, nota: null },
-        ];
-      }
-
-      const tieneAlgunaNota = trimestres.some((t) => t.nota !== null);
-
-      return {
-        estudianteId: e.id,
-        codigoRude: e.codigoRude,
-        ci: e.ci ?? null,
-        estudiante: `${e.apellidos}, ${e.nombres}`,
-        promedioAnual,
-        porcentajeAsistencia: asist?.porcentaje ?? null,
-        clasesDictadas: asist?.clases ?? 0,
-        asistencias: asist ? asist.presentes + asist.licencias : 0,
-        estadoBoletin: tieneAlgunaNota ? 'LISTO' : 'PENDIENTE_NOTAS',
-        trimestres,
-      };
-    }),
-  );
-
+  const estudiantes: BoletinEstudiante[] = await listarBoletinesCursoApi(cursoId);
   const totalEstudiantes = estudiantes.length;
-  const requiereCola = esCursoNumeroso(totalEstudiantes);
-  const boletinesListos = estudiantes.filter((e) => e.estadoBoletin === 'LISTO').length;
 
   return {
     cursoId,
@@ -202,8 +157,8 @@ export async function obtenerResumenBoletinesCurso(
     materiaId: materia.id,
     materiaNombre: materia.nombre,
     totalEstudiantes,
-    requiereCola,
-    boletinesListos,
+    requiereCola: esCursoNumeroso(totalEstudiantes),
+    boletinesListos: estudiantes.filter((e) => e.estadoBoletin === 'LISTO').length,
     estudiantes,
   };
 }

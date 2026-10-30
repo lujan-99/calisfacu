@@ -1,11 +1,4 @@
-import {
-  notasTrimestrales,
-  obtenerMateria,
-  obtenerPanelRiesgoMateriaApi,
-  obtenerPorcentajesAsistencia,
-  type NotaTrimestral,
-  type PorcentajeAsistenciaEstudiante,
-} from './api';
+import { obtenerPanelRiesgoMateriaApi } from './api';
 
 /** Umbral mínimo de aprobación según la RM 001/2026 y normativa vigente en Bolivia. */
 export const UMBRAL_NOTA_MINIMA = 51;
@@ -184,88 +177,12 @@ export function filtrarEstudiantesRiesgo(
 }
 
 /**
- * Consulta el panel de riesgo para la materia indicada.
- * Intenta invocar el endpoint dedicado `/materias/:id/riesgo` de la API de Lujan (T-043).
- * Si la API aún no lo expone en local, compone los datos de los endpoints existentes.
+ * Consulta el panel de riesgo de la materia (T-043): la API calcula la nota del trimestre, la asistencia y el riesgo
+ * con el umbral de la gestión (decisiones D6 y D18). Un error (por ejemplo, 403) se muestra tal cual en la pantalla.
  */
-export async function obtenerPanelRiesgoMateria(
+export function obtenerPanelRiesgoMateria(
   materiaId: number,
   trimestreId?: number,
 ): Promise<PanelRiesgoData> {
-  try {
-    return await obtenerPanelRiesgoMateriaApi<PanelRiesgoData>(materiaId, trimestreId);
-  } catch {
-    // Si no existe la ruta en el backend aún (T-043 en desarrollo), agregamos los datos disponibles
-    return await fallbackPanelRiesgo(materiaId, trimestreId);
-  }
-}
-
-/**
- * Fallback resiliente para componer el panel de riesgo a partir de materia, cálculo y asistencia.
- */
-async function fallbackPanelRiesgo(
-  materiaId: number,
-  trimestreId?: number,
-): Promise<PanelRiesgoData> {
-  const materia = await obtenerMateria(materiaId);
-  const tId = trimestreId ?? 1;
-
-  const [notas, asistencias] = await Promise.all([
-    notasTrimestrales(materiaId, tId).catch(() => [] as NotaTrimestral[]),
-    obtenerPorcentajesAsistencia(materiaId).catch(() => [] as PorcentajeAsistenciaEstudiante[]),
-  ]);
-
-  const mapAsistencia = new Map<
-    number,
-    { porcentaje: number | null; clases: number; asistencias: number }
-  >(
-    asistencias.map((a: PorcentajeAsistenciaEstudiante) => [
-      a.estudianteId,
-      {
-        porcentaje: a.porcentaje,
-        clases: a.clases,
-        asistencias: a.presentes + a.licencias,
-      },
-    ]),
-  );
-
-  const estudiantes: EstudianteRiesgo[] = notas.map((n: NotaTrimestral) => {
-    const asist = mapAsistencia.get(n.estudianteId);
-    const porcentaje = asist?.porcentaje ?? null;
-    const clasesDictadas = asist?.clases ?? 0;
-    const totalAsistencias = asist?.asistencias ?? 0;
-
-    const evaluacion = evaluarRiesgoEstudiante(
-      n.nota,
-      porcentaje,
-      UMBRAL_ASISTENCIA_DEFECTO,
-      UMBRAL_NOTA_MINIMA,
-    );
-
-    return {
-      estudianteId: n.estudianteId,
-      codigoRude: '',
-      ci: null,
-      estudiante: n.estudiante,
-      promedio: n.nota,
-      porcentajeAsistencia: porcentaje,
-      clasesDictadas,
-      asistencias: totalAsistencias,
-      enRiesgo: evaluacion.enRiesgo,
-      motivoRiesgo: evaluacion.motivoRiesgo,
-      estado: evaluacion.estado,
-    };
-  });
-
-  const resumen = calcularResumenPanelRiesgo(estudiantes);
-
-  return {
-    materia: { id: materia.id, nombre: materia.nombre },
-    curso: { id: materia.curso.id, nombre: materia.curso.nombre },
-    trimestre: { id: tId, numero: 1 },
-    umbralAsistencia: UMBRAL_ASISTENCIA_DEFECTO,
-    umbralNotaMinima: UMBRAL_NOTA_MINIMA,
-    resumen,
-    estudiantes,
-  };
+  return obtenerPanelRiesgoMateriaApi<PanelRiesgoData>(materiaId, trimestreId);
 }

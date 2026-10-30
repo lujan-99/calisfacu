@@ -22,6 +22,7 @@ import { ControlEntregas } from './pages/secretaria/ControlEntregas';
 import { Cursos } from './pages/secretaria/Cursos';
 import { Estudiantes } from './pages/secretaria/Estudiantes';
 import { Materias } from './pages/secretaria/Materias';
+import { PublicacionBoletines } from './pages/secretaria/PublicacionBoletines';
 import { UnidadEducativa } from './pages/secretaria/UnidadEducativa';
 import { VinculacionPadres } from './pages/secretaria/VinculacionPadres';
 
@@ -65,6 +66,7 @@ export const rutas = [
           { path: '/secretaria/materias', element: <Materias /> },
           { path: '/secretaria/control-entregas', element: <ControlEntregas /> },
           { path: '/secretaria/vinculos-familiares', element: <VinculacionPadres /> },
+          { path: '/secretaria/publicacion-boletines', element: <PublicacionBoletines /> },
           { path: '/secretaria/unidad-educativa', element: <UnidadEducativa /> },
         ],
       },

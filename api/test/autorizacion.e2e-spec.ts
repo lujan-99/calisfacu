@@ -276,6 +276,11 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
       url: `/api/boletines/cursos/${e.ajeno.curso.id}/cola`,
       noPermitidos: ['profesor', 'otro', 'padre'],
     },
+    {
+      metodo: 'get',
+      url: `/api/boletines/cursos/${e.ajeno.curso.id}/estudiantes`,
+      noPermitidos: ['profesor', 'otro', 'padre'],
+    },
     { metodo: 'get', url: '/api/boletines/trabajos/1', noPermitidos: ['padre'] },
     { metodo: 'get', url: '/api/boletines/trabajos/1/pdf', noPermitidos: ['padre'] },
     {

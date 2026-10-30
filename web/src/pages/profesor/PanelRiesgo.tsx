@@ -352,7 +352,7 @@ export function PanelRiesgo() {
                         </div>
                       </div>
                     </td>
-                    <td className="numero">
+                    <td className="numero" data-cy="celda-promedio">
                       {e.promedio !== null ? (
                         <strong
                           style={{
@@ -367,7 +367,7 @@ export function PanelRiesgo() {
                         <span style={{ color: 'var(--texto-3)' }}>Pendiente</span>
                       )}
                     </td>
-                    <td className="numero">
+                    <td className="numero" data-cy="celda-asistencia">
                       {e.porcentajeAsistencia !== null ? (
                         <div>
                           <strong
@@ -401,7 +401,8 @@ export function PanelRiesgo() {
                           style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
                         >
                           <Icono nombre="alerta" tam={12} />
-                          En riesgo crítico (Notas &lt; 51 y Asistencia &lt; {umbralAsist}%)
+                          En riesgo crítico (Notas &lt; {umbralNota} y Asistencia &lt; {umbralAsist}
+                          %)
                         </span>
                       )}
 

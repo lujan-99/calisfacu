@@ -199,6 +199,47 @@ describe('Boletín de notas en PDF (US-07)', () => {
     });
   });
 
+  describe('Lista del curso para la pantalla de boletines', () => {
+    it('debe listar al profesor los estudiantes del curso con sus promedios y su asistencia', async () => {
+      const r = await http()
+        .get(`/api/boletines/cursos/${e.estudiantes[0].curso.id}/estudiantes`)
+        .set(como('profesor'))
+        .expect(200);
+      const lista = r.body as { estudianteId: number; estadoBoletin: string }[];
+      expect(lista.map((x) => x.estudianteId)).toEqual(
+        [e.estudiantes[2], e.estudiantes[1], e.estudiantes[0]].map((x) => x.id),
+      );
+      // Sin Lenguaje completo no hay promedio del trimestre (D12): el boletín todavía no está listo.
+      expect(lista.find((x) => x.estudianteId === e.estudiantes[0].id)).toEqual({
+        estudianteId: e.estudiantes[0].id,
+        codigoRude: 'RUDE000001',
+        ci: null,
+        estudiante: 'Quispe, Ana',
+        promedioAnual: null,
+        porcentajeAsistencia: 75,
+        clasesDictadas: 4,
+        asistencias: 3,
+        estadoBoletin: 'PENDIENTE_NOTAS',
+        trimestres: [
+          { numero: 1, nota: null },
+          { numero: 2, nota: null },
+          { numero: 3, nota: null },
+        ],
+      });
+    });
+
+    it('debe responder 403 al profesor que no da clases al curso y 404 a un curso que no existe', async () => {
+      await http()
+        .get(`/api/boletines/cursos/${e.ajeno.curso.id}/estudiantes`)
+        .set(como('profesor'))
+        .expect(403);
+      await http()
+        .get('/api/boletines/cursos/9999/estudiantes')
+        .set(como('secretaria'))
+        .expect(404);
+    });
+  });
+
   describe('Boletines de un curso grande en la cola (T-046, criterio 3)', () => {
     let cursoGrande: Curso;
 

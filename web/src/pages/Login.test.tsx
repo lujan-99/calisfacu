@@ -42,6 +42,7 @@ describe('Inicio de sesión y menú por rol (US-17)', () => {
         'Materias y asignaciones',
         'Control de entregas',
         'Vínculos familiares',
+        'Publicación de boletines',
         'Unidad educativa',
       ],
     ],

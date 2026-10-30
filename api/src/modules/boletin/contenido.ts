@@ -32,6 +32,9 @@ export interface DatosBoletin {
   promedioAnual: number | null;
   estadoAnual: string;
   porcentajeAsistencia: number | null;
+  /** Clases registradas en todas las materias y a cuántas asistió (presente o con licencia, D5). */
+  clasesDictadas: number;
+  asistencias: number;
 }
 
 const ORDINALES = ['1.er', '2.º', '3.er'];

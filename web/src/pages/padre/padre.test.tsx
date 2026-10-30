@@ -17,6 +17,7 @@ const HIJOS_PRUEBA: api.HijoTutor[] = [
       paralelo: 'A',
       anioEscolaridad: 3,
     },
+    gestion: { id: 1, anio: 2026 },
   },
   {
     id: 16,

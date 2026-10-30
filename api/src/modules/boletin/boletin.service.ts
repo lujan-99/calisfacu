@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type { DataSource } from 'typeorm';
 import type { UsuarioToken } from '../../common/decoradores';
-import { Asistencia, EstadoAsistencia, Estudiante } from '../../database/entities';
+import { Asistencia, Curso, EstadoAsistencia, Estudiante } from '../../database/entities';
 import { nombreCurso, nombreNivel } from '../academico/formato';
 import { porcentajeAsistencia } from '../asistencia/reglas-asistencia';
 import { CalculoService } from '../calculo/calculo.service';
 import { HistorialService } from '../calculo/historial.service';
+import { AccesoNotasService } from '../notas/acceso.service';
 import type { DatosBoletin } from './contenido';
 
 /**
@@ -18,6 +19,7 @@ export class BoletinService {
   constructor(
     private readonly historial: HistorialService,
     private readonly calculo: CalculoService,
+    private readonly acceso: AccesoNotasService,
     @InjectDataSource() private readonly db: DataSource,
   ) {}
 
@@ -103,6 +105,43 @@ export class BoletinService {
       promedioAnual: h.promedioAnual,
       estadoAnual: h.estadoAnual,
       porcentajeAsistencia: asistenciaDe(),
+      clasesDictadas: conteos.reduce((suma, f) => suma + f.cantidad, 0),
+      asistencias: contar(EstadoAsistencia.PRESENTE) + contar(EstadoAsistencia.LICENCIA),
     };
+  }
+
+  /**
+   * Estudiantes del curso con lo que la pantalla de boletines necesita para listarlos (US-07). La usa el profesor,
+   * que no puede consultar /api/estudiantes (es de la secretaria).
+   */
+  async resumenCurso(cursoId: number, usuario: UsuarioToken) {
+    const curso = await this.db.getRepository(Curso).findOneBy({ id: cursoId });
+    if (!curso) throw new NotFoundException('El curso no existe');
+    await this.acceso.verificarEstudiante(curso.id, usuario);
+    const estudiantes = await this.db.getRepository(Estudiante).find({
+      where: { curso: { id: curso.id } },
+      order: { apellidos: 'ASC', nombres: 'ASC' },
+    });
+    const lista = [];
+    for (const e of estudiantes) {
+      const d = await this.datos(e.id, usuario);
+      const tieneNota = d.promediosTrimestrales.some((p) => p !== null);
+      lista.push({
+        estudianteId: e.id,
+        codigoRude: e.codigoRude,
+        ci: e.ci,
+        estudiante: `${e.apellidos}, ${e.nombres}`,
+        promedioAnual: d.promedioAnual,
+        porcentajeAsistencia: d.porcentajeAsistencia,
+        clasesDictadas: d.clasesDictadas,
+        asistencias: d.asistencias,
+        estadoBoletin: tieneNota ? ('LISTO' as const) : ('PENDIENTE_NOTAS' as const),
+        trimestres: d.trimestres.map((t, i) => ({
+          numero: t.numero,
+          nota: d.promediosTrimestrales[i],
+        })),
+      });
+    }
+    return lista;
   }
 }

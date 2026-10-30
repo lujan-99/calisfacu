@@ -67,8 +67,9 @@ jobs:
           inicio=$(date +%s)
           f=$(find respaldo -name '*.dump.gpg' | head -1)
           gpg --batch --pinentry-mode loopback --passphrase "$BACKUP_PASSPHRASE" -o db.dump -d "$f"
+          # Sin dueños ni permisos: el respaldo de Render trae GRANT para el rol postgres, que aquí no existe.
           docker run --rm --network host -e PGPASSWORD=calis -v "$PWD":/w postgres:16 \
-            pg_restore -h localhost -U calis -d restaurada --no-owner /w/db.dump
+            pg_restore -h localhost -U calis -d restaurada --no-owner --no-privileges /w/db.dump
           tablas=$(docker run --rm --network host -e PGPASSWORD=calis postgres:16 \
             psql -h localhost -U calis -d restaurada -tAc "select count(*) from information_schema.tables where table_schema='public'")
           echo "Tablas restauradas: $tablas"

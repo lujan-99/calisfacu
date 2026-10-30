@@ -9,3 +9,4 @@ docs/**/*.pdf
 docs/**/*.xlsx
 docs/**/*.png
 *.jmx
+docs/evidencias/**/*.html

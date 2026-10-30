@@ -12,10 +12,10 @@
 
 ## 1. Análisis dinámico (OWASP ZAP)
 
-| Objetivo | Script            | Antes de corregir          | Después de corregir |
-| -------- | ----------------- | -------------------------- | ------------------- |
-| Web      | `zap-baseline.py` | 0 FAIL · 7 WARN · 54 PASS  | ver sección 5       |
-| API      | `zap-api-scan.py` | 0 FAIL · 5 WARN · 115 PASS | ver sección 5       |
+| Objetivo | Script            | Antes de corregir          | Después de corregir        |
+| -------- | ----------------- | -------------------------- | -------------------------- |
+| Web      | `zap-baseline.py` | 0 FAIL · 7 WARN · 54 PASS  | 0 FAIL · 9 WARN · 59 PASS  |
+| API      | `zap-api-scan.py` | 0 FAIL · 5 WARN · 115 PASS | 0 FAIL · 1 WARN · 120 PASS |
 
 Advertencias de la API antes de corregir: sin `X-Content-Type-Options`, sin HSTS, `X-Powered-By: Express` (13 URL),
 sin `Cross-Origin-Resource-Policy` y "Unexpected Content-Type" (42 URL: respuestas 401 en JSON a un escaneo sin sesión,
@@ -55,7 +55,17 @@ tres avisos informativos de caché.
 
 ## 5. Verificación después de corregir
 
-Se completa con el despliegue de `6ba9d85` en staging (build de Jenkins de develop) y una nueva ejecución de ZAP.
+Build #39 de develop en verde (deploy, smoke test y E2E) con `6ba9d85` en staging; ZAP se volvió a ejecutar el
+30/10/2026 después del build #40. Informes HTML en `docs/evidencias/sprint3/zap/`.
+
+- **API:** desaparecieron las 4 advertencias de cabeceras (nosniff, HSTS, `X-Powered-By`, CORP): 0 FAIL, 1 WARN,
+  120 PASS. Queda "Unexpected Content-Type" en 42 URL: son respuestas 401 en JSON a un escaneo sin sesión (esperado).
+- **Web:** desaparecieron "CSP Header Not Set" y "Missing Anti-clickjacking Header": 0 FAIL, 9 WARN, 59 PASS. Con la
+  CSP presente ZAP revisa más a fondo y suma avisos de menor nivel: `Permissions-Policy` (corregido después en
+  `18c40fb`), `style-src 'unsafe-inline'` (aceptado: estilos en línea de React; los scripts sí están restringidos a
+  `'self'`), `Cross-Origin-Embedder-Policy` (aceptado: `require-corp` bloquearía las fuentes de Google), SRI de Google
+  Fonts (H5) y avisos informativos de caché y de aplicación moderna.
+- **Pruebas:** 292 pruebas de la API y 31 escenarios de Cypress contra staging en verde con las cabeceras nuevas.
 
 ## 6. Firmas
 

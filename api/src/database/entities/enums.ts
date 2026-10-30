@@ -28,3 +28,12 @@ export enum EstadoSolicitud {
   APROBADA = 'APROBADA',
   RECHAZADA = 'RECHAZADA',
 }
+
+/** Relación del padre de familia o tutor con el estudiante (US-20, decisión D17). */
+export enum Parentesco {
+  PADRE = 'PADRE',
+  MADRE = 'MADRE',
+  TUTOR_LEGAL = 'TUTOR_LEGAL',
+  APODERADO = 'APODERADO',
+  OTRO = 'OTRO',
+}

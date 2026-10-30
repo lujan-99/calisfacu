@@ -1,6 +1,6 @@
 # US-20 · Vinculación Padre–Estudiante
 
-- **Sprint:** Sprint 3 · **Prioridad:** MEDIA · **Puntos:** valor 5, esfuerzo 3 · **Estado:** Planificada
+- **Sprint:** Sprint 3 · **Prioridad:** MEDIA · **Puntos:** valor 5, esfuerzo 3 · **Estado:** En proceso
 
 ## Historia
 
@@ -26,6 +26,6 @@ NUEVA (propuesta del análisis; requiere aprobación del docente). US-11 y US-12
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

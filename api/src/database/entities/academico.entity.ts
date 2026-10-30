@@ -1,6 +1,7 @@
 import {
   Check,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -10,7 +11,7 @@ import {
   Unique,
 } from 'typeorm';
 import { COLORES_PREDETERMINADOS } from '../../modules/academico/apariencia';
-import { Nivel } from './enums';
+import { Nivel, Parentesco } from './enums';
 import { Usuario } from './usuario.entity';
 
 /**
@@ -201,4 +202,10 @@ export class VinculoPadre {
 
   @ManyToOne(() => Estudiante, { nullable: false })
   estudiante: Estudiante;
+
+  @Column({ type: 'enum', enum: Parentesco, enumName: 'parentesco', default: Parentesco.PADRE })
+  parentesco: Parentesco;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  creadoEn: Date;
 }

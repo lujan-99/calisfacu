@@ -71,7 +71,10 @@ api/src/
     academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, esquema) y fixtures
+    familias/     vinculación padre–estudiante con parentesco y guard     US-20 (T-048)
+                  de pertenencia AccesoFamiliarService (D17): /api/padres,
+                  /api/vinculos-familiares, /api/padre/hijos
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, familias, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)
@@ -113,7 +116,7 @@ erDiagram
   cursos ||--o{ estudiantes : inscribe
   materias ||--|| asignaciones_materia : "un profesor"
   usuarios ||--o{ asignaciones_materia : dicta
-  usuarios ||--o{ vinculos_padre : "padre de"
+  usuarios ||--o{ vinculos_padre : "padre de (con parentesco)"
   estudiantes ||--o{ vinculos_padre : ""
   materias ||--o{ actividades : tiene
   trimestres ||--o{ actividades : ""
@@ -153,7 +156,7 @@ Decisiones del modelo:
 | Acceso sin sesión                | `JwtAuthGuard` global; solo son públicas `/api/salud`, `/api/auth/login` y `/api/institucion` (nombre, colores y logo) | `autorizacion.e2e-spec.ts` (401) |
 | Rol sin permiso                  | `@Roles()` + `RolesGuard`                                                                                              | M09 (403)                        |
 | Profesor de otra materia         | `AccesoNotasService` comprueba la asignación profesor–materia                                                          | M09 (403)                        |
-| Padre que cambia el ID en la URL | Guard de vínculo padre–estudiante (US-20, semana 3)                                                                    | M09 (403)                        |
+| Padre que cambia el ID en la URL | `AccesoFamiliarService` comprueba el vínculo padre–estudiante; un ID inexistente también recibe 403 (US-20, D17)       | M09 (403)                        |
 | Fuerza bruta                     | Bloqueo de 15 minutos tras 5 intentos; mismo mensaje para correo inexistente y contraseña incorrecta                   | e2e de inicio de sesión          |
 | Sesión abandonada                | Token de 30 minutos que la web renueva (`POST /api/auth/renovar`) solo mientras hay actividad (D11)                    | e2e de expiración de sesión      |
 | Archivo malicioso (logo)         | Solo PNG, JPEG o WebP, reconocidos por su contenido (sin SVG); 256 KB; `X-Content-Type-Options: nosniff`               | `academico.e2e-spec.ts`          |

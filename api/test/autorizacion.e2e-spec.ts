@@ -250,6 +250,21 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
     { metodo: 'get', url: '/api/materias/mias', noPermitidos: ['secretaria', 'admin', 'padre'] },
     { metodo: 'get', url: `/api/materias/${e.matematica.id}`, noPermitidos: ['otro', 'padre'] },
     { metodo: 'get', url: '/api/profesores', noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/padres', noPermitidos: secretariaYAdmin },
+    { metodo: 'get', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },
+    { metodo: 'post', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },
+    {
+      metodo: 'delete',
+      url: `/api/vinculos-familiares/${e.padre.id}/${e.estudiantes[0].id}`,
+      noPermitidos: secretariaYAdmin,
+    },
+    { metodo: 'get', url: '/api/padre/hijos', noPermitidos: ['profesor', 'secretaria', 'admin'] },
+    // El padre del escenario solo está vinculado a e.estudiantes[0] (US-20, criterio 2).
+    {
+      metodo: 'get',
+      url: `/api/padre/hijos/${e.ajeno.id}`,
+      noPermitidos: ['profesor', 'secretaria', 'admin', 'padre'],
+    },
     { metodo: 'get', url: '/api/unidad-educativa', noPermitidos: secretariaYAdmin },
     { metodo: 'put', url: '/api/unidad-educativa', noPermitidos: secretariaYAdmin },
     { metodo: 'put', url: '/api/unidad-educativa/colores', noPermitidos: soloAdmin },

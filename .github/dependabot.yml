@@ -7,6 +7,11 @@ updates:
     target-branch: develop
     schedule: { interval: weekly }
     commit-message: { prefix: 'chore(deps)', include: scope }
+    # Las versiones mayores de NestJS se actualizan juntas y a mano: una sola (p. ej. @nestjs/swagger 12) deja otra copia
+    # de @nestjs/common en api/node_modules y las pruebas e2e no compilan (PR #71).
+    ignore:
+      - dependency-name: '@nestjs/*'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: '/'
     target-branch: develop

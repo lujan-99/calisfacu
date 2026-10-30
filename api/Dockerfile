@@ -26,6 +26,9 @@ FROM node:22-slim
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=deps /app/node_modules node_modules
+# npm deja en api/node_modules las dependencias que no puede subir a la raíz (bullmq y msgpackr): sin esta copia la API
+# no arranca con "Cannot find module 'bullmq'".
+COPY --from=deps /app/api/node_modules api/node_modules
 COPY --from=build /app/api/package.json api/
 COPY --from=build /app/api/dist api/dist
 WORKDIR /app/api

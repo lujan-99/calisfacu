@@ -27,6 +27,12 @@ services:
       # Staging usa solo datos sintéticos: el seed se carga si la base está vacía (SQAP, Sección 7.2).
       - key: SEMBRAR
         value: '1'
+      # Cola de boletines de cursos grandes (US-07, ADR-0006).
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: calisfacu-redis-staging
+          property: connectionString
 
   - type: web
     name: calisfacu-web-staging
@@ -46,6 +52,14 @@ services:
         value: '0'
       - key: VITE_API_URL
         value: https://calisfacu-api-staging.onrender.com/api
+
+  # Redis para BullMQ. noeviction: la cola no debe perder trabajos aunque se llene la memoria.
+  - type: keyvalue
+    name: calisfacu-redis-staging
+    plan: free
+    region: virginia
+    maxmemoryPolicy: noeviction
+    ipAllowList: []
 
 databases:
   - name: calisfacu-db-staging

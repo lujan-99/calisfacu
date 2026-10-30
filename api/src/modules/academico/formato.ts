@@ -19,6 +19,7 @@ export function nombreCurso(c: Pick<Curso, 'nivel' | 'anioEscolaridad' | 'parale
   return `${NIVELES[c.nivel]} ${c.anioEscolaridad}.º «${c.paralelo}»`;
 }
 
+export const nombreNivel = (n: Nivel) => NIVELES[n];
 export const resumenCurso = (c: Curso) => ({ id: c.id, nombre: nombreCurso(c) });
 export const resumenGestion = (g: Gestion) => ({ id: g.id, anio: g.anio });
 export const resumenUsuario = (u: Usuario) => ({ id: u.id, nombre: u.nombre });

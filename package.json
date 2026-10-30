@@ -43,7 +43,8 @@
     "esbuild@0.28.2": true,
     "unrs-resolver@1.12.2": true,
     "@parcel/watcher@2.6.0": true,
-    "@scarf/scarf": false
+    "@scarf/scarf": false,
+    "msgpackr-extract": false
   },
   "overrides": {
     "exceljs": {

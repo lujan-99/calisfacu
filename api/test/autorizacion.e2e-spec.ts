@@ -260,6 +260,24 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
       url: `/api/gestiones/${e.t1.gestion.id}/umbral-asistencia`,
       noPermitidos: soloAdmin,
     },
+    // Ningún profesor del escenario da clases al curso de e.ajeno.
+    {
+      metodo: 'get',
+      url: `/api/boletines/estudiantes/${e.ajeno.id}`,
+      noPermitidos: ['profesor', 'otro', 'padre'],
+    },
+    {
+      metodo: 'get',
+      url: `/api/boletines/estudiantes/${e.ajeno.id}/pdf`,
+      noPermitidos: ['profesor', 'otro', 'padre'],
+    },
+    {
+      metodo: 'post',
+      url: `/api/boletines/cursos/${e.ajeno.curso.id}/cola`,
+      noPermitidos: ['profesor', 'otro', 'padre'],
+    },
+    { metodo: 'get', url: '/api/boletines/trabajos/1', noPermitidos: ['padre'] },
+    { metodo: 'get', url: '/api/boletines/trabajos/1/pdf', noPermitidos: ['padre'] },
     { metodo: 'get', url: '/api/padres', noPermitidos: secretariaYAdmin },
     { metodo: 'get', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },
     { metodo: 'post', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },

@@ -31,6 +31,6 @@ import { NotasTrimestralesService } from './notas-trimestrales.service';
   ],
   controllers: [CalculoController, DimensionesController, HistorialController],
   providers: [CalculoService, DimensionesService, HistorialService, NotasTrimestralesService],
-  exports: [CalculoService, NotasTrimestralesService],
+  exports: [CalculoService, NotasTrimestralesService, HistorialService],
 })
 export class CalculoModule {}

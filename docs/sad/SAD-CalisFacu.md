@@ -36,7 +36,7 @@ flowchart LR
 | Web           | React + Vite + TypeScript, en Render    | Pantallas de cada rol; valida la entrada y muestra los resultados que calcula la API |
 | API           | NestJS + TypeScript, en Render (Docker) | Reglas de negocio, autorización, cálculo, auditoría, PDF                             |
 | Base de datos | PostgreSQL 16 con TypeORM               | Datos académicos, notas y registro de auditoría                                      |
-| Cola          | BullMQ + Redis (semana 3)               | Generación de boletines de cursos grandes (RNF-03, R05)                              |
+| Cola          | BullMQ + Redis (Render Key Value)       | Generación de boletines de cursos grandes (RNF-03, R05)                              |
 | CI/CD         | Jenkins Multibranch (local, en Docker)  | Pruebas, análisis, despliegue a staging y producción                                 |
 | Respaldos     | GitHub Actions (`backup.yml`)           | `pg_dump` diario cifrado (RNF-07)                                                    |
 
@@ -75,10 +75,13 @@ api/src/
                   asistencia acumulada (GET /api/materias/:id/riesgo, D18);
                   umbral de asistencia por gestión que cambia el administrador
                   (PUT /api/gestiones/:id/umbral-asistencia, D6)
+    boletin/      boletín en PDF con pdfkit (GET /api/boletines/estudiantes/:id/pdf) US-07 (T-045, T-046)
+                  y cola BullMQ + Redis para un curso (POST /api/boletines/cursos/:id/cola,
+                  GET /api/boletines/trabajos/:id[/pdf]); D19, ADR-0006
     familias/     vinculación padre–estudiante con parentesco y guard     US-20 (T-048)
                   de pertenencia AccesoFamiliarService (D17): /api/padres,
                   /api/vinculos-familiares, /api/padre/hijos
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, familias, panel, esquema) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, familias, panel, boletin, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)
@@ -161,6 +164,7 @@ Decisiones del modelo:
 | Rol sin permiso                  | `@Roles()` + `RolesGuard`                                                                                              | M09 (403)                        |
 | Profesor de otra materia         | `AccesoNotasService` comprueba la asignación profesor–materia                                                          | M09 (403)                        |
 | Padre que cambia el ID en la URL | `AccesoFamiliarService` comprueba el vínculo padre–estudiante; un ID inexistente también recibe 403 (US-20, D17)       | M09 (403)                        |
+| Boletines de un curso ajeno      | El trabajo de la cola guarda quién lo pidió: otro usuario recibe 404; el PDF vence a las 24 horas (D19)                | `boletin.e2e-spec.ts`            |
 | Fuerza bruta                     | Bloqueo de 15 minutos tras 5 intentos; mismo mensaje para correo inexistente y contraseña incorrecta                   | e2e de inicio de sesión          |
 | Sesión abandonada                | Token de 30 minutos que la web renueva (`POST /api/auth/renovar`) solo mientras hay actividad (D11)                    | e2e de expiración de sesión      |
 | Archivo malicioso (logo)         | Solo PNG, JPEG o WebP, reconocidos por su contenido (sin SVG); 256 KB; `X-Content-Type-Options: nosniff`               | `academico.e2e-spec.ts`          |

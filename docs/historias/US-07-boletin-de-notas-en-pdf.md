@@ -1,6 +1,6 @@
 # US-07 · Boletín de Notas en PDF
 
-- **Sprint:** Sprint 3 · **Prioridad:** MEDIA · **Puntos:** valor 13, esfuerzo 8 · **Estado:** Planificada
+- **Sprint:** Sprint 3 · **Prioridad:** MEDIA · **Puntos:** valor 13, esfuerzo 8 · **Estado:** En proceso
 
 ## Historia
 
@@ -29,6 +29,6 @@ Depende de US-02, US-03 y US-19. Riesgo R05 / defecto CAL-001: generación en co
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

@@ -49,17 +49,13 @@ pipeline {
         sh 'npx license-checker --production --excludePrivatePackages --onlyAllow "MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD"'
       }
     }
-    stage('Análisis estático') {                           // M05, M07, M08: Quality Gate "CalisFacu"
-      // Se exige desde el Sprint 2 (T-030): se activa con la variable SONAR_HABILITADO=true en jenkins/.env.
-      when { allOf { not { buildingTag() }; environment name: 'SONAR_HABILITADO', value: 'true' } }
+    stage('Análisis estático') {                           // M05, M07, M08: Quality Gate "Sonar way"
+      // Se activa con SONAR_HABILITADO=true en jenkins/.env (T-030). El plan gratuito de SonarQube Cloud solo analiza la
+      // rama principal del proyecto, que allí es develop (ADR-0008): en main, PR y etiquetas el análisis fallaría.
+      when { allOf { branch 'develop'; environment name: 'SONAR_HABILITADO', value: 'true' } }
       steps {
         withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-          script {
-            def destino = env.CHANGE_ID ?
-              "-Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${env.CHANGE_TARGET}" :
-              "-Dsonar.branch.name=${env.BRANCH_NAME}"
-            sh "sonar-scanner -Dsonar.qualitygate.wait=true ${destino}"
-          }
+          sh 'sonar-scanner -Dsonar.qualitygate.wait=true'   // análisis de la rama principal (develop)
         }
       }
     }

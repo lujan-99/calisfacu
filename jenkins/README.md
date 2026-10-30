@@ -15,6 +15,7 @@ cp jenkins/.env.example jenkins/.env          # URL de staging y SONAR_HABILITAD
 #   github-token                    token de GitHub con lectura del repositorio y estados de commit
 #   render-hook-staging             Deploy Hook de calisfacu-api-staging
 #   render-hook-web-staging         Deploy Hook de calisfacu-web-staging
+#   sonar-token                     token de SonarQube Cloud (sonarcloud.io/account/security)
 docker compose -f jenkins/docker-compose.yml --env-file jenkins/.env -p calisfacu-jenkins up -d --build
 ```
 
@@ -24,16 +25,16 @@ build se interrumpe.
 
 ## 2. Qué define `casc.yaml`
 
-| Qué              | Valor                                                                                                |
-| ---------------- | ---------------------------------------------------------------------------------------------------- |
-| Seguridad        | Usuarios locales `lujan` y `galvan`, ambos administradores; anónimo sin permisos (SQAP, Sección 3)   |
-| Credenciales     | `github-calisfacu`, `render-hook-staging`, `render-hook-web-staging` (leídas de `jenkins/secretos/`) |
-| Job              | Multibranch `calisfacu` sobre `lujan-99/calisfacu`: ramas, PR y etiquetas de menos de 7 días         |
-| Disparo          | Escaneo del repositorio cada minuto (Jenkins es local y GitHub no puede enviarle webhooks)           |
-| Límite de la API | `ThrottleOnOver`: con token hay 5000 consultas por hora; solo frena cerca del límite                 |
+| Qué              | Valor                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Seguridad        | Usuarios locales `lujan` y `galvan`, ambos administradores; anónimo sin permisos (SQAP, Sección 3)                  |
+| Credenciales     | `github-calisfacu`, `render-hook-staging`, `render-hook-web-staging`, `sonar-token` (leídas de `jenkins/secretos/`) |
+| Job              | Multibranch `calisfacu` sobre `lujan-99/calisfacu`: ramas, PR y etiquetas de menos de 7 días                        |
+| Disparo          | Escaneo del repositorio cada minuto (Jenkins es local y GitHub no puede enviarle webhooks)                          |
+| Límite de la API | `ThrottleOnOver`: con token hay 5000 consultas por hora; solo frena cerca del límite                                |
 
-En el release (T-069) se agregan a `casc.yaml` `render-hook-prod` y `render-hook-web-prod`; con SonarQube (T-030),
-`sonar-token`.
+En el release (T-069) se agregan a `casc.yaml` `render-hook-prod` y `render-hook-web-prod`. `sonar-token` está desde
+el 30/10/2026 (T-030).
 
 ## 3. Variables de entorno (`jenkins/.env`)
 

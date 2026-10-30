@@ -44,6 +44,11 @@ credentials:
               id: render-hook-web-staging
               description: Deploy Hook de calisfacu-web-staging
               secret: '${readFile:/run/secrets/render-hook-web-staging}'
+          - string:
+              scope: GLOBAL
+              id: sonar-token
+              description: Token de SonarQube Cloud (etapa Análisis estático, M05, M07, M08)
+              secret: '${readFile:/run/secrets/sonar-token}'
 
 unclassified:
   location:

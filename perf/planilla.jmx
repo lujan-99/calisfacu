@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- M04 (error < 1 %): escritura de notas bajo carga, en una transacción con auditoría (US-01, US-04). Usa las notas del seed de rendimiento (npm run -w api seed:perf).
+<!-- M04 (error < 1 %): "registrar planilla" bajo carga (US-01): cada iteración crea una actividad y registra la nota de
+     todos los estudiantes del curso en una transacción con auditoría. Antes corregía notas al azar, lo que desde la
+     decisión D16 exige una solicitud aprobada y respondía 422. Usa el seed de rendimiento (npm run -w api seed:perf);
+     el setUp toma por la API la materia del curso «P1» (60 estudiantes), el primer trimestre abierto y la dimensión Ser.
      Uso (etapa Rendimiento del Jenkinsfile):
        jmeter -n -t perf/planilla.jmx -Jusuarios=100 -Jduracion=600 -l perf/planilla.jtl -e -o perf/planilla
      Propiedades: host (localhost), puerto (3000), usuarios (100), duracion (600 s), email y contrasena del profesor del seed. -->
@@ -64,6 +67,30 @@
           </JSR223PostProcessor>
           <hashTree/>
         </hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="SETUP materia, trimestre y estudiantes">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters">${__P(host,localhost)} ${__P(puerto,3000)}</stringProp>
+          <stringProp name="script">import groovy.json.JsonSlurper
+def base = "http://${args[0]}:${args[1]}/api"
+def get = { String ruta -&gt;
+  def c = new URL(base + ruta).openConnection()
+  c.setRequestProperty('Authorization', 'Bearer ' + props.get('token'))
+  new JsonSlurper().parseText(c.inputStream.getText('UTF-8'))
+}
+def materias = get('/materias/mias')
+def materia = materias.find { it.curso.nombre.contains('«P1»') } ?: materias[0]
+def gestion = materia.gestion.id
+def trimestre = get("/gestiones/${gestion}/trimestres").find { !it.cerrado }
+def dimension = get("/gestiones/${gestion}/dimensiones").find { it.codigo == 'SER' }
+def actividad = get("/notas/actividades?materiaId=${materia.id}&amp;trimestreId=${trimestre.id}").actividades[0]
+def estudiantes = get("/notas/actividades/${actividad.id}").filas*.estudianteId
+props.put('materiaId', materia.id as String)
+props.put('trimestreId', trimestre.id as String)
+props.put('dimensionId', dimension.id as String)
+props.put('estudiantes', estudiantes.join(','))
+SampleResult.setResponseData("materia ${materia.id}, trimestre ${trimestre.id}, ${estudiantes.size()} estudiantes", 'UTF-8')</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Carga: ${__P(usuarios,100)} usuarios">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -78,21 +105,51 @@
         <stringProp name="ThreadGroup.delay">0</stringProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Registrar una nota (correccion auditada)">
-          <stringProp name="HTTPSampler.path">/api/notas/${__Random(1,${__P(notas,2400)})}/correccion</stringProp>
-          <stringProp name="HTTPSampler.method">PATCH</stringProp>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Crear actividad">
+          <stringProp name="HTTPSampler.path">/api/notas/actividades</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{"valor":${__Random(51,99)}.5,"motivo":"Prueba de carga"}</stringProp>
+                <stringProp name="Argument.value">{"materiaId":${__P(materiaId)},"trimestreId":${__P(trimestreId)},"dimensionId":${__P(dimensionId)},"nombre":"Carga ${__threadNum}-${__counter(FALSE,)}"}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
         </HTTPSamplerProxy>
-        <hashTree/>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extraer actividad">
+            <stringProp name="JSONPostProcessor.referenceNames">actividadId</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Registrar planilla">
+          <stringProp name="HTTPSampler.path">/api/notas/planilla</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">${cuerpo}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Notas de todos los estudiantes">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="script">def r = new Random()
+def notas = props.get('estudiantes').split(',').collect { [estudianteId: it as int, valor: 51 + r.nextInt(50)] }
+vars.put('cuerpo', groovy.json.JsonOutput.toJson([actividadId: vars.get('actividadId') as int, notas: notas]))</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+        </hashTree>
         <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Pausa entre peticiones">
           <stringProp name="ConstantTimer.delay">1000</stringProp>
         </ConstantTimer>

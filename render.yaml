@@ -45,6 +45,22 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+    # Revisión OWASP del Sprint 3 (H2, A05): CSP y anti-clickjacking (HSTS y nosniff ya los pone Render). La CSP permite
+    # solo lo que carga la web: su código, las fuentes de Google, la API y los PDF que se descargan como blob.
+    headers:
+      - path: /*
+        name: Content-Security-Policy
+        value: >-
+          default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+          font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://calisfacu-api-staging.onrender.com;
+          connect-src 'self' https://calisfacu-api-staging.onrender.com; object-src 'none'; base-uri 'self';
+          form-action 'self'; frame-ancestors 'none'
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
     envVars:
       - key: NODE_VERSION
         value: '22'

@@ -48,6 +48,7 @@ const config: Config = {
     './src/modules/calculo/': { lines: 90 },
     './src/modules/auditoria/': { lines: 90 },
     './src/modules/auth/': { lines: 90 },
+    './src/modules/familias/': { lines: 90 },
   },
   reporters: [
     'default',

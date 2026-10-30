@@ -32,6 +32,9 @@ COPY --from=deps /app/api/node_modules api/node_modules
 COPY --from=build /app/api/package.json api/
 COPY --from=build /app/api/dist api/dist
 WORKDIR /app/api
+# Prueba de regresión de CAL-001: si falta una dependencia de producción, falla la construcción de la imagen y no el
+# arranque en Render. Cargar AppModule resuelve todos los require sin conectarse a la base.
+RUN node -e "require('./dist/app.module')"
 EXPOSE 3000
 # Aplica las migraciones pendientes; con SEMBRAR=1 (staging) carga el seed sintético si la base está vacía; arranca.
 # RENDER_GIT_COMMIT lo define Render (smoke test).

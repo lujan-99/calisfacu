@@ -13,6 +13,8 @@ export function configurarApp(app: INestApplication): INestApplication {
         ? { useDefaults: false, directives: { defaultSrc: ["'none'"], frameAncestors: ["'none'"] } }
         : false,
       frameguard: { action: 'deny' },
+      // La web (otro subdominio de onrender.com, otro sitio) muestra el logo con <img>: same-origin lo bloquearía.
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
   app.setGlobalPrefix('api');

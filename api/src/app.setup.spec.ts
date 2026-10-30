@@ -49,6 +49,11 @@ describe('configurarApp: cabeceras de seguridad', () => {
     );
   });
 
+  it('debe permitir que la web, en otro sitio, muestre el logo de la API (CORP cross-origin)', async () => {
+    const res = await crear('production');
+    expect(res.headers['cross-origin-resource-policy']).toBe('cross-origin');
+  });
+
   it('debe omitir la CSP fuera de producción para que funcione Swagger en /api/docs', async () => {
     const res = await crear('development');
     expect(res.headers['content-security-policy']).toBeUndefined();

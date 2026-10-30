@@ -1,13 +1,14 @@
 # Respaldo de la base de producción (SQAP, Sección 10.6; métrica M14: RPO 24 h, RTO 2 h).
 # Es la única tarea en GitHub Actions: debe correr cada día a las 03:00 aunque la computadora de Jenkins esté apagada.
-# Secretos (Settings → Secrets and variables → Actions, ambiente "production"):
+# Secretos (Settings → Secrets and variables → Actions, ambiente "production"). Hasta el release v1.0 DATABASE_URL apunta a
+# la base de staging (SQAP, Tabla 22), para que M14 tenga evidencia antes de que exista producción.
 #   DATABASE_URL       URL de PostgreSQL de producción
 #   BACKUP_PASSPHRASE  frase para cifrar el respaldo (AES-256)
 name: backup
 on:
   schedule:
     - cron: '0 7 * * *' # respaldo: 03:00 en Bolivia (UTC-4)
-    - cron: '0 8 5 * *' # prueba de restauración: día 5 de cada mes, 04:00 en Bolivia
+    - cron: '0 8 * * 5' # prueba de restauración: cada viernes (día 5 del sprint), 04:00 en Bolivia
   workflow_dispatch:
     inputs:
       restaurar:
@@ -40,7 +41,7 @@ jobs:
           retention-days: 30
 
   restaurar:
-    if: ${{ github.event.schedule == '0 8 5 * *' || (github.event_name == 'workflow_dispatch' && inputs.restaurar) }}
+    if: ${{ github.event.schedule == '0 8 * * 5' || (github.event_name == 'workflow_dispatch' && inputs.restaurar) }}
     environment: production
     runs-on: ubuntu-latest
     services:

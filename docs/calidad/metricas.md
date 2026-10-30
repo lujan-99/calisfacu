@@ -31,9 +31,9 @@
 | M02 · 100 %      | `Jenkinsfile`, etapa E2E (rama develop)                | `npx cypress run`: código de salida distinto de 0 si falla un escenario          |
 | M03 · ≤ 2000 ms  | `Jenkinsfile`, etapa Rendimiento (etiquetas `v*-rc.*`) | `jq -e ".Total.pct2ResTime <= 2000" perf/boletin/statistics.json`                |
 | M04 · < 1 %      | `Jenkinsfile`, etapa Rendimiento                       | `jq -e ".Total.errorPct < 1"` sobre `perf/boletin/` y `perf/planilla/`           |
-| M05 · ≥ 80 %     | Quality Gate "CalisFacu" de SonarQube Cloud            | Coverage on New Code is less than 80.0                                           |
+| M05 · ≥ 80 %     | Quality Gate "Sonar way" de SonarQube Cloud            | Coverage on New Code is less than 80.0                                           |
 | M06 · ≥ 90 %     | `api/jest.config.ts`                                   | `coverageThreshold` con `lines: 90` para cada ruta de la Tabla 4                 |
-| M07 · ≤ 3 %      | Quality Gate "CalisFacu"                               | Duplicated Lines (%) on New Code is greater than 3.0                             |
+| M07 · ≤ 3 %      | Quality Gate "Sonar way"                               | Duplicated Lines (%) on New Code is greater than 3.0                             |
 | M08 · 0          | Quality Gate + etapa Dependencias                      | Security Rating on New Code is worse than A · `npm audit --audit-level=high`     |
 | M09 · 100 %      | `Jenkinsfile`, etapa Pruebas › API                     | Suite `autorizacion.e2e-spec.ts` dentro de `npm run -w api test:cov`             |
 | M11, M12         | Acta de la prueba de usabilidad                        | Planilla de resultados en `docs/evidencias/usabilidad/`                          |

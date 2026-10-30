@@ -14,6 +14,9 @@ Plantilla: [plantilla-acta.md](plantilla-acta.md). Un acta preparada lleva el no
 | [revision-sprint2](revision-sprint2.md)                                       | —     | Lujan con el cliente            | Pendiente                        |
 | [auditoria-cierre-sprint2-desarrollo](auditoria-cierre-sprint2-desarrollo.md) | T-041 | Sin auditor independiente       | Pendiente                        |
 | [auditoria-cierre-sprint2-pruebas](auditoria-cierre-sprint2-pruebas.md)       | T-042 | Lujan audita a Galvan           | 21/10/2026                       |
+| [revision-sprint3](revision-sprint3.md)                                       | —     | Lujan con el cliente            | Pendiente                        |
+| [auditoria-cierre-sprint3-desarrollo](auditoria-cierre-sprint3-desarrollo.md) | T-055 | Galvan audita a Lujan           | Pendiente                        |
+| [auditoria-cierre-sprint3-pruebas](auditoria-cierre-sprint3-pruebas.md)       | T-056 | Lujan audita a Galvan           | 30/10/2026                       |
 
 El acta de conformidad se regenera con `python3 docs/herramientas/gen_conformidad_calculo.py` si cambian los casos de
 `api/test/fixtures/casos-calculo.json` o las decisiones de `docs/backlog/reglas-ministerio.md`; el PDF, con

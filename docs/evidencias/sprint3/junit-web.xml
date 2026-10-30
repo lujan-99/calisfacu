@@ -1,391 +1,401 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="178" failures="0" errors="0" time="8.4287117">
-    <testsuite name="src/lib/api.test.ts" timestamp="2026-10-26T01:15:58.509Z" hostname="DESKTOP-4709AGA" tests="8" failures="0" errors="0" skipped="0" time="0.0223679">
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe iniciar sesión con POST /auth/login sin enviar token" time="0.0094021">
+<testsuites name="vitest tests" tests="183" failures="0" errors="0" time="5.031425682">
+    <testsuite name="src/lib/api.test.ts" timestamp="2026-10-30T04:03:32.326Z" hostname="002" tests="8" failures="0" errors="0" skipped="0" time="0.011312621">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe iniciar sesión con POST /auth/login sin enviar token" time="0.005914648">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe enviar el token de la sesión en las peticiones autenticadas" time="0.0010891">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe enviar el token de la sesión en las peticiones autenticadas" time="0.000414314">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe avisar que la sesión expiró cuando la API responde 401 con una sesión abierta" time="0.002532">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe avisar que la sesión expiró cuando la API responde 401 con una sesión abierta" time="0.000964833">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; no debe avisar expiración por un 401 del inicio de sesión" time="0.0019997">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; no debe avisar expiración por un 401 del inicio de sesión" time="0.000979839">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe unir los mensajes de validación de la API" time="0.0008074">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe unir los mensajes de validación de la API" time="0.00034616">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe usar un mensaje genérico si la respuesta no trae mensaje" time="0.0012948">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe usar un mensaje genérico si la respuesta no trae mensaje" time="0.0002826">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe aceptar respuestas 204 sin cuerpo" time="0.0011748">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe aceptar respuestas 204 sin cuerpo" time="0.000357544">
         </testcase>
-        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe armar la consulta solo con los filtros indicados" time="0.0018653">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/lib/asistencia.test.ts" timestamp="2026-10-26T01:15:58.512Z" hostname="DESKTOP-4709AGA" tests="8" failures="0" errors="0" skipped="0" time="0.0469462">
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe contar presentes y licencias sobre el total de clases dictadas" time="0.0031197">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe redondear a un solo decimal" time="0.0004719">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe devolver 100 si nunca faltó y 0 si faltó a todas" time="0.0004618">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe devolver null si todavía no hay clases registradas (clases === 0)" time="0.000317">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Control de fechas (criterio 3) &gt; debe obtener la fecha de hoy en formato AAAA-MM-DD para la zona de Bolivia" time="0.0262054">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Control de fechas (criterio 3) &gt; debe detectar correctamente si una fecha es futura respecto a hoy en Bolivia" time="0.0026841">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Formateo y niveles de riesgo &gt; debe formatear con coma decimal y símbolo de porcentaje" time="0.009398">
-        </testcase>
-        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Formateo y niveles de riesgo &gt; debe categorizar el nivel de asistencia según umbral ministerial (80 %)" time="0.0010675">
+        <testcase classname="src/lib/api.test.ts" name="Cliente de la API &gt; debe armar la consulta solo con los filtros indicados" time="0.000340591">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/boletin.test.ts" timestamp="2026-10-26T01:15:58.515Z" hostname="DESKTOP-4709AGA" tests="7" failures="0" errors="0" skipped="0" time="0.0172052">
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; esCursoNumeroso (Criterio 3 y Defecto CAL-001) &gt; debe indicar false para cursos de 50 o menos estudiantes (generación directa)" time="0.0031944">
+    <testsuite name="src/lib/asistencia.test.ts" timestamp="2026-10-30T04:03:32.328Z" hostname="002" tests="8" failures="0" errors="0" skipped="0" time="0.015201004">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe contar presentes y licencias sobre el total de clases dictadas" time="0.001253886">
         </testcase>
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; esCursoNumeroso (Criterio 3 y Defecto CAL-001) &gt; debe indicar true cuando el curso supera 50 estudiantes (activa BullMQ + Redis)" time="0.0005649">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe redondear a un solo decimal" time="0.000121183">
         </testcase>
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; esCursoNumeroso (Criterio 3 y Defecto CAL-001) &gt; debe respetar el umbral oficial del proyecto (50 estudiantes)" time="0.0004013">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe devolver 100 si nunca faltó y 0 si faltó a todas" time="0.000094297">
         </testcase>
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; filtrarBoletinesEstudiantes &gt; debe filtrar exclusivamente boletines con notas listas para emitir" time="0.0022342">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; calcularPorcentajeAsistencia (criterio 2, decisión D5) &gt; debe devolver null si todavía no hay clases registradas (clases === 0)" time="0.000088032">
         </testcase>
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; filtrarBoletinesEstudiantes &gt; debe filtrar boletines pendientes de calificaciones" time="0.0005749">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Control de fechas (criterio 3) &gt; debe obtener la fecha de hoy en formato AAAA-MM-DD para la zona de Bolivia" time="0.008544473">
         </testcase>
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; filtrarBoletinesEstudiantes &gt; debe permitir buscar por nombre, RUDE o Cédula de Identidad" time="0.0008804">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Control de fechas (criterio 3) &gt; debe detectar correctamente si una fecha es futura respecto a hoy en Bolivia" time="0.000415822">
         </testcase>
-        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; descargarBlob &gt; debe crear un enlace temporal y simular la descarga" time="0.0067027">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Formateo y niveles de riesgo &gt; debe formatear con coma decimal y símbolo de porcentaje" time="0.00307364">
         </testcase>
-    </testsuite>
-    <testsuite name="src/lib/boletinPadre.test.ts" timestamp="2026-10-26T01:15:58.519Z" hostname="DESKTOP-4709AGA" tests="10" failures="0" errors="0" skipped="0" time="0.0105845">
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarAprobacionMateria &gt; debe marcar EN_CURSO si la materia no tiene nota final" time="0.0031336">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarAprobacionMateria &gt; debe marcar APROBADO si la nota es mayor o igual a 51 (RM 001/2026)" time="0.0005989">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarAprobacionMateria &gt; debe marcar REPROBADO si la nota es menor a 51" time="0.000599">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe devolver EN_CURSO si el promedio anual no está calculado" time="0.0003522">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe promover al estudiante si tiene promedio &gt;= 51 y asistencia &gt;= 80%" time="0.0004864">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe retener al estudiante si su promedio es menor a 51" time="0.000314">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe retener al estudiante si su asistencia es inferior al 80% (Decisión D6)" time="0.0003935">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; puedeDescargarBoletin (US-11, Criterios 1 y 2) &gt; debe permitir la descarga solo cuando el boletín está publicado oficialmente (CA 1)" time="0.0003523">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; puedeDescargarBoletin (US-11, Criterios 1 y 2) &gt; no debe permitir la descarga si el boletín no está publicado o está en elaboración (CA 2)" time="0.0004386">
-        </testcase>
-        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; calcularResumenBoletin &gt; debe calcular las estadísticas de materias aprobadas, reprobadas y promedio general" time="0.0007783">
+        <testcase classname="src/lib/asistencia.test.ts" name="Reglas de asistencia (US-19) &gt; Formateo y niveles de riesgo &gt; debe categorizar el nivel de asistencia según umbral ministerial (80 %)" time="0.000222793">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/controlEntregas.test.ts" timestamp="2026-10-26T01:15:58.522Z" hostname="DESKTOP-4709AGA" tests="6" failures="0" errors="0" skipped="0" time="0.0088125">
-        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe rechazar la entrega si faltan notas por registrar en las actividades" time="0.0024403">
+    <testsuite name="src/lib/boletin.test.ts" timestamp="2026-10-30T04:03:32.330Z" hostname="002" tests="7" failures="0" errors="0" skipped="0" time="0.013391898">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; esCursoNumeroso (Criterio 3 y Defecto CAL-001) &gt; debe indicar false para cursos de 50 o menos estudiantes (generación directa)" time="0.002226523">
         </testcase>
-        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe aceptar la entrega cuando todos los estudiantes tienen nota en todas las actividades" time="0.0006139">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; esCursoNumeroso (Criterio 3 y Defecto CAL-001) &gt; debe indicar true cuando el curso supera 50 estudiantes (activa BullMQ + Redis)" time="0.000294735">
         </testcase>
-        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe rechazar la entrega si no existen actividades creadas en el trimestre" time="0.0003908">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; esCursoNumeroso (Criterio 3 y Defecto CAL-001) &gt; debe respetar el umbral oficial del proyecto (50 estudiantes)" time="0.000171928">
         </testcase>
-        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe rechazar la entrega si el curso no tiene estudiantes registrados" time="0.000292">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; filtrarBoletinesEstudiantes &gt; debe filtrar exclusivamente boletines con notas listas para emitir" time="0.001895062">
         </testcase>
-        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 1: Agrupación y cálculo de métricas por curso y generales &gt; debe agrupar materias por curso y computar porcentajes de entrega" time="0.0023">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; filtrarBoletinesEstudiantes &gt; debe filtrar boletines pendientes de calificaciones" time="0.000309424">
         </testcase>
-        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 1: Agrupación y cálculo de métricas por curso y generales &gt; debe calcular estadísticas globales consolidadas" time="0.0007521">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; filtrarBoletinesEstudiantes &gt; debe permitir buscar por nombre, RUDE o Cédula de Identidad" time="0.000505719">
         </testcase>
-    </testsuite>
-    <testsuite name="src/lib/institucion.test.tsx" timestamp="2026-10-26T01:15:58.524Z" hostname="DESKTOP-4709AGA" tests="9" failures="0" errors="0" skipped="0" time="0.1473805">
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Unidad Educativa Juana Azurduy" time="0.0056406">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de U. E. San Simón" time="0.0005054">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Colegio Nacional de La Plata" time="0.0003942">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Unidad Educativa de Prueba" time="0.0004632">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de null" time="0.0002403">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de " time="0.0002454">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe aplicar los colores como variables CSS" time="0.0326894">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe cargar la institución de la API, con su logo versionado" time="0.0877657">
-        </testcase>
-        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe seguir con la apariencia predeterminada si la API no responde" time="0.0131065">
+        <testcase classname="src/lib/boletin.test.ts" name="Generación de Boletines en PDF y Colas (US-07, Riesgo R05 / CAL-001) &gt; descargarBlob &gt; debe crear un enlace temporal y simular la descarga" time="0.005954349">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/notas.test.ts" timestamp="2026-10-26T01:15:58.525Z" hostname="DESKTOP-4709AGA" tests="8" failures="0" errors="0" skipped="0" time="0.009906">
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe aceptar una nota dentro de la escala de 1 a 100" time="0.0043042">
+    <testsuite name="src/lib/boletinPadre.test.ts" timestamp="2026-10-30T04:03:32.330Z" hostname="002" tests="10" failures="0" errors="0" skipped="0" time="0.00355776">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarAprobacionMateria &gt; debe marcar EN_CURSO si la materia no tiene nota final" time="0.001320952">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe aceptar coma decimal" time="0.0004744">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarAprobacionMateria &gt; debe marcar APROBADO si la nota es mayor o igual a 51 (RM 001/2026)" time="0.000138176">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar 0 por estar fuera de la escala" time="0.0003861">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarAprobacionMateria &gt; debe marcar REPROBADO si la nota es menor a 51" time="0.000097722">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar 101 por estar fuera de la escala" time="0.0003814">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe devolver EN_CURSO si el promedio anual no está calculado" time="0.000122442">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar -3 por estar fuera de la escala" time="0.0004909">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe promover al estudiante si tiene promedio &gt;= 51 y asistencia &gt;= 80%" time="0.00008859">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar texto vacío o no numérico" time="0.0004338">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe retener al estudiante si su promedio es menor a 51" time="0.000063476">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar más de dos decimales" time="0.0002944">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; determinarEstadoAnual &gt; debe retener al estudiante si su asistencia es inferior al 80% (Decisión D6)" time="0.000066406">
         </testcase>
-        <testcase classname="src/lib/notas.test.ts" name="estadoAprobacion &gt; debe aprobar con 51 y reprobar con 50" time="0.0004363">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; puedeDescargarBoletin (US-11, Criterios 1 y 2) &gt; debe permitir la descarga solo cuando el boletín está publicado oficialmente (CA 1)" time="0.000103601">
         </testcase>
-    </testsuite>
-    <testsuite name="src/lib/riesgo.test.ts" timestamp="2026-10-26T01:15:58.527Z" hostname="DESKTOP-4709AGA" tests="13" failures="0" errors="0" skipped="0" time="0.0143821">
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe marcar en riesgo a un estudiante con promedio menor a 51 (escala RM 001/2026)" time="0.0034728">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; puedeDescargarBoletin (US-11, Criterios 1 y 2) &gt; no debe permitir la descarga si el boletín no está publicado o está en elaboración (CA 2)" time="0.000090043">
         </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe considerar regular al estudiante en la nota frontera de aprobación (51 pts)" time="0.0006365">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe marcar en riesgo a un estudiante con asistencia menor a 80 % (Decisión D6)" time="0.0004604">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe considerar regular al estudiante en el umbral exacto de 80.0 % de asistencia" time="0.0004619">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe marcar en riesgo con motivo AMBOS si reprueba nota y no cumple asistencia" time="0.0004319">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe clasificar como PENDIENTE a estudiantes que aún no tienen notas ni asistencia" time="0.0003736">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe admitir umbrales configurables por gestión (Decisión D6)" time="0.0002611">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; calcularResumenPanelRiesgo &gt; debe calcular métricas consolidadas y conteos de riesgo correctamente" time="0.0007514">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar exclusivamente estudiantes en riesgo" time="0.0025406">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar estudiantes con riesgo en promedio" time="0.0006523">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar estudiantes con riesgo en asistencia" time="0.0003886">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar estudiantes regulares sin riesgo" time="0.0004278">
-        </testcase>
-        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe buscar por nombre, RUDE o cédula de identidad" time="0.000793">
+        <testcase classname="src/lib/boletinPadre.test.ts" name="Lógica del Boletín para el Padre de Familia (US-11) &gt; calcularResumenBoletin &gt; debe calcular las estadísticas de materias aprobadas, reprobadas y promedio general" time="0.000211523">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/sesion.test.tsx" timestamp="2026-10-26T01:15:58.529Z" hostname="DESKTOP-4709AGA" tests="6" failures="0" errors="0" skipped="0" time="0.1330496">
-        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe renovar el token si el usuario trabajó y pasaron 10 minutos" time="0.058891">
+    <testsuite name="src/lib/controlEntregas.test.ts" timestamp="2026-10-30T04:03:32.332Z" hostname="002" tests="6" failures="0" errors="0" skipped="0" time="0.007500628">
+        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe rechazar la entrega si faltan notas por registrar en las actividades" time="0.002622262">
         </testcase>
-        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; no debe renovar si no hubo actividad, y debe cerrar la sesión a los 30 minutos" time="0.0227751">
+        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe aceptar la entrega cuando todos los estudiantes tienen nota en todas las actividades" time="0.000405536">
         </testcase>
-        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe cerrar la sesión si la renovación falla" time="0.0097003">
+        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe rechazar la entrega si no existen actividades creadas en el trimestre" time="0.000245201">
         </testcase>
-        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe restaurar la sesión guardada si pasaron menos de 30 minutos" time="0.0067949">
+        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 2: Validación de requisitos para marcar como entregada &gt; debe rechazar la entrega si el curso no tiene estudiantes registrados" time="0.000211188">
         </testcase>
-        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; no debe restaurar la sesión guardada si ya pasaron 30 minutos" time="0.0204484">
+        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 1: Agrupación y cálculo de métricas por curso y generales &gt; debe agrupar materias por curso y computar porcentajes de entrega" time="0.001581071">
         </testcase>
-        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe exigir el proveedor" time="0.0111904">
-        </testcase>
-    </testsuite>
-    <testsuite name="src/lib/solicitudes.test.ts" timestamp="2026-10-26T01:15:58.530Z" hostname="DESKTOP-4709AGA" tests="4" failures="0" errors="0" skipped="0" time="0.0087332">
-        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe dejar bloqueada la nota sin solicitudes" time="0.004438">
-        </testcase>
-        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe mostrar pendiente y no permitir pedir otra" time="0.000681">
-        </testcase>
-        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe habilitar la edición con una aprobación sin usar y bloquearla cuando ya se usó" time="0.0004718">
-        </testcase>
-        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe tomar la solicitud más reciente y mostrar la observación del rechazo" time="0.000407">
+        <testcase classname="src/lib/controlEntregas.test.ts" name="Control de Entrega de Notas (US-10) &gt; Criterio 1: Agrupación y cálculo de métricas por curso y generales &gt; debe calcular estadísticas globales consolidadas" time="0.00035854">
         </testcase>
     </testsuite>
-    <testsuite name="src/lib/vinculos.test.ts" timestamp="2026-10-26T01:15:58.531Z" hostname="DESKTOP-4709AGA" tests="10" failures="0" errors="0" skipped="0" time="0.0130178">
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe validar exitosamente cuando los identificadores son válidos y no están duplicados" time="0.0033693">
+    <testsuite name="src/lib/institucion.test.tsx" timestamp="2026-10-30T04:03:32.332Z" hostname="002" tests="9" failures="0" errors="0" skipped="0" time="0.034771404">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Unidad Educativa Juana Azurduy" time="0.001811238">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe rechazar si falta seleccionar el padre o tutor" time="0.0008162">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de U. E. San Simón" time="0.000202392">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe rechazar si falta seleccionar el estudiante" time="0.0005205">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Colegio Nacional de La Plata" time="0.000144851">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe rechazar si el vínculo ya existe para la misma dupla padre-estudiante" time="0.0003471">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de Unidad Educativa de Prueba" time="0.000087412">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe devolver todos los vínculos cuando no hay término de búsqueda ni filtro de curso" time="0.0016023">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de null" time="0.000087475">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe filtrar por curso correctamente" time="0.0005769">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe sacar las iniciales de " time="0.000080149">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe buscar por nombre o email del padre de familia" time="0.0005734">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe aplicar los colores como variables CSS" time="0.004807206">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe buscar por apellido o código RUDE del estudiante" time="0.0006246">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe cargar la institución de la API, con su logo versionado" time="0.02250811">
         </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; calcularEstadisticasVinculos &gt; debe calcular las métricas de cobertura y tutores correctamente" time="0.0006824">
-        </testcase>
-        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; calcularEstadisticasVinculos &gt; debe manejar adecuadamente cursos o unidades educativas sin estudiantes registrados" time="0.0004222">
+        <testcase classname="src/lib/institucion.test.tsx" name="Institución (ADR-0010) &gt; debe seguir con la apariencia predeterminada si la API no responde" time="0.003155397">
         </testcase>
     </testsuite>
-    <testsuite name="src/pages/Login.test.tsx" timestamp="2026-10-26T01:15:58.532Z" hostname="DESKTOP-4709AGA" tests="11" failures="0" errors="0" skipped="0" time="1.0522291">
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar el nombre de la institución en la pantalla de ingreso" time="0.1943254">
+    <testsuite name="src/lib/notas.test.ts" timestamp="2026-10-30T04:03:32.333Z" hostname="002" tests="8" failures="0" errors="0" skipped="0" time="0.003843563">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe aceptar una nota dentro de la escala de 1 a 100" time="0.00177026">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe llevar al profesor a Mis materias con su menú" time="0.3437985">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe aceptar coma decimal" time="0.000197925">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a SECRETARIA solo sus opciones" time="0.0531011">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar 0 por estar fuera de la escala" time="0.000170557">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a ADMINISTRADOR solo sus opciones" time="0.0518675">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar 101 por estar fuera de la escala" time="0.00007435">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a PADRE solo sus opciones" time="0.0615813">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar -3 por estar fuera de la escala" time="0.00006341">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar el error de la API sin revelar si el usuario existe" time="0.0886497">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar texto vacío o no numérico" time="0.000115911">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe pedir el ingreso a quien abre una pantalla sin sesión" time="0.0287551">
+        <testcase classname="src/lib/notas.test.ts" name="validarNota &gt; debe rechazar más de dos decimales" time="0.00008064">
         </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe devolver a su inicio al profesor que escribe la dirección de otro rol" time="0.0390131">
-        </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe cerrar la sesión con Salir" time="0.0581105">
-        </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe avisar que la sesión expiró cuando la API responde 401" time="0.1109449">
-        </testcase>
-        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar una página de no encontrada dentro del marco" time="0.0194233">
+        <testcase classname="src/lib/notas.test.ts" name="estadoAprobacion &gt; debe aprobar con 51 y reprobar con 50" time="0.000115105">
         </testcase>
     </testsuite>
-    <testsuite name="src/pages/admin/admin.test.tsx" timestamp="2026-10-26T01:15:58.534Z" hostname="DESKTOP-4709AGA" tests="7" failures="0" errors="0" skipped="0" time="1.1673258">
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe decir cuántos puntos faltan o sobran" time="0.0047929">
+    <testsuite name="src/lib/riesgo.test.ts" timestamp="2026-10-30T04:03:32.334Z" hostname="002" tests="13" failures="0" errors="0" skipped="0" time="0.005978644">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe marcar en riesgo a un estudiante con promedio menor a 51 (escala RM 001/2026)" time="0.00138373">
         </testcase>
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe permitir guardar solo cuando las dimensiones suman 100" time="0.5237407">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe considerar regular al estudiante en la nota frontera de aprobación (51 pts)" time="0.000189584">
         </testcase>
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe bloquear la tabla si la gestión ya tiene notas" time="0.2792278">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe marcar en riesgo a un estudiante con asistencia menor a 80 % (Decisión D6)" time="0.000121471">
         </testcase>
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Boletín del padre (US-11, Sprint 3) &gt; debe avisar que el boletín todavía no está disponible" time="0.0803001">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe considerar regular al estudiante en el umbral exacto de 80.0 % de asistencia" time="0.000103205">
         </testcase>
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Solicitudes de edición (decisión D16) &gt; debe listar las solicitudes de la API y aprobarlas" time="0.1109119">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe marcar en riesgo con motivo AMBOS si reprueba nota y no cumple asistencia" time="0.000095516">
         </testcase>
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Solicitudes de edición (decisión D16) &gt; debe exigir una observación para rechazar" time="0.0981002">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe clasificar como PENDIENTE a estudiantes que aún no tienen notas ni asistencia" time="0.000089457">
         </testcase>
-        <testcase classname="src/pages/admin/admin.test.tsx" name="Solicitudes de edición (decisión D16) &gt; debe mostrar el error de la API si la solicitud ya fue resuelta" time="0.0673638">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; evaluarRiesgoEstudiante (Criterio 2 y RNF-01) &gt; debe admitir umbrales configurables por gestión (Decisión D6)" time="0.000070951">
         </testcase>
-    </testsuite>
-    <testsuite name="src/pages/padre/padre.test.tsx" timestamp="2026-10-26T01:15:58.535Z" hostname="DESKTOP-4709AGA" tests="4" failures="0" errors="0" skipped="0" time="0.6559568">
-        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe avisar claramente cuando el padre aún no tiene estudiantes vinculados (RNF-04)" time="0.2105948">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; calcularResumenPanelRiesgo &gt; debe calcular métricas consolidadas y conteos de riesgo correctamente" time="0.000258223">
         </testcase>
-        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe mostrar aviso y no permitir descarga cuando el boletín no está publicado (US-11, CA 2)" time="0.1573917">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar exclusivamente estudiantes en riesgo" time="0.001171249">
         </testcase>
-        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe mostrar las calificaciones y permitir la descarga en PDF del boletín publicado (US-11, CA 1)" time="0.2127354">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar estudiantes con riesgo en promedio" time="0.000360802">
         </testcase>
-        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe permitir cambiar de hijo cuando el padre tiene múltiples estudiantes vinculados" time="0.071589">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar estudiantes con riesgo en asistencia" time="0.00023545">
         </testcase>
-    </testsuite>
-    <testsuite name="src/pages/profesor/profesor.test.tsx" timestamp="2026-10-26T01:15:58.535Z" hostname="DESKTOP-4709AGA" tests="44" failures="0" errors="0" skipped="0" time="2.7735968">
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe mostrar solo las materias del profesor, cada una con su curso" time="0.3808601">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe filtrar estudiantes regulares sin riesgo" time="0.000223051">
         </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe avisar si no tiene materias asignadas" time="0.0539252">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe mostrar el error y permitir reintentar" time="0.1316081">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe elegir por defecto el trimestre en curso: el primero abierto" time="0.0014692">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe listar las actividades de la dimensión elegida con su avance" time="0.1240363">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe avisar que el trimestre está cerrado y no dejar crear actividades (US-18, criterio 4)" time="0.0738676">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe exigir el nombre y crear la actividad en el trimestre y la dimensión elegidos" time="0.1419037">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar las notas registradas con coma y sin poder cambiarlas" time="0.0511291">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe marcar una nota fuera de 1 a 100 junto al campo y no guardar nada" time="0.0903729">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe guardar todas las notas pendientes juntas y mostrarlas como registradas" time="0.0874423">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar el aviso con el que vuelve la importación desde Excel (US-05)" time="0.0305651">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar el rechazo de la API sin perder lo escrito" time="0.0714802">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe pasar al siguiente estudiante con Enter" time="0.0239368">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe desactivar la planilla de un trimestre cerrado" time="0.0298444">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe preguntar antes de salir con notas sin guardar" time="0.0853782">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Notas del trimestre (US-02, T-024) &gt; debe nombrar las dimensiones que faltan (decisión D4)" time="0.0003469">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Notas del trimestre (US-02, T-024) &gt; debe mostrar los puntos que calcula la API, la nota y el estado de cada estudiante" time="0.0512191">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe pedir la edición al administrador si la nota no está habilitada (decisión D16)" time="0.1061656">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe mostrar la solicitud en revisión y el rechazo con su observación" time="0.041365">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe abrir el modal de corrección y exigir el motivo obligatorio antes de guardar (US-04, criterio 1)" time="0.1045412">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe corregir la nota, actualizar la planilla y guardar el registro de auditoría (US-04, criterio 1 y 3)" time="0.0788311">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe mostrar el historial de auditoría de solo lectura con quién, cuándo y valor anterior (US-04, criterio 1 y 2)" time="0.0791135">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe avisar si no se pudo leer el historial en vez de mostrarlo vacío" time="0.0521392">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe ocultar la corrección mientras la nota no tenga id" time="0.0292092">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Historial académico del estudiante (US-03, T-035) &gt; debe mostrar las notas y promedios de cada trimestre en orden cronológico (US-03, criterio 1)" time="0.0314388">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Historial académico del estudiante (US-03, T-035) &gt; debe cambiar de trimestre y ver sus materias correspondientes" time="0.039101">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Historial académico del estudiante (US-03, T-035) &gt; debe mostrar mensaje de acceso denegado (403) cuando el profesor no tiene autorización (US-03, criterio 2)" time="0.0264156">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe mostrar la pantalla de importación con la descarga de la plantilla (US-05, criterio 1)" time="0.0223476">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe enviar el archivo a la API y mostrar la vista previa con filas válidas y con error (US-05, criterios 1 y 2)" time="0.0466798">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe mostrar el error de la API si el archivo no es una planilla válida" time="0.0455209">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe confirmar la importación enviando el mismo archivo a la API (US-05, criterio 3)" time="0.0528817">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe mostrar la lista de la clase y permitir marcar asistencia individual o masiva (US-19, criterio 1)" time="0.0442222">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe guardar la asistencia de la fecha cuando la lista está completa (US-19, criterio 1)" time="0.06552">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe impedir registrar asistencia de una fecha futura mostrando advertencia (US-19, criterio 3)" time="0.0340295">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe mostrar los porcentajes acumulados calculados según D5 (US-19, criterio 2)" time="0.0501386">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Entrega de notas por materia (US-10, criterio 2) &gt; debe rechazar la entrega de notas si faltan estudiantes por calificar (US-10, criterio 2)" time="0.073084">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Entrega de notas por materia (US-10, criterio 2) &gt; debe aceptar la entrega y actualizar el estado cuando todas las notas están completas (US-10, criterio 2)" time="0.0486005">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Panel de Riesgo Académico (US-06, T-044) &gt; debe mostrar el listado de estudiantes con su promedio y asistencia (US-06, criterio 1)" time="0.0420041">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Panel de Riesgo Académico (US-06, T-044) &gt; debe marcar como &quot;en riesgo&quot; a los estudiantes con promedio &lt; 51 o asistencia &lt; 80 % (US-06, criterio 2, D6)" time="0.0305502">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Panel de Riesgo Académico (US-06, T-044) &gt; debe permitir filtrar estudiantes por condición de riesgo y buscar por nombre" time="0.0536209">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe mostrar el listado de boletines con notas y asistencia (US-07, criterio 1)" time="0.0390426">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe detectar cursos con más de 50 estudiantes y advertir sobre la cola BullMQ (US-07, criterio 3, R05 / CAL-001)" time="0.0292126">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe permitir descargar el boletín en PDF individualmente (US-07, criterio 1)" time="0.0353042">
-        </testcase>
-        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe filtrar estudiantes por estado de boletín" time="0.0374063">
+        <testcase classname="src/lib/riesgo.test.ts" name="Panel de Riesgo Académico (US-06, Decisión D6) &gt; filtrarEstudiantesRiesgo &gt; debe buscar por nombre, RUDE o cédula de identidad" time="0.000399721">
         </testcase>
     </testsuite>
-    <testsuite name="src/pages/secretaria/secretaria.test.tsx" timestamp="2026-10-26T01:15:58.542Z" hostname="DESKTOP-4709AGA" tests="23" failures="0" errors="0" skipped="0" time="2.3472177">
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe listar los cursos de la gestión y filtrar por nivel" time="0.4472872">
+    <testsuite name="src/lib/sesion.test.tsx" timestamp="2026-10-30T04:03:32.334Z" hostname="002" tests="6" failures="0" errors="0" skipped="0" time="0.038855285">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe renovar el token si el usuario trabajó y pasaron 10 minutos" time="0.025817725">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe registrar un curso y mostrar el mensaje de éxito" time="0.2307493">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; no debe renovar si no hubo actividad, y debe cerrar la sesión a los 30 minutos" time="0.002904072">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe mostrar en el formulario el rechazo de un curso repetido" time="0.1082311">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe cerrar la sesión si la renovación falla" time="0.002186594">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe limitar los años al nivel elegido (Inicial tiene 2)" time="0.0722871">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe restaurar la sesión guardada si pasaron menos de 30 minutos" time="0.001384181">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe pedir confirmación antes de eliminar y mostrar si la API lo impide" time="0.1113092">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; no debe restaurar la sesión guardada si ya pasaron 30 minutos" time="0.00122085">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe editar un curso sin cambiar su gestión" time="0.1170674">
+        <testcase classname="src/lib/sesion.test.tsx" name="Sesión (US-17, criterio 4) &gt; debe exigir el proveedor" time="0.003603718">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe buscar por apellido después de que el usuario deja de escribir" time="0.3770945">
+    </testsuite>
+    <testsuite name="src/lib/solicitudes.test.ts" timestamp="2026-10-30T04:03:32.335Z" hostname="002" tests="4" failures="0" errors="0" skipped="0" time="0.003614918">
+        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe dejar bloqueada la nota sin solicitudes" time="0.001836609">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe validar el RUDE, los nombres y el curso antes de enviar" time="0.0611788">
+        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe mostrar pendiente y no permitir pedir otra" time="0.000260334">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe enviar el CI a la API y mostrarlo en la tabla (decisión D15)" time="0.0891269">
+        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe habilitar la edición con una aprobación sin usar y bloquearla cuando ya se usó" time="0.000144918">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe rechazar un CI con formato inválido antes de enviar" time="0.0524154">
+        <testcase classname="src/lib/solicitudes.test.ts" name="estadoEdicion (decisión D16) &gt; debe tomar la solicitud más reciente y mostrar la observación del rechazo" time="0.00013787">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe mostrar en qué curso ya está inscrito el estudiante" time="0.0632043">
+    </testsuite>
+    <testsuite name="src/lib/vinculos.test.ts" timestamp="2026-10-30T04:03:32.335Z" hostname="002" tests="10" failures="0" errors="0" skipped="0" time="0.004903933">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe validar exitosamente cuando los identificadores son válidos y no están duplicados" time="0.001424886">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe avisar si ningún estudiante coincide con el filtro" time="0.0398152">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe rechazar si falta seleccionar el padre o tutor" time="0.000217642">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe mostrar la advertencia de impacto de borrado seguro con técnica de burbuja" time="0.055671">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe rechazar si falta seleccionar el estudiante" time="0.000106933">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Materias y asignaciones &gt; debe listar las materias con su profesor" time="0.0278054">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; validarVinculo &gt; debe rechazar si el vínculo ya existe para la misma dupla padre-estudiante" time="0.000092851">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Materias y asignaciones &gt; debe exigir el profesor y crear la materia con su asignación" time="0.0645543">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe devolver todos los vínculos cuando no hay término de búsqueda ni filtro de curso" time="0.000645198">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Unidad educativa (US-18, criterio 5) &gt; debe validar el código SIE y guardar los datos" time="0.0728028">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe filtrar por curso correctamente" time="0.000148511">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Unidad educativa (US-18, criterio 5) &gt; debe ofrecer el formulario vacío si todavía no hay datos" time="0.0283702">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe buscar por nombre o email del padre de familia" time="0.000172648">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Control de entrega de notas (US-10, criterio 1) &gt; debe listar por curso cada materia con su profesor y su estado Entregado o Pendiente (US-10, criterio 1)" time="0.0729925">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; filtrarVinculos &gt; debe buscar por apellido o código RUDE del estudiante" time="0.000182431">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Control de entrega de notas (US-10, criterio 1) &gt; debe filtrar materias por estado y buscar por profesor (US-10, criterio 1)" time="0.0497426">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; calcularEstadisticasVinculos &gt; debe calcular las métricas de cobertura y tutores correctamente" time="0.00021889">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe listar los vínculos familiares y mostrar estadísticas de cobertura (US-20, CA 1)" time="0.029342">
+        <testcase classname="src/lib/vinculos.test.ts" name="Lógica de Vinculación Padre-Estudiante (US-20) &gt; calcularEstadisticasVinculos &gt; debe manejar adecuadamente cursos o unidades educativas sin estudiantes registrados" time="0.000104884">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe filtrar vínculos mediante el buscador de texto (US-20, CA 1)" time="0.0320841">
+    </testsuite>
+    <testsuite name="src/pages/Login.test.tsx" timestamp="2026-10-30T04:03:32.335Z" hostname="002" tests="11" failures="0" errors="0" skipped="0" time="0.314293548">
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar el nombre de la institución en la pantalla de ingreso" time="0.049865264">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe abrir el diálogo y registrar una nueva vinculación padre-estudiante (US-20, CA 1)" time="0.0901136">
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe llevar al profesor a Mis materias con su menú" time="0.087273878">
         </testcase>
-        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe confirmar y eliminar un vínculo familiar (US-20, CA 1, RNF-04)" time="0.0501988">
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a SECRETARIA solo sus opciones" time="0.018250867">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a ADMINISTRADOR solo sus opciones" time="0.014508849">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar a PADRE solo sus opciones" time="0.018787088">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar el error de la API sin revelar si el usuario existe" time="0.036503441">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe pedir el ingreso a quien abre una pantalla sin sesión" time="0.01009645">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe devolver a su inicio al profesor que escribe la dirección de otro rol" time="0.010191102">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe cerrar la sesión con Salir" time="0.017796378">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe avisar que la sesión expiró cuando la API responde 401" time="0.043626421">
+        </testcase>
+        <testcase classname="src/pages/Login.test.tsx" name="Inicio de sesión y menú por rol (US-17) &gt; debe mostrar una página de no encontrada dentro del marco" time="0.006080028">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/admin/admin.test.tsx" timestamp="2026-10-30T04:03:32.336Z" hostname="002" tests="7" failures="0" errors="0" skipped="0" time="0.357144188">
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe decir cuántos puntos faltan o sobran" time="0.001940067">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe permitir guardar solo cuando las dimensiones suman 100" time="0.138673315">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Dimensiones de evaluación (US-18, criterios 6 y 7) &gt; debe bloquear la tabla si la gestión ya tiene notas" time="0.090393665">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Boletín del padre (US-11, Sprint 3) &gt; debe avisar que el boletín todavía no está disponible" time="0.01257424">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Solicitudes de edición (decisión D16) &gt; debe listar las solicitudes de la API y aprobarlas" time="0.039857471">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Solicitudes de edición (decisión D16) &gt; debe exigir una observación para rechazar" time="0.04697207">
+        </testcase>
+        <testcase classname="src/pages/admin/admin.test.tsx" name="Solicitudes de edición (decisión D16) &gt; debe mostrar el error de la API si la solicitud ya fue resuelta" time="0.025383168">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/profesor/profesor.test.tsx" timestamp="2026-10-30T04:03:32.336Z" hostname="002" tests="46" failures="0" errors="0" skipped="0" time="2.819571837">
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe mostrar solo las materias del profesor, cada una con su curso" time="0.086245026">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe avisar si no tiene materias asignadas" time="0.012894089">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Mis materias (US-18, criterio 2) &gt; debe mostrar el error y permitir reintentar" time="0.030751243">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe elegir por defecto el trimestre en curso: el primero abierto" time="0.000546585">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe listar las actividades de la dimensión elegida con su avance" time="0.056263524">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe avisar que el trimestre está cerrado y no dejar crear actividades (US-18, criterio 4)" time="0.017162442">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Materia y actividades (T-020) &gt; debe exigir el nombre y crear la actividad en el trimestre y la dimensión elegidos" time="0.061844658">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar las notas registradas con coma y sin poder cambiarlas" time="0.020092098">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe marcar una nota fuera de 1 a 100 junto al campo y no guardar nada" time="0.032843194">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe guardar todas las notas pendientes juntas y mostrarlas como registradas" time="0.042149788">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar el aviso con el que vuelve la importación desde Excel (US-05)" time="0.018187032">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe mostrar el rechazo de la API sin perder lo escrito" time="0.030914528">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe pasar al siguiente estudiante con Enter" time="0.015427289">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe desactivar la planilla de un trimestre cerrado" time="0.014404585">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Planilla de notas (US-01, criterios 1 a 3) &gt; debe preguntar antes de salir con notas sin guardar" time="0.056083453">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Notas del trimestre (US-02, T-024) &gt; debe nombrar las dimensiones que faltan (decisión D4)" time="0.000229458">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Notas del trimestre (US-02, T-024) &gt; debe mostrar los puntos que calcula la API, la nota y el estado de cada estudiante" time="0.028210363">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe pedir la edición al administrador si la nota no está habilitada (decisión D16)" time="0.054521858">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe mostrar la solicitud en revisión y el rechazo con su observación" time="0.016901858">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe abrir el modal de corrección y exigir el motivo obligatorio antes de guardar (US-04, criterio 1)" time="0.053620757">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe corregir la nota, actualizar la planilla y guardar el registro de auditoría (US-04, criterio 1 y 3)" time="0.054088738">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe mostrar el historial de auditoría de solo lectura con quién, cuándo y valor anterior (US-04, criterio 1 y 2)" time="0.049117278">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe avisar si no se pudo leer el historial en vez de mostrarlo vacío" time="0.028532923">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Corrección auditable de notas (US-04, T-032, RNF-04) &gt; debe ocultar la corrección mientras la nota no tenga id" time="0.011069351">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Historial académico del estudiante (US-03, T-035) &gt; debe mostrar las notas y promedios de cada trimestre en orden cronológico (US-03, criterio 1)" time="0.018429783">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Historial académico del estudiante (US-03, T-035) &gt; debe cambiar de trimestre y ver sus materias correspondientes" time="0.02216139">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Historial académico del estudiante (US-03, T-035) &gt; debe mostrar mensaje de acceso denegado (403) cuando el profesor no tiene autorización (US-03, criterio 2)" time="0.011102688">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe mostrar la pantalla de importación con la descarga de la plantilla (US-05, criterio 1)" time="0.016025208">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe enviar el archivo a la API y mostrar la vista previa con filas válidas y con error (US-05, criterios 1 y 2)" time="0.035198117">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe mostrar el error de la API si el archivo no es una planilla válida" time="0.014738028">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Importación desde Excel (US-05, T-039) &gt; debe confirmar la importación enviando el mismo archivo a la API (US-05, criterio 3)" time="0.024508695">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe mostrar la lista de la clase y permitir marcar asistencia individual o masiva (US-19, criterio 1)" time="0.026611972">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe guardar la asistencia de la fecha cuando la lista está completa (US-19, criterio 1)" time="0.029278768">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe impedir registrar asistencia de una fecha futura mostrando advertencia (US-19, criterio 3)" time="0.022833215">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Registro de asistencia por clase (US-19, T-037) &gt; debe mostrar los porcentajes acumulados calculados según D5 (US-19, criterio 2)" time="0.025198005">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Entrega de notas por materia (US-10, criterio 2) &gt; debe rechazar la entrega de notas si faltan estudiantes por calificar (US-10, criterio 2)" time="0.020894668">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Entrega de notas por materia (US-10, criterio 2) &gt; debe aceptar la entrega y actualizar el estado cuando todas las notas están completas (US-10, criterio 2)" time="0.023808558">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Panel de Riesgo Académico (US-06, T-044) &gt; debe mostrar el listado de estudiantes con su promedio y asistencia (US-06, criterio 1)" time="0.023176016">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Panel de Riesgo Académico (US-06, T-044) &gt; debe marcar como &quot;en riesgo&quot; a los estudiantes con promedio &lt; 51 o asistencia &lt; 80 % (US-06, criterio 2, D6)" time="0.016476511">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Panel de Riesgo Académico (US-06, T-044) &gt; debe permitir filtrar estudiantes por condición de riesgo y buscar por nombre" time="0.040827841">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe mostrar el listado de boletines con notas y asistencia (US-07, criterio 1)" time="0.02004158">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe detectar cursos con más de 50 estudiantes y advertir sobre la cola BullMQ (US-07, criterio 3, R05 / CAL-001)" time="0.01786291">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe permitir descargar el boletín en PDF individualmente (US-07, criterio 1)" time="0.020593645">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe consultar la cola hasta que termine, mostrar el aviso y descargar el PDF del curso (US-07, criterio 3)" time="1.548298806">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe mostrar el error de la API al encolar, sin simular que terminó" time="0.027542219">
+        </testcase>
+        <testcase classname="src/pages/profesor/profesor.test.tsx" name="Generación de Boletines en PDF (US-07, T-047) &gt; debe filtrar estudiantes por estado de boletín" time="0.020009029">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/secretaria/secretaria.test.tsx" timestamp="2026-10-30T04:03:32.340Z" hostname="002" tests="26" failures="0" errors="0" skipped="0" time="1.214363079">
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe listar los cursos de la gestión y filtrar por nivel" time="0.099247368">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe registrar un curso y mostrar el mensaje de éxito" time="0.061253904">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe mostrar en el formulario el rechazo de un curso repetido" time="0.045279375">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe limitar los años al nivel elegido (Inicial tiene 2)" time="0.027720067">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe pedir confirmación antes de eliminar y mostrar si la API lo impide" time="0.043952378">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Cursos (US-18, criterio 1) &gt; debe editar un curso sin cambiar su gestión" time="0.058025245">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe buscar por apellido después de que el usuario deja de escribir" time="0.325679193">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe validar el RUDE, los nombres y el curso antes de enviar" time="0.030721826">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe enviar el CI a la API y mostrarlo en la tabla (decisión D15)" time="0.050816463">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe rechazar un CI con formato inválido antes de enviar" time="0.028078095">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe mostrar en qué curso ya está inscrito el estudiante" time="0.038168727">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe avisar si ningún estudiante coincide con el filtro" time="0.017834123">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Estudiantes (US-18, criterio 3) &gt; debe mostrar la advertencia de impacto de borrado seguro con técnica de burbuja" time="0.029390992">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Materias y asignaciones &gt; debe listar las materias con su profesor" time="0.017460174">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Materias y asignaciones &gt; debe exigir el profesor y crear la materia con su asignación" time="0.039394701">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Unidad educativa (US-18, criterio 5) &gt; debe validar el código SIE y guardar los datos" time="0.03901421">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Unidad educativa (US-18, criterio 5) &gt; debe ofrecer el formulario vacío si todavía no hay datos" time="0.017497683">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Control de entrega de notas (US-10, criterio 1) &gt; debe listar por curso cada materia con su profesor y su estado Entregado o Pendiente (US-10, criterio 1)" time="0.037788032">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Control de entrega de notas (US-10, criterio 1) &gt; debe filtrar materias por estado y buscar por profesor (US-10, criterio 1)" time="0.028525653">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe listar los vínculos familiares y mostrar estadísticas de cobertura (US-20, CA 1)" time="0.020219572">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe filtrar vínculos mediante el buscador de texto (US-20, CA 1)" time="0.016045561">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe abrir el diálogo y registrar una nueva vinculación padre-estudiante (US-20, CA 1)" time="0.035607076">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049) &gt; debe confirmar y eliminar un vínculo familiar (US-20, CA 1, RNF-04)" time="0.028956376">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Publicación de boletines (US-11, T-050, decisión D20) &gt; debe publicar el trimestre cuyas materias entregaron todas y bloquear el que tiene entregas pendientes" time="0.029067013">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Publicación de boletines (US-11, T-050, decisión D20) &gt; debe pedir confirmación antes de retirar una publicación" time="0.023729051">
+        </testcase>
+        <testcase classname="src/pages/secretaria/secretaria.test.tsx" name="Publicación de boletines (US-11, T-050, decisión D20) &gt; debe mostrar el error de la API si la publicación es rechazada" time="0.023163934">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/padre/padre.test.tsx" timestamp="2026-10-30T04:03:32.342Z" hostname="002" tests="4" failures="0" errors="0" skipped="0" time="0.183121372">
+        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe avisar claramente cuando el padre aún no tiene estudiantes vinculados (RNF-04)" time="0.058065323">
+        </testcase>
+        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe mostrar aviso y no permitir descarga cuando el boletín no está publicado (US-11, CA 2)" time="0.039158085">
+        </testcase>
+        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe mostrar las calificaciones y permitir la descarga en PDF del boletín publicado (US-11, CA 1)" time="0.056057702">
+        </testcase>
+        <testcase classname="src/pages/padre/padre.test.tsx" name="Portal del Padre de Familia (US-11, T-051) &gt; debe permitir cambiar de hijo cuando el padre tiene múltiples estudiantes vinculados" time="0.028573433">
         </testcase>
     </testsuite>
 </testsuites>

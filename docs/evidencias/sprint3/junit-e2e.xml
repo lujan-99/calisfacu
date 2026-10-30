@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="Cypress" tests="31" failures="0"><testsuite name="Solicitud de edición aprobada en la bandeja del administrador (decisión D16)" timestamp="2026-10-30T04:28:11" tests="1" time="5.461" failures="0">
+    <testcase name="Solicitud de edición aprobada en la bandeja del administrador (decisión D16) debe dejar corregir la nota solo después de que el administrador aprueba la solicitud" time="5.436" classname="debe dejar corregir la nota solo después de que el administrador aprueba la solicitud">
+    </testcase>
+  </testsuite>
+  <testsuite name="Corrección auditable de notas (US-04, T-033)" timestamp="2026-10-30T04:28:16" tests="2" time="5.382" failures="0">
+    <testcase name="Corrección auditable de notas (US-04, T-033) debe exigir motivo obligatorio para corregir una nota registrada" time="1.885" classname="debe exigir motivo obligatorio para corregir una nota registrada">
+    </testcase>
+    <testcase name="Corrección auditable de notas (US-04, T-033) debe corregir la nota con motivo y mostrar el historial de auditoría inmutable" time="3.425" classname="debe corregir la nota con motivo y mostrar el historial de auditoría inmutable">
+    </testcase>
+  </testsuite>
+<testsuite name="Control de entrega de notas por curso (US-10, T-040)" timestamp="2026-10-30T04:28:04" tests="3" time="4.550" failures="0">
+    <testcase name="Control de entrega de notas por curso (US-10, T-040) debe mostrar el estado de entrega (Entregado o Pendiente) de cada materia y profesor" time="1.425" classname="debe mostrar el estado de entrega (Entregado o Pendiente) de cada materia y profesor">
+    </testcase>
+    <testcase name="Control de entrega de notas por curso (US-10, T-040) debe permitir filtrar por estado de entrega (pendientes vs entregados)" time="1.469" classname="debe permitir filtrar por estado de entrega (pendientes vs entregados)">
+    </testcase>
+    <testcase name="Control de entrega de notas por curso (US-10, T-040) debe permitir buscar materias o profesores por nombre" time="1.513" classname="debe permitir buscar materias o profesores por nombre">
+    </testcase>
+  </testsuite>
+<testsuite name="Publicación de boletines (US-11)" timestamp="2026-10-30T04:28:51" tests="1" time="1.673" failures="0">
+    <testcase name="Publicación de boletines (US-11) debe mostrar por trimestre la entrega de notas y bloquear la publicación si falta alguna" time="1.640" classname="debe mostrar por trimestre la entrega de notas y bloquear la publicación si falta alguna">
+    </testcase>
+  </testsuite>
+<testsuite name="Inicio de sesión por rol (US-17)" timestamp="2026-10-30T04:28:35" tests="7" time="7.814" failures="0">
+    <testcase name="Inicio de sesión por rol (US-17) debe llevar al rol Profesor a su inicio y mostrarle solo sus opciones" time="1.250" classname="debe llevar al rol Profesor a su inicio y mostrarle solo sus opciones">
+    </testcase>
+    <testcase name="Inicio de sesión por rol (US-17) debe llevar al rol Secretaria a su inicio y mostrarle solo sus opciones" time="1.094" classname="debe llevar al rol Secretaria a su inicio y mostrarle solo sus opciones">
+    </testcase>
+    <testcase name="Inicio de sesión por rol (US-17) debe llevar al rol Administrador a su inicio y mostrarle solo sus opciones" time="1.010" classname="debe llevar al rol Administrador a su inicio y mostrarle solo sus opciones">
+    </testcase>
+    <testcase name="Inicio de sesión por rol (US-17) debe llevar al rol Padre a su inicio y mostrarle solo sus opciones" time="1.034" classname="debe llevar al rol Padre a su inicio y mostrarle solo sus opciones">
+    </testcase>
+    <testcase name="Inicio de sesión por rol (US-17) debe devolver a su inicio al profesor que escribe la dirección de otro rol" time="1.080" classname="debe devolver a su inicio al profesor que escribe la dirección de otro rol">
+    </testcase>
+    <testcase name="Inicio de sesión por rol (US-17) debe rechazar una contraseña incorrecta sin revelar si el usuario existe" time="0.999" classname="debe rechazar una contraseña incorrecta sin revelar si el usuario existe">
+    </testcase>
+    <testcase name="Inicio de sesión por rol (US-17) debe cerrar la sesión con Salir" time="1.186" classname="debe cerrar la sesión con Salir">
+    </testcase>
+  </testsuite>
+<testsuite name="Boletín de Notas en PDF (US-07)" timestamp="2026-10-30T04:27:50" tests="2" time="7.210" failures="0">
+    <testcase name="Boletín de Notas en PDF (US-07) debe listar a los estudiantes del curso y descargar el PDF de uno (criterio 1)" time="2.967" classname="debe listar a los estudiantes del curso y descargar el PDF de uno (criterio 1)">
+    </testcase>
+    <testcase name="Boletín de Notas en PDF (US-07) debe generar los boletines del curso en la cola, avisar al terminar y descargar el PDF (criterio 3)" time="4.214" classname="debe generar los boletines del curso en la cola, avisar al terminar y descargar el PDF (criterio 3)">
+    </testcase>
+  </testsuite>
+<testsuite name="Portal de Consulta de Boletín para el Padre de Familia (US-11, T-051)" timestamp="2026-10-30T04:27:59" tests="2" time="2.814" failures="0">
+    <testcase name="Portal de Consulta de Boletín para el Padre de Familia (US-11, T-051) debe acceder al portal de familias y visualizar la información formativa oficial" time="1.443" classname="debe acceder al portal de familias y visualizar la información formativa oficial">
+    </testcase>
+    <testcase name="Portal de Consulta de Boletín para el Padre de Familia (US-11, T-051) debe gestionar adecuadamente la disponibilidad y descarga del boletín según su estado" time="1.347" classname="debe gestionar adecuadamente la disponibilidad y descarga del boletín según su estado">
+    </testcase>
+  </testsuite>
+<testsuite name="Importación de calificaciones desde Excel (US-05, T-039)" timestamp="2026-10-30T04:28:29" tests="2" time="3.919" failures="0">
+    <testcase name="Importación de calificaciones desde Excel (US-05, T-039) debe previsualizar y discriminar filas válidas de filas con error antes de confirmar" time="2.075" classname="debe previsualizar y discriminar filas válidas de filas con error antes de confirmar">
+    </testcase>
+    <testcase name="Importación de calificaciones desde Excel (US-05, T-039) debe confirmar la importación y redirigir con aviso de éxito" time="1.790" classname="debe confirmar la importación y redirigir con aviso de éxito">
+    </testcase>
+  </testsuite>
+<testsuite name="Vinculación Padre–Estudiante en Secretaría (US-20, T-049)" timestamp="2026-10-30T04:29:12" tests="2" time="3.235" failures="0">
+    <testcase name="Vinculación Padre–Estudiante en Secretaría (US-20, T-049) debe mostrar la lista de vínculos familiares y métricas de cobertura de tutores" time="1.569" classname="debe mostrar la lista de vínculos familiares y métricas de cobertura de tutores">
+    </testcase>
+    <testcase name="Vinculación Padre–Estudiante en Secretaría (US-20, T-049) debe abrir el diálogo modal accesible para registrar un nuevo vínculo familiar" time="1.634" classname="debe abrir el diálogo modal accesible para registrar un nuevo vínculo familiar">
+    </testcase>
+  </testsuite>
+<testsuite name="Registrar calificación (US-01)" timestamp="2026-10-30T04:28:54" tests="2" time="9.449" failures="0">
+    <testcase name="Registrar calificación (US-01) debe rechazar una nota fuera de 1 a 100 junto al campo y no guardar nada" time="2.030" classname="debe rechazar una nota fuera de 1 a 100 junto al campo y no guardar nada">
+    </testcase>
+    <testcase name="Registrar calificación (US-01) debe guardar la planilla completa y mostrar las notas como registradas" time="7.366" classname="debe guardar la planilla completa y mostrar las notas como registradas">
+    </testcase>
+  </testsuite>
+<testsuite name="Historial académico anual del estudiante (US-03, T-035)" timestamp="2026-10-30T04:28:24" tests="2" time="3.042" failures="0">
+    <testcase name="Historial académico anual del estudiante (US-03, T-035) debe acceder al historial del estudiante desde la lista de notas trimestrales" time="1.556" classname="debe acceder al historial del estudiante desde la lista de notas trimestrales">
+    </testcase>
+    <testcase name="Historial académico anual del estudiante (US-03, T-035) debe mostrar los trimestres en orden cronológico con sus calificaciones y dimensiones" time="1.418" classname="debe mostrar los trimestres en orden cronológico con sus calificaciones y dimensiones">
+    </testcase>
+  </testsuite>
+<testsuite name="Registro de asistencia por clase (US-19, T-037)" timestamp="2026-10-30T04:29:06" tests="3" time="4.662" failures="0">
+    <testcase name="Registro de asistencia por clase (US-19, T-037) debe registrar y guardar la asistencia de la clase para la fecha actual" time="1.728" classname="debe registrar y guardar la asistencia de la clase para la fecha actual">
+    </testcase>
+    <testcase name="Registro de asistencia por clase (US-19, T-037) debe impedir el registro de asistencia en fechas futuras (criterio 3)" time="1.572" classname="debe impedir el registro de asistencia en fechas futuras (criterio 3)">
+    </testcase>
+    <testcase name="Registro de asistencia por clase (US-19, T-037) debe consultar la pestaña de porcentajes acumulados de asistencia (D5)" time="1.289" classname="debe consultar la pestaña de porcentajes acumulados de asistencia (D5)">
+    </testcase>
+  </testsuite>
+<testsuite name="Panel de Riesgo Académico (US-06)" timestamp="2026-10-30T04:28:44" tests="2" time="4.188" failures="0">
+    <testcase name="Panel de Riesgo Académico (US-06) debe mostrar a cada estudiante con su promedio y su porcentaje de asistencia (criterio 1)" time="2.488" classname="debe mostrar a cada estudiante con su promedio y su porcentaje de asistencia (criterio 1)">
+    </testcase>
+    <testcase name="Panel de Riesgo Académico (US-06) debe dejar en el filtro &quot;en riesgo&quot; solo a estudiantes marcados en riesgo (criterio 2)" time="1.668" classname="debe dejar en el filtro &quot;en riesgo&quot; solo a estudiantes marcados en riesgo (criterio 2)">
+    </testcase>
+  </testsuite>
+</testsuites>

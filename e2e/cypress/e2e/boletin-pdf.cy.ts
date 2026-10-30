@@ -1,34 +1,41 @@
-// US-07, Criterio 1 y 3 (T-047): Generación de boletines en PDF y gestión de colas.
-// Métrica M02: 100% de escenarios E2E críticos pasando; R05: colas para cursos > 50 estudiantes.
+// US-07 (T-045 a T-047): boletín en PDF de un estudiante y de todo el curso por la cola BullMQ (decisión D19).
 
-describe('Generación de Boletín de Notas en PDF (US-07, T-047)', () => {
+describe('Boletín de Notas en PDF (US-07)', () => {
   beforeEach(() => {
+    cy.intercept('GET', '**/api/boletines/cursos/*/estudiantes').as('lista');
     cy.ingresar(Cypress.env('profesorEmail') as string);
     cy.contains('[data-cy=materia-item]', 'Matemática').click();
     cy.get('[data-cy=link-generar-boletines]').click();
+    cy.wait('@lista').its('response.statusCode').should('be.oneOf', [200, 304]);
   });
 
-  it('debe mostrar la lista de estudiantes con notas trimestrales y estado del boletín', () => {
+  it('debe listar a los estudiantes del curso y descargar el PDF de uno (criterio 1)', () => {
     cy.location('pathname').should('match', /\/profesor\/materias\/\d+\/boletines$/);
-    cy.get('h1').should('contain', 'Emisión de Boletines de Calificaciones');
-
-    // Comprobar tabla oficial
-    cy.get('[data-cy=tabla-boletines-curso]').should('be.visible');
     cy.get('[data-cy=fila-boletin-estudiante]').should('have.length.at.least', 1);
-
-    // Botón de descarga individual
-    cy.get('[data-cy=btn-descargar-boletin-fila]').first().should('be.visible');
-
-    cy.screenshot('sprint3-us07-boletines-curso-tabla');
+    cy.screenshot('sprint3-us07-boletines-curso');
+    cy.intercept('GET', '**/api/boletines/estudiantes/*/pdf').as('pdf');
+    cy.get('[data-cy=btn-descargar-boletin-pdf]').first().click();
+    cy.wait('@pdf').then(({ response }) => {
+      expect(response?.statusCode).to.eq(200);
+      expect(response?.headers['content-type']).to.eq('application/pdf');
+    });
   });
 
-  it('debe permitir descargar el boletín en PDF desde el historial académico del estudiante', () => {
-    cy.get('[data-cy=btn-ver-historial-estudiante]').first().click();
-    cy.location('pathname').should('match', /\/profesor\/estudiantes\/\d+\/historial$/);
-
-    // Botón directo de descarga en PDF
-    cy.get('[data-cy=btn-descargar-boletin-pdf]').should('be.visible');
-
-    cy.screenshot('sprint3-us07-historial-descarga-pdf');
+  it('debe generar los boletines del curso en la cola, avisar al terminar y descargar el PDF (criterio 3)', () => {
+    cy.intercept('POST', '**/api/boletines/cursos/*/cola').as('cola');
+    cy.get('[data-cy=btn-emision-masiva]').click();
+    cy.wait('@cola').its('response.statusCode').should('eq', 202);
+    cy.get('[data-cy=mensaje-estado-cola]', { timeout: 60000 }).should(
+      'contain',
+      'listos para descargar',
+    );
+    // La captura va antes de la descarga: después, cy.screenshot() puede quedarse esperando.
+    cy.screenshot('sprint3-us07-cola-completada');
+    cy.intercept('GET', '**/api/boletines/trabajos/*/pdf').as('pdfCurso');
+    cy.get('[data-cy=btn-descargar-boletines-curso]').click();
+    cy.wait('@pdfCurso').then(({ response }) => {
+      expect(response?.statusCode).to.eq(200);
+      expect(response?.headers['content-type']).to.eq('application/pdf');
+    });
   });
 });

@@ -15,6 +15,8 @@ const ROLES = [
       'Estudiantes',
       'Materias y asignaciones',
       'Control de entregas',
+      'Vínculos familiares',
+      'Publicación de boletines',
       'Unidad educativa',
     ],
   },

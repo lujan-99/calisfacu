@@ -1,6 +1,6 @@
 # US-06 · Panel de Riesgo Académico
 
-- **Sprint:** Sprint 3 · **Prioridad:** ALTA · **Puntos:** valor 10, esfuerzo 5 · **Estado:** Planificada
+- **Sprint:** Sprint 3 · **Prioridad:** ALTA · **Puntos:** valor 10, esfuerzo 5 · **Estado:** En proceso
 
 ## Historia
 
@@ -26,6 +26,6 @@ Depende de US-02 y US-19.
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

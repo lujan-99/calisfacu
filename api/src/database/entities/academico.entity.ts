@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { decimal } from '../decimal.transformer';
 import { COLORES_PREDETERMINADOS } from '../../modules/academico/apariencia';
 import { Nivel, Parentesco } from './enums';
 import { Usuario } from './usuario.entity';
@@ -56,12 +57,17 @@ export class UnidadEducativa {
 
 @Entity('gestiones')
 @Unique(['unidadEducativa', 'anio'])
+@Check('gestiones_umbral_asistencia', 'umbral_asistencia BETWEEN 0 AND 100')
 export class Gestion {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   anio: number;
+
+  /** Porcentaje de asistencia bajo el cual un estudiante está en riesgo (US-06, decisión D6). */
+  @Column({ type: 'numeric', precision: 4, scale: 1, default: 80, transformer: decimal })
+  umbralAsistencia: number;
 
   @ManyToOne(() => UnidadEducativa, { nullable: false })
   unidadEducativa: UnidadEducativa;

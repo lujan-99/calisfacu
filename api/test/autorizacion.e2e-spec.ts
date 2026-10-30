@@ -250,6 +250,16 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
     { metodo: 'get', url: '/api/materias/mias', noPermitidos: ['secretaria', 'admin', 'padre'] },
     { metodo: 'get', url: `/api/materias/${e.matematica.id}`, noPermitidos: ['otro', 'padre'] },
     { metodo: 'get', url: '/api/profesores', noPermitidos: secretariaYAdmin },
+    {
+      metodo: 'get',
+      url: `/api/materias/${e.matematica.id}/riesgo`,
+      noPermitidos: ['otro', 'padre'],
+    },
+    {
+      metodo: 'put',
+      url: `/api/gestiones/${e.t1.gestion.id}/umbral-asistencia`,
+      noPermitidos: soloAdmin,
+    },
     { metodo: 'get', url: '/api/padres', noPermitidos: secretariaYAdmin },
     { metodo: 'get', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },
     { metodo: 'post', url: '/api/vinculos-familiares', noPermitidos: secretariaYAdmin },

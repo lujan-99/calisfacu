@@ -11,6 +11,7 @@ import { EntregasModule } from './modules/entregas/entregas.module';
 import { FamiliasModule } from './modules/familias/familias.module';
 import { ImportacionModule } from './modules/importacion/importacion.module';
 import { NotasModule } from './modules/notas/notas.module';
+import { PanelModule } from './modules/panel/panel.module';
 import { SaludModule } from './modules/salud/salud.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { SaludModule } from './modules/salud/salud.module';
     EntregasModule,
     ImportacionModule,
     FamiliasModule,
+    PanelModule,
   ],
 })
 export class AppModule {}

@@ -15,6 +15,7 @@ import { DimensionesController } from './dimensiones.controller';
 import { DimensionesService } from './dimensiones.service';
 import { HistorialController } from './historial.controller';
 import { HistorialService } from './historial.service';
+import { NotasTrimestralesService } from './notas-trimestrales.service';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { HistorialService } from './historial.service';
     ]),
   ],
   controllers: [CalculoController, DimensionesController, HistorialController],
-  providers: [CalculoService, DimensionesService, HistorialService],
-  exports: [CalculoService],
+  providers: [CalculoService, DimensionesService, HistorialService, NotasTrimestralesService],
+  exports: [CalculoService, NotasTrimestralesService],
 })
 export class CalculoModule {}

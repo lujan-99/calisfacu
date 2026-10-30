@@ -71,10 +71,14 @@ api/src/
     academico/    cursos, estudiantes, materias y asignaciones,           US-18 (T-016)
                   gestiones y trimestres, "mis materias", unidad educativa
                   y su apariencia: colores y logo (ADR-0010)
+    panel/        panel de riesgo por materia: nota del trimestre y        US-06 (T-043)
+                  asistencia acumulada (GET /api/materias/:id/riesgo, D18);
+                  umbral de asistencia por gestión que cambia el administrador
+                  (PUT /api/gestiones/:id/umbral-asistencia, D6)
     familias/     vinculación padre–estudiante con parentesco y guard     US-20 (T-048)
                   de pertenencia AccesoFamiliarService (D17): /api/padres,
                   /api/vinculos-familiares, /api/padre/hijos
-api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, familias, esquema) y fixtures
+api/test/        e2e con PostgreSQL real (autorizacion, notas, auditoria, dimensiones, asistencia, historial, entregas, importacion, solicitudes, academico, familias, panel, esquema) y fixtures
 web/src/         App (rutas por rol), componentes/ (marco, diálogos, estados de carga),
                  pages/{profesor,secretaria,admin,padre}, lib/ (cliente de la API, sesión, institución),
                  estilos/tema.css (tokens; colores de la institución desde la API, ADR-0010)

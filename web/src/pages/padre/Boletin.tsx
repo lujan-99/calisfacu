@@ -243,6 +243,30 @@ export function Boletin() {
       {/* CASO 2: BOLETÍN PUBLICADO OFICIALMENTE (US-11, CA 1) */}
       {hijoActivo && boletinCarga.estado === 'datos' && estaPublicado && boletin && (
         <div className="contenedor-boletin-padre" data-cy="boletin-publicado-detalle">
+          {/* Banner de aviso y confirmación de notificación por correo (US-12) */}
+          <div
+            className="tarjeta panel"
+            data-cy="aviso-notificacion-boletin"
+            style={{
+              padding: '12px 16px',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              borderRadius: 8,
+              marginBottom: 16,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              fontSize: '0.92rem',
+              color: '#1e40af',
+            }}
+          >
+            <Icono nombre="correo" tam={20} />
+            <div>
+              <strong>Aviso de boletín disponible (US-12):</strong> Se emitió la notificación
+              oficial por correo electrónico a la familia en menos de 15 minutos desde su
+              publicación.
+            </div>
+          </div>
           {/* Tarjeta de Resumen y Botón de Descarga Oficial */}
           <div
             className="tarjeta"

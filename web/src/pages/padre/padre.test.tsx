@@ -157,4 +157,61 @@ describe('Portal del Padre de Familia (US-11, T-051)', () => {
       expect(obtenerSpy).toHaveBeenCalledWith(16);
     });
   });
+
+  it('debe mostrar el banner informativo de notificación por correo cuando el boletín está publicado (US-12, CA 1)', async () => {
+    vi.spyOn(api, 'obtenerBoletinHijoApi').mockResolvedValue(BOLETIN_PUBLICADO);
+    abrir('/padre/boletin', 'PADRE');
+
+    expect(await screen.findByText(/Aviso de boletín disponible \(US-12\):/i)).toBeInTheDocument();
+    expect(screen.getByText(/menos de 15 minutos desde su publicación/i)).toBeInTheDocument();
+  });
+});
+
+describe('Avisos y Notificaciones de Boletín al Padre de Familia (US-12, T-062)', () => {
+  const AVISO_PRUEBA: api.NotificacionBoletinPadreApi = {
+    id: 101,
+    estudianteId: 15,
+    estudianteNombre: 'Pérez Condori, Alejandro',
+    codigoRude: '90000000015',
+    cursoId: 1,
+    cursoNombre: 'Secundaria 3.º «A»',
+    trimestreId: 1,
+    trimestreNumero: 1,
+    gestionAnio: 2026,
+    fechaPublicacion: '2026-11-02T10:00:00Z',
+    canalEnvio: 'EMAIL',
+    correoDestinatario: 'padre@calisfacu.edu.bo',
+    tiempoEntregaMinutos: 8,
+    leido: false,
+    estadoEnvio: 'ENVIADO',
+  };
+
+  beforeEach(() => {
+    vi.spyOn(api, 'listarHijosTutorApi').mockResolvedValue(HIJOS_PRUEBA);
+    vi.spyOn(api, 'listarNotificacionesPadreApi').mockResolvedValue([AVISO_PRUEBA]);
+  });
+
+  it('debe listar las notificaciones de boletines y reflejar el tiempo de entrega en 15 minutos o menos (US-12, CA 1)', async () => {
+    abrir('/padre/notificaciones', 'PADRE');
+
+    expect(await screen.findByText(/Avisos de Boletines Publicados/i)).toBeInTheDocument();
+    expect(screen.getByText('Boletín Disponible: Pérez Condori, Alejandro')).toBeInTheDocument();
+    expect(screen.getByText(/Enviada a padre@calisfacu.edu.bo en 8 minutos/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cumple SLA ≤ 15 min · US-12 CA 1/i)).toBeInTheDocument();
+    expect(screen.getByText('Nuevo aviso')).toBeInTheDocument();
+  });
+
+  it('debe permitir marcar una notificación como leída (US-12)', async () => {
+    const marcarSpy = vi.spyOn(api, 'marcarNotificacionPadreLeidaApi').mockResolvedValue(undefined);
+    abrir('/padre/notificaciones', 'PADRE');
+
+    const btnMarcar = await screen.findByRole('button', { name: /Marcar como leído/i });
+    expect(btnMarcar).toBeInTheDocument();
+    fireEvent.click(btnMarcar);
+
+    await waitFor(() => {
+      expect(marcarSpy).toHaveBeenCalledWith(101);
+    });
+    expect(await screen.findByText(/Notificación marcada como leída/i)).toBeInTheDocument();
+  });
 });

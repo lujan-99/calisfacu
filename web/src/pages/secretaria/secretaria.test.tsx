@@ -481,7 +481,7 @@ describe('Vinculación Padre–Estudiante (US-20, criterios 1 y 2; T-049)', () =
     ).toBeInTheDocument();
 
     // Comprobar datos en tabla
-    expect(screen.getByText('Juan Pérez Ramos')).toBeInTheDocument();
+    expect(await screen.findByText('Juan Pérez Ramos')).toBeInTheDocument();
     expect(screen.getByText('padre1@calisfacu.test')).toBeInTheDocument();
     expect(screen.getByText('Pérez Condori, Alejandro')).toBeInTheDocument();
     expect(screen.getByText('RUDE: 90000000015')).toBeInTheDocument();

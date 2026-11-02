@@ -10,6 +10,7 @@ import { Login } from './pages/Login';
 import { NoEncontrada } from './pages/NoEncontrada';
 import { AlertasPromedio } from './pages/profesor/AlertasPromedio';
 import { AsistenciaMateria } from './pages/profesor/AsistenciaMateria';
+import { AvisosPadre } from './pages/padre/AvisosPadre';
 import { Boletin } from './pages/padre/Boletin';
 import { GenerarBoletines } from './pages/profesor/GenerarBoletines';
 import { HistorialEstudiante } from './pages/profesor/HistorialEstudiante';
@@ -83,7 +84,10 @@ export const rutas = [
       },
       {
         element: <RutaProtegida roles={['PADRE']} />,
-        children: [{ path: '/padre/boletin', element: <Boletin /> }],
+        children: [
+          { path: '/padre/boletin', element: <Boletin /> },
+          { path: '/padre/notificaciones', element: <AvisosPadre /> },
+        ],
       },
       {
         element: <RutaProtegida roles={['PROFESOR', 'SECRETARIA', 'ADMINISTRADOR', 'PADRE']} />,

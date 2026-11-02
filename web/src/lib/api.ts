@@ -729,3 +729,28 @@ export const marcarAlertaLeidaEnApi = (alertaId: number) =>
 
 export const marcarAlertaAtendidaEnApi = <T>(alertaId: number, notaAtencion: string) =>
   solicitar<T>(`/notificaciones/alertas/${alertaId}/atender`, enviar('POST', { notaAtencion }));
+
+// ---------- Notificaciones de Boletín Disponible para Padres (US-12, T-062) ----------
+export interface NotificacionBoletinPadreApi {
+  id: number;
+  estudianteId: number;
+  estudianteNombre: string;
+  codigoRude: string;
+  cursoId: number;
+  cursoNombre: string;
+  trimestreId: number;
+  trimestreNumero: number;
+  gestionAnio: number;
+  fechaPublicacion: string;
+  canalEnvio: 'EMAIL' | 'SISTEMA';
+  correoDestinatario?: string;
+  tiempoEntregaMinutos: number; // <= 15 min según US-12 CA 1
+  leido: boolean;
+  estadoEnvio: 'ENVIADO' | 'PENDIENTE' | 'FALLIDO';
+}
+
+export const listarNotificacionesPadreApi = <T = NotificacionBoletinPadreApi[]>() =>
+  solicitar<T>('/notificaciones/padre');
+
+export const marcarNotificacionPadreLeidaApi = (notificacionId: number) =>
+  solicitar<void>(`/notificaciones/padre/${notificacionId}/leer`, enviar('PATCH'));

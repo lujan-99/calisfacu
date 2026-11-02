@@ -718,3 +718,14 @@ export const ejecutarCentralizacionApi = <T>(
     `/centralizador/cursos/${cursoId}/ejecutar`,
     enviar('POST', { trimestreId, cerrarTrimestre }),
   );
+
+export const listarAlertasApi = <T>(materiaId?: number) =>
+  solicitar<T>(
+    materiaId ? `/notificaciones/alertas?materiaId=${materiaId}` : '/notificaciones/alertas',
+  );
+
+export const marcarAlertaLeidaEnApi = (alertaId: number) =>
+  solicitar<void>(`/notificaciones/alertas/${alertaId}/leer`, enviar('PATCH'));
+
+export const marcarAlertaAtendidaEnApi = <T>(alertaId: number, notaAtencion: string) =>
+  solicitar<T>(`/notificaciones/alertas/${alertaId}/atender`, enviar('POST', { notaAtencion }));

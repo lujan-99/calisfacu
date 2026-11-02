@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../lib/api';
 import * as boletinLib from '../../lib/boletin';
+import * as alertasLib from '../../lib/alertas';
 import * as riesgoLib from '../../lib/riesgo';
 import { abrir, DIMENSIONES, MATERIA, TRIMESTRES } from '../../prueba-utils';
 import { trimestrePorDefecto } from './MateriaActividades';
@@ -1279,5 +1280,142 @@ describe('Generación de Boletines en PDF (US-07, T-047)', () => {
     fireEvent.click(screen.getByRole('button', { name: /Sin notas \(1\)/i }));
     expect(screen.getByText('Morales Soliz, Mateo')).toBeInTheDocument();
     expect(screen.queryByText('Perez Ramos, Alejandro')).not.toBeInTheDocument();
+  });
+});
+
+describe('Alertas Automáticas de Promedio Bajo (US-08, CA 1, CA 2, Decisión D7)', () => {
+  const alertasMock: alertasLib.AlertaPromedioBajo[] = [
+    {
+      id: 101,
+      estudianteId: 1,
+      estudianteNombre: 'Mamani Ramos, Alejandro',
+      codigoRude: '80980001',
+      ci: '10203040',
+      materiaId: 7,
+      materiaNombre: 'Matemática',
+      cursoId: 1,
+      cursoNombre: 'Secundaria 4.º «A»',
+      trimestreId: 1,
+      trimestreNumero: 1,
+      promedioAnterior: 62,
+      promedioNuevo: 45,
+      fechaAlerta: '2026-11-01T10:00:00Z',
+      estado: 'ACTIVA',
+      leida: false,
+      correoEnviado: true,
+      tutor: {
+        id: 20,
+        nombre: 'Elena Ramos Condori',
+        parentesco: 'Madre',
+        telefono: '71234567',
+        email: 'elena.ramos@gmail.com',
+      },
+    },
+    {
+      id: 102,
+      estudianteId: 2,
+      estudianteNombre: 'Condori Rojas, Beatriz',
+      codigoRude: '80980002',
+      ci: null,
+      materiaId: 7,
+      materiaNombre: 'Matemática',
+      cursoId: 1,
+      cursoNombre: 'Secundaria 4.º «A»',
+      trimestreId: 1,
+      trimestreNumero: 1,
+      promedioAnterior: 55,
+      promedioNuevo: 49,
+      fechaAlerta: '2026-11-01T11:00:00Z',
+      estado: 'ATENDIDA',
+      leida: true,
+      correoEnviado: true,
+      notaAtencion: 'Reunión acordada para el viernes con el padre.',
+      tutor: {
+        id: 21,
+        nombre: 'Pedro Condori',
+        parentesco: 'Padre',
+        telefono: '79876543',
+        email: 'pedro.condori@gmail.com',
+      },
+    },
+  ];
+
+  beforeEach(() => {
+    vi.spyOn(api, 'misMaterias').mockResolvedValue([MATERIA]);
+    vi.spyOn(alertasLib, 'listarAlertasProfesorApi').mockResolvedValue(alertasMock);
+  });
+
+  it('debe listar alertas activas con estudiante, puntajes, materia y contacto del tutor (US-08 CA 1)', async () => {
+    abrir('/profesor/alertas', 'PROFESOR');
+
+    expect(await screen.findByText('Mamani Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.getAllByText('45 pts').length).toBeGreaterThan(0);
+    expect(screen.getByText(/Anterior: 62 pts/)).toBeInTheDocument();
+    expect(screen.getByText(/Elena Ramos Condori/)).toBeInTheDocument();
+    expect(screen.getByText(/71234567/)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/Notificación automática enviada por correo/)[0],
+    ).toBeInTheDocument();
+  });
+
+  it('debe registrar la atención de la alerta con nota de seguimiento al tutor (US-08 CA 1)', async () => {
+    const atenderSpy = vi
+      .spyOn(alertasLib, 'marcarAlertaAtendidaApi')
+      .mockResolvedValue({ exito: true, mensaje: 'Seguimiento registrado con éxito.' });
+
+    abrir('/profesor/alertas', 'PROFESOR');
+
+    const botonAtender = await screen.findByRole('button', { name: /Marcar como Atendida/ });
+    fireEvent.click(botonAtender);
+
+    const dialogo = screen.getByRole('dialog');
+    expect(within(dialogo).getByText(/Registrar Atención de Alerta/)).toBeInTheDocument();
+
+    const textarea = within(dialogo).getByLabelText(/Detalle de la comunicación/);
+    fireEvent.change(textarea, {
+      target: { value: 'Llamada telefónica: Se acuerda plan de apoyo en casa.' },
+    });
+
+    fireEvent.click(within(dialogo).getByRole('button', { name: 'Confirmar Atención' }));
+
+    await waitFor(() =>
+      expect(atenderSpy).toHaveBeenCalledWith(
+        101,
+        'Llamada telefónica: Se acuerda plan de apoyo en casa.',
+      ),
+    );
+  });
+
+  it('debe filtrar alertas por estado y por texto (US-08)', async () => {
+    abrir('/profesor/alertas', 'PROFESOR');
+
+    expect(await screen.findByText('Mamani Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.getByText('Condori Rojas, Beatriz')).toBeInTheDocument();
+
+    // Filtro por texto
+    const inputBusqueda = screen.getByLabelText(/Buscar estudiante, RUDE o tutor/);
+    fireEvent.change(inputBusqueda, { target: { value: 'Beatriz' } });
+
+    expect(screen.queryByText('Mamani Ramos, Alejandro')).not.toBeInTheDocument();
+    expect(screen.getByText('Condori Rojas, Beatriz')).toBeInTheDocument();
+
+    // Filtro por estado
+    fireEvent.change(inputBusqueda, { target: { value: '' } });
+    const selectEstado = screen.getByLabelText(/Estado de Alerta/);
+    fireEvent.change(selectEstado, { target: { value: 'ACTIVAS' } });
+
+    expect(screen.getByText('Mamani Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.queryByText('Condori Rojas, Beatriz')).not.toBeInTheDocument();
+  });
+
+  it('debe permitir marcar una alerta como leída', async () => {
+    const leidaSpy = vi.spyOn(alertasLib, 'marcarAlertaLeidaApi').mockResolvedValue(undefined);
+
+    abrir('/profesor/alertas', 'PROFESOR');
+
+    const botonLeer = await screen.findByRole('button', { name: /Marcar Leída/ });
+    fireEvent.click(botonLeer);
+
+    await waitFor(() => expect(leidaSpy).toHaveBeenCalledWith(101));
   });
 });

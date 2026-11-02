@@ -16,6 +16,7 @@ interface OpcionMenu {
 export const MENU_POR_ROL: Record<Rol, OpcionMenu[]> = {
   PROFESOR: [
     { a: '/profesor/materias', texto: 'Mis materias', icono: 'libro', cy: 'menu-mis-materias' },
+    { a: '/profesor/alertas', texto: 'Alertas tempranas', icono: 'alerta', cy: 'menu-alertas' },
   ],
   SECRETARIA: [
     { a: '/secretaria/cursos', texto: 'Cursos', icono: 'capas', cy: 'menu-cursos' },

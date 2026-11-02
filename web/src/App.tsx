@@ -8,6 +8,7 @@ import { Dimensiones } from './pages/admin/Dimensiones';
 import { SolicitudesEdicion } from './pages/admin/SolicitudesEdicion';
 import { Login } from './pages/Login';
 import { NoEncontrada } from './pages/NoEncontrada';
+import { AlertasPromedio } from './pages/profesor/AlertasPromedio';
 import { AsistenciaMateria } from './pages/profesor/AsistenciaMateria';
 import { Boletin } from './pages/padre/Boletin';
 import { GenerarBoletines } from './pages/profesor/GenerarBoletines';
@@ -43,6 +44,7 @@ export const rutas = [
         element: <RutaProtegida roles={['PROFESOR']} />,
         children: [
           { path: '/profesor/materias', element: <MisMaterias /> },
+          { path: '/profesor/alertas', element: <AlertasPromedio /> },
           { path: '/profesor/materias/:materiaId', element: <MateriaActividades /> },
           { path: '/profesor/materias/:materiaId/actividades/:actividadId', element: <Planilla /> },
           {

@@ -15,22 +15,22 @@ describe('Lógica de Centralización de Notas (US-09, RM 001/2026)', () => {
     {
       id: 101,
       nombre: 'Matemática',
-      cursoId: 1,
-      curso: 'Secundaria 4.º «A»',
+      curso: { id: 1, nombre: 'Secundaria 4.º «A»' },
+      gestion: { id: 1, anio: 2026 },
       profesor: { id: 10, nombre: 'Carlos Quispe' },
     },
     {
       id: 102,
       nombre: 'Lenguaje y Comunicación',
-      cursoId: 1,
-      curso: 'Secundaria 4.º «A»',
+      curso: { id: 1, nombre: 'Secundaria 4.º «A»' },
+      gestion: { id: 1, anio: 2026 },
       profesor: { id: 11, nombre: 'Ana Flores' },
     },
     {
       id: 103,
       nombre: 'Ciencias Naturales: Física',
-      cursoId: 1,
-      curso: 'Secundaria 4.º «A»',
+      curso: { id: 1, nombre: 'Secundaria 4.º «A»' },
+      gestion: { id: 1, anio: 2026 },
       profesor: { id: 12, nombre: 'Roberto Gómez' },
     },
   ];
@@ -71,39 +71,35 @@ describe('Lógica de Centralización de Notas (US-09, RM 001/2026)', () => {
     profesor: m.profesor?.nombre,
   }));
 
+  const crearEntrega = (
+    materiaId: number,
+    materia: string,
+    profesor: string,
+    estado: 'ENTREGADO' | 'PENDIENTE',
+    notasFaltantes = 0,
+  ): EntregaMateria => ({
+    materiaId,
+    materia,
+    cursoId: 1,
+    curso: 'Secundaria 4.º «A»',
+    profesorId: 10,
+    profesor,
+    trimestreId: 1,
+    trimestreNumero: 1,
+    estado,
+    totalActividades: 4,
+    totalEstudiantes: 30,
+    totalNotasRegistradas: estado === 'ENTREGADO' ? 30 : 25,
+    totalNotasRequeridas: 30,
+    notasFaltantes,
+  });
+
   describe('evaluarEntregasCurso (US-09 CA 1 y CA 3)', () => {
     it('debe indicar que todas están entregadas cuando todas las materias del curso tienen estado ENTREGADO (CA 1)', () => {
       const entregas: EntregaMateria[] = [
-        {
-          materiaId: 101,
-          materia: 'Matemática',
-          cursoId: 1,
-          curso: 'Secundaria 4.º «A»',
-          profesor: 'Carlos Quispe',
-          estado: 'ENTREGADO',
-          totalEstudiantes: 30,
-          conNota: 30,
-        },
-        {
-          materiaId: 102,
-          materia: 'Lenguaje y Comunicación',
-          cursoId: 1,
-          curso: 'Secundaria 4.º «A»',
-          profesor: 'Ana Flores',
-          estado: 'ENTREGADO',
-          totalEstudiantes: 30,
-          conNota: 30,
-        },
-        {
-          materiaId: 103,
-          materia: 'Ciencias Naturales: Física',
-          cursoId: 1,
-          curso: 'Secundaria 4.º «A»',
-          profesor: 'Roberto Gómez',
-          estado: 'ENTREGADO',
-          totalEstudiantes: 30,
-          conNota: 30,
-        },
+        crearEntrega(101, 'Matemática', 'Carlos Quispe', 'ENTREGADO'),
+        crearEntrega(102, 'Lenguaje y Comunicación', 'Ana Flores', 'ENTREGADO'),
+        crearEntrega(103, 'Ciencias Naturales: Física', 'Roberto Gómez', 'ENTREGADO'),
       ];
 
       const resultado = evaluarEntregasCurso(materiasMock, entregas);
@@ -115,23 +111,8 @@ describe('Lógica de Centralización de Notas (US-09, RM 001/2026)', () => {
 
     it('debe listar materias pendientes y no permitir cerrar cuando falta una o más entregas (CA 3)', () => {
       const entregas: EntregaMateria[] = [
-        {
-          materiaId: 101,
-          materia: 'Matemática',
-          cursoId: 1,
-          curso: 'Secundaria 4.º «A»',
-          profesor: 'Carlos Quispe',
-          estado: 'ENTREGADO',
-        },
-        {
-          materiaId: 102,
-          materia: 'Lenguaje y Comunicación',
-          cursoId: 1,
-          curso: 'Secundaria 4.º «A»',
-          profesor: 'Ana Flores',
-          estado: 'PENDIENTE',
-          notasFaltantes: 5,
-        },
+        crearEntrega(101, 'Matemática', 'Carlos Quispe', 'ENTREGADO'),
+        crearEntrega(102, 'Lenguaje y Comunicación', 'Ana Flores', 'PENDIENTE', 5),
       ];
 
       const resultado = evaluarEntregasCurso(materiasMock, entregas);

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="82" failures="0" errors="0" time="3.194">
+  <testsuite name="configurarApp: cabeceras de seguridad" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:52" time="2.241" tests="5">
+    <testcase classname="configurarApp: cabeceras de seguridad debe ocultar que la API usa Express (sin x-powered-by)" name="configurarApp: cabeceras de seguridad debe ocultar que la API usa Express (sin x-powered-by)" time="0.28">
+    </testcase>
+    <testcase classname="configurarApp: cabeceras de seguridad debe enviar nosniff, HSTS y prohibir que la API se muestre en un iframe" name="configurarApp: cabeceras de seguridad debe enviar nosniff, HSTS y prohibir que la API se muestre en un iframe" time="0.01">
+    </testcase>
+    <testcase classname="configurarApp: cabeceras de seguridad debe aplicar en producción una CSP que no permite cargar nada ni ser incrustada" name="configurarApp: cabeceras de seguridad debe aplicar en producción una CSP que no permite cargar nada ni ser incrustada" time="0.005">
+    </testcase>
+    <testcase classname="configurarApp: cabeceras de seguridad debe permitir que la web, en otro sitio, muestre el logo de la API (CORP cross-origin)" name="configurarApp: cabeceras de seguridad debe permitir que la web, en otro sitio, muestre el logo de la API (CORP cross-origin)" time="0.004">
+    </testcase>
+    <testcase classname="configurarApp: cabeceras de seguridad debe omitir la CSP fuera de producción para que funcione Swagger en /api/docs" name="configurarApp: cabeceras de seguridad debe omitir la CSP fuera de producción para que funcione Swagger en /api/docs" time="0.014">
+    </testcase>
+  </testsuite>
+  <testsuite name="CalculoService" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:54" time="0.193" tests="19">
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe aceptar los puntajes de la RM 001/2026, que suman 100" name="CalculoService validarDimensiones (US-18, criterio 6) debe aceptar los puntajes de la RM 001/2026, que suman 100" time="0.002">
+    </testcase>
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos faltan si no suman 100" name="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos faltan si no suman 100" time="0.01">
+    </testcase>
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos sobran" name="CalculoService validarDimensiones (US-18, criterio 6) debe indicar cuántos puntos sobran" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService validarDimensiones (US-18, criterio 6) debe rechazar una lista vacía, códigos repetidos y puntajes no positivos" name="CalculoService validarDimensiones (US-18, criterio 6) debe rechazar una lista vacía, códigos repetidos y puntajes no positivos" time="0.003">
+    </testcase>
+    <testcase classname="CalculoService puntosDimension (US-02, criterio 1) debe calcular Saber con promedio 80 como 36 puntos" name="CalculoService puntosDimension (US-02, criterio 1) debe calcular Saber con promedio 80 como 36 puntos" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService promedio debe promediar sin errores de coma flotante" name="CalculoService promedio debe promediar sin errores de coma flotante" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService promedio debe devolver null si no hay notas" name="CalculoService promedio debe devolver null si no hay notas" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,5 a 51 y aprobar" name="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,5 a 51 y aprobar" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,4 a 50 y reprobar" name="CalculoService redondear y aprobar (US-02, criterio 3) debe redondear 50,4 a 50 y reprobar" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe sumar los puntos de las cuatro dimensiones" name="CalculoService notaTrimestral (US-02, criterio 2) debe sumar los puntos de las cuatro dimensiones" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe dejar la nota pendiente si una dimensión no tiene actividades (US-02, criterio 6, regla provisional)" name="CalculoService notaTrimestral (US-02, criterio 2) debe dejar la nota pendiente si una dimensión no tiene actividades (US-02, criterio 6, regla provisional)" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService notaTrimestral (US-02, criterio 2) debe rechazar dimensiones mal configuradas" name="CalculoService notaTrimestral (US-02, criterio 2) debe rechazar dimensiones mal configuradas" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe promediar los tres trimestres y redondear" name="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe promediar los tres trimestres y redondear" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe rechazar si no hay trimestres" name="CalculoService notaAnual (US-02, criterio 4, regla provisional) debe rechazar si no hay trimestres" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService promedioDeMaterias (US-03, decisión D12) debe promediar las notas de las materias con dos decimales, 0,5 hacia arriba" name="CalculoService promedioDeMaterias (US-03, decisión D12) debe promediar las notas de las materias con dos decimales, 0,5 hacia arriba" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService promedioDeMaterias (US-03, decisión D12) debe quedar pendiente si alguna materia no tiene nota o no hay materias" name="CalculoService promedioDeMaterias (US-03, decisión D12) debe quedar pendiente si alguna materia no tiene nota o no hay materias" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService resumenAnual (US-03, decisión D12) debe promediar los trimestres con nota e ignorar los pendientes" name="CalculoService resumenAnual (US-03, decisión D12) debe promediar los trimestres con nota e ignorar los pendientes" time="0">
+    </testcase>
+    <testcase classname="CalculoService resumenAnual (US-03, decisión D12) debe comparar los dos últimos trimestres con nota para la tendencia" name="CalculoService resumenAnual (US-03, decisión D12) debe comparar los dos últimos trimestres con nota para la tendencia" time="0.001">
+    </testcase>
+    <testcase classname="CalculoService resumenAnual (US-03, decisión D12) debe marcar en riesgo un promedio anual menor que la nota mínima de aprobación" name="CalculoService resumenAnual (US-03, decisión D12) debe marcar en riesgo un promedio anual menor que la nota mínima de aprobación" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Tabla de casos de cálculo firmada por el cliente (M01, R02)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:54" time="0.147" tests="13">
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Caso típico" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Caso típico" time="0.002">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,5 se redondea a 51 (aprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,5 se redondea a 51 (aprueba)" time="0.001">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,4 se redondea a 50 (reprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,4 se redondea a 50 (reprueba)" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al máximo" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al máximo" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al mínimo de la escala" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Todo al mínimo de la escala" time="0.004">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Exactamente 51 sin redondear (aprueba justo)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Exactamente 51 sin redondear (aprueba justo)" time="0.001">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) D2: 50,45 se redondea solo al final (reprueba); por dimensión daría 51" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) D2: 50,45 se redondea solo al final (reprueba); por dimensión daría 51" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,55 se redondea a 51 (aprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera: 50,55 se redondea a 51 (aprueba)" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera alta: 99,5 se redondea a 100" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Frontera alta: 99,5 se redondea a 100" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Promedios con decimales (Ser 85,5; Saber 72,25; Hacer 68,75)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Promedios con decimales (Ser 85,5; Saber 72,25; Hacer 68,75)" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Saber y Hacer al máximo con Ser y Autoevaluación en 1 (aprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Saber y Hacer al máximo con Ser y Autoevaluación en 1 (aprueba)" time="0">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) Saber y Hacer en 50 con Ser y Autoevaluación al máximo (aprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) Saber y Hacer en 50 con Ser y Autoevaluación al máximo (aprueba)" time="0.001">
+    </testcase>
+    <testcase classname="Tabla de casos de cálculo firmada por el cliente (M01, R02) D1: actividades no presentadas registradas con 1 en Saber y Hacer (reprueba)" name="Tabla de casos de cálculo firmada por el cliente (M01, R02) D1: actividades no presentadas registradas con 1 en Saber y Hacer (reprueba)" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Apariencia de la institución (ADR-0010)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:54" time="0.148" tests="14">
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe aceptar un color hexadecimal de 6 dígitos y devolverlo en mayúsculas" name="Apariencia de la institución (ADR-0010) normalizarColor debe aceptar un color hexadecimal de 6 dígitos y devolverlo en mayúsculas" time="0.002">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor 1D4E89" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor 1D4E89" time="0.003">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #FFF" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #FFF" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #GGGGGG" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #GGGGGG" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor rojo" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor rojo" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #1D4E8900" name="Apariencia de la institución (ADR-0010) normalizarColor debe rechazar el valor #1D4E8900" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 21 entre negro y blanco" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 21 entre negro y blanco" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 1 entre dos colores iguales" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe dar 1 entre dos colores iguales" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe ser simétrico" name="Apariencia de la institución (ADR-0010) contraste (WCAG 2.1) debe ser simétrico" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe aceptar los colores predeterminados del diseño" name="Apariencia de la institución (ADR-0010) validarColores debe aceptar los colores predeterminados del diseño" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe rechazar un color de marca o primario con poco contraste para texto blanco" name="Apariencia de la institución (ADR-0010) validarColores debe rechazar un color de marca o primario con poco contraste para texto blanco" time="0.002">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) validarColores debe rechazar un acento que no se distingue sobre el color de marca" name="Apariencia de la institución (ADR-0010) validarColores debe rechazar un acento que no se distingue sobre el color de marca" time="0.001">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) detectarTipoImagen debe reconocer PNG, JPEG y WebP por su contenido, no por el nombre" name="Apariencia de la institución (ADR-0010) detectarTipoImagen debe reconocer PNG, JPEG y WebP por su contenido, no por el nombre" time="0">
+    </testcase>
+    <testcase classname="Apariencia de la institución (ADR-0010) detectarTipoImagen debe rechazar SVG, GIF y otros formatos (un SVG puede llevar código)" name="Apariencia de la institución (ADR-0010) detectarTipoImagen debe rechazar SVG, GIF y otros formatos (un SVG puede llevar código)" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Reglas de asistencia (US-19)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:55" time="0.062" tests="6">
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe contar presentes y licencias sobre las clases dictadas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe contar presentes y licencias sobre las clases dictadas" time="0.002">
+    </testcase>
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe redondear a un decimal, 0,05 hacia arriba" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe redondear a un decimal, 0,05 hacia arriba" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver 100 si nunca faltó y 0 si faltó a todas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver 100 si nunca faltó y 0 si faltó a todas" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver null si todavía no hay clases registradas" name="Reglas de asistencia (US-19) porcentajeAsistencia (criterio 2, decisión D5) debe devolver null si todavía no hay clases registradas" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de asistencia (US-19) fechas (criterio 3) debe tomar la fecha de hoy en Bolivia (UTC-4), no la del servidor" name="Reglas de asistencia (US-19) fechas (criterio 3) debe tomar la fecha de hoy en Bolivia (UTC-4), no la del servidor" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de asistencia (US-19) fechas (criterio 3) debe considerar futura solo una fecha posterior a hoy en Bolivia" name="Reglas de asistencia (US-19) fechas (criterio 3) debe considerar futura solo una fecha posterior a hoy en Bolivia" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="Reglas de la importación desde Excel (US-05)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:55" time="0.062" tests="6">
+    <testcase classname="Reglas de la importación desde Excel (US-05) leerNota debe aceptar números de 1 a 100 con hasta dos decimales, también con coma" name="Reglas de la importación desde Excel (US-05) leerNota debe aceptar números de 1 a 100 con hasta dos decimales, también con coma" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) leerNota debe rechazar valores fuera de la escala, con más decimales o que no son números" name="Reglas de la importación desde Excel (US-05) leerNota debe rechazar valores fuera de la escala, con más decimales o que no son números" time="0">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe separar las filas válidas de las filas con error, cada una con su motivo" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe separar las filas válidas de las filas con error, cada una con su motivo" time="0.002">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe ignorar las filas sin nota: el profesor puede llenar solo una parte de la plantilla" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe ignorar las filas sin nota: el profesor puede llenar solo una parte de la plantilla" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar al estudiante que ya tiene nota en la actividad (se corrige con motivo, US-04)" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar al estudiante que ya tiene nota en la actividad (se corrige con motivo, US-04)" time="0.001">
+    </testcase>
+    <testcase classname="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar las filas repetidas del mismo estudiante, salvo la primera" name="Reglas de la importación desde Excel (US-05) validarFilas (criterios 1 y 2) debe rechazar las filas repetidas del mismo estudiante, salvo la primera" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="evaluarRiesgo (US-06, criterio 2)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:55" time="0.069" tests="10">
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe marcar en riesgo por promedio a quien tiene menos de 51" name="evaluarRiesgo (US-06, criterio 2) debe marcar en riesgo por promedio a quien tiene menos de 51" time="0.002">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe dejar como regular a quien tiene exactamente 51 y asistencia exactamente en el umbral" name="evaluarRiesgo (US-06, criterio 2) debe dejar como regular a quien tiene exactamente 51 y asistencia exactamente en el umbral" time="0">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe marcar en riesgo por asistencia a quien tiene 79,9 % con el umbral de 80 %" name="evaluarRiesgo (US-06, criterio 2) debe marcar en riesgo por asistencia a quien tiene 79,9 % con el umbral de 80 %" time="0">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe indicar los dos motivos cuando fallan el promedio y la asistencia" name="evaluarRiesgo (US-06, criterio 2) debe indicar los dos motivos cuando fallan el promedio y la asistencia" time="0.001">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe usar el umbral configurado en la gestión y no uno fijo" name="evaluarRiesgo (US-06, criterio 2) debe usar el umbral configurado en la gestión y no uno fijo" time="0">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe evaluar solo la asistencia mientras la nota del trimestre está pendiente" name="evaluarRiesgo (US-06, criterio 2) debe evaluar solo la asistencia mientras la nota del trimestre está pendiente" time="0.001">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe evaluar solo el promedio si aún no se tomó asistencia" name="evaluarRiesgo (US-06, criterio 2) debe evaluar solo el promedio si aún no se tomó asistencia" time="0">
+    </testcase>
+    <testcase classname="evaluarRiesgo (US-06, criterio 2) debe dejar pendiente a quien no tiene nota ni asistencia" name="evaluarRiesgo (US-06, criterio 2) debe dejar pendiente a quien no tiene nota ni asistencia" time="0">
+    </testcase>
+    <testcase classname="resumenRiesgo (US-06) debe contar a los estudiantes por motivo de riesgo y promediar con un decimal" name="resumenRiesgo (US-06) debe contar a los estudiantes por motivo de riesgo y promediar con un decimal" time="0.002">
+    </testcase>
+    <testcase classname="resumenRiesgo (US-06) debe dejar los promedios generales en null sin datos" name="resumenRiesgo (US-06) debe dejar los promedios generales en null sin datos" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="contenidoBoletin (US-07, criterio 1)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:55" time="0.057" tests="5">
+    <testcase classname="contenidoBoletin (US-07, criterio 1) debe mostrar la unidad educativa, el código SIE y la gestión" name="contenidoBoletin (US-07, criterio 1) debe mostrar la unidad educativa, el código SIE y la gestión" time="0.001">
+    </testcase>
+    <testcase classname="contenidoBoletin (US-07, criterio 1) debe mostrar el nivel, el año de escolaridad y el paralelo del estudiante" name="contenidoBoletin (US-07, criterio 1) debe mostrar el nivel, el año de escolaridad y el paralelo del estudiante" time="0.001">
+    </testcase>
+    <testcase classname="contenidoBoletin (US-07, criterio 1) debe mostrar por materia la nota de cada trimestre, la nota anual y la asistencia" name="contenidoBoletin (US-07, criterio 1) debe mostrar por materia la nota de cada trimestre, la nota anual y la asistencia" time="0.001">
+    </testcase>
+    <testcase classname="contenidoBoletin (US-07, criterio 1) debe mostrar con una raya lo que todavía está pendiente" name="contenidoBoletin (US-07, criterio 1) debe mostrar con una raya lo que todavía está pendiente" time="0.001">
+    </testcase>
+    <testcase classname="contenidoBoletin (US-07, criterio 1) debe resumir los promedios y la asistencia general al pie" name="contenidoBoletin (US-07, criterio 1) debe resumir los promedios y la asistencia general al pie" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Reglas de la entrega de notas (US-10)" errors="0" failures="0" skipped="0" timestamp="2026-11-02T23:24:55" time="0.054" tests="4">
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe aceptar la entrega si todos los estudiantes tienen nota en todas las actividades" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe aceptar la entrega si todos los estudiantes tienen nota en todas las actividades" time="0.002">
+    </testcase>
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazarla e indicar cuántas notas faltan" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazarla e indicar cuántas notas faltan" time="0">
+    </testcase>
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar una materia sin actividades en el trimestre" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar una materia sin actividades en el trimestre" time="0">
+    </testcase>
+    <testcase classname="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar un curso sin estudiantes" name="Reglas de la entrega de notas (US-10) requisitosEntrega (criterio 2) debe rechazar un curso sin estudiantes" time="0">
+    </testcase>
+  </testsuite>
+</testsuites>

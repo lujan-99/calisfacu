@@ -1,0 +1,39 @@
+> @calisfacu/web@0.1.0 test
+> vitest --run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/Joelp/Documents/6.5 semestre/calidad-de-software/calisfacu/web[39m
+
+ [32m✓[39m src/lib/riesgo.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/lib/asistencia.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m src/lib/boletin.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/lib/api.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/lib/institucion.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+ [32m✓[39m src/lib/sesion.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 156[2mms[22m[39m
+ [32m✓[39m src/lib/alertas.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/lib/vinculos.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/lib/avisosBoletin.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/lib/centralizador.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/lib/controlEntregas.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/lib/boletinPadre.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/pages/padre/padre.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1084[2mms[22m[39m
+ [32m✓[39m src/pages/Login.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 1210[2mms[22m[39m
+     [33m[2m✓[22m[39m debe llevar al profesor a Mis materias con su menú [33m 302[2mms[22m[39m
+ [32m✓[39m src/pages/admin/admin.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1370[2mms[22m[39m
+     [33m[2m✓[22m[39m debe permitir guardar solo cuando las dimensiones suman 100 [33m 486[2mms[22m[39m
+     [33m[2m✓[22m[39m debe bloquear la tabla si la gestión ya tiene notas [33m 404[2mms[22m[39m
+ [32m✓[39m src/lib/notas.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/lib/solicitudes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/pages/secretaria/secretaria.test.tsx [2m([22m[2m30 tests[22m[2m)[22m[33m 3081[2mms[22m[39m
+     [33m[2m✓[22m[39m debe listar los cursos de la gestión y filtrar por nivel [33m 375[2mms[22m[39m
+     [33m[2m✓[22m[39m debe buscar por apellido después de que el usuario deja de escribir [33m 384[2mms[22m[39m
+ [32m✓[39m src/pages/profesor/profesor.test.tsx [2m([22m[2m50 tests[22m[2m)[22m[33m 5532[2mms[22m[39m
+     [33m[2m✓[22m[39m debe mostrar solo las materias del profesor, cada una con su curso [33m 306[2mms[22m[39m
+     [33m[2m✓[22m[39m debe consultar la cola hasta que termine, mostrar el aviso y descargar el PDF del curso (US-07, criterio 3) [33m 1590[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m      Tests [22m [1m[32m222 passed[39m[22m[90m (222)[39m
+[2m   Start at [22m 19:37:05
+[2m   Duration [22m 10.00s[2m (transform 7.35s, setup 8.74s, import 12.61s, tests 12.73s, environment 22.52s)[22m
+
+JUNIT report written to C:/Users/Joelp/Documents/6.5 semestre/calidad-de-software/calisfacu/web/reports/junit-web.xml

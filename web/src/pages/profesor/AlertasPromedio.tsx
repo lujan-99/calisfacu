@@ -196,7 +196,7 @@ export function AlertasPromedio() {
       {alertasFiltradas.length === 0 ? (
         <Vacio
           titulo="No hay alertas con los filtros seleccionados"
-          descripcion="Todos los estudiantes evaluados se encuentran por encima del mínimo aprobatorio o no coinciden con la búsqueda."
+          texto="Todos los estudiantes evaluados se encuentran por encima del mínimo aprobatorio o no coinciden con la búsqueda."
         />
       ) : (
         <div className="espacio-y" data-cy="lista-alertas-promedio">

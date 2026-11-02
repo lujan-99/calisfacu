@@ -1,0 +1,8 @@
+e28dc73 feat(notificaciones): aviso de boletin disponible para padres de familia Refs: US-12
+0398647 feat(notificaciones): documentacion sprint 4 y ajuste de timeout en pruebas
+0f806a0 feat(notificaciones): alertas de promedio bajo y contacto con tutores Refs: US-08
+5f84e38 feat(notificaciones): alertas de promedio bajo y contacto con tutores
+2e8ab99 feat(centralizacion): pantalla y logica de centralizacion de notas Refs: US-09
+9055982 feat(centralizacion): pantalla y logica de centralizacion de notas
+bbb48cd chore(deps-dev): fast-uri 3.1.8 → 3.1.9 (Dependabot #70)
+379cee5 docs(sqap): informe de pruebas del Sprint 3 con los resultados oficiales

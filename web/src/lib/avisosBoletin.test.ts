@@ -157,6 +157,13 @@ describe('Avisos de Boletín Disponible (US-12, T-062)', () => {
         nombres: 'Sofía',
         apellidos: 'Vargas',
         codigoRude: '90000000020',
+        curso: {
+          id: 3,
+          nombre: 'Primaria 1.º «A»',
+          nivel: 'PRIMARIA',
+          paralelo: 'A',
+          anioEscolaridad: 1,
+        },
       },
       publicado: true,
       estadoPeriodo: 'PUBLICADO',

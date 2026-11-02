@@ -37,7 +37,7 @@ export function Centralizador() {
   const [procesando, setProcesando] = useState<boolean>(false);
 
   // Carga base de gestiones, cursos y trimestres
-  const { carga: cargaBase } = useCarga(async () => {
+  const { carga: cargaBase, recargar: recargarBase } = useCarga(async () => {
     const gestiones = await listarGestiones();
     const gestionActiva = gestiones[0] ?? null;
     if (!gestionActiva) {
@@ -134,7 +134,12 @@ export function Centralizador() {
   }
 
   if (cargaBase.estado === 'error') {
-    return <ErrorCarga mensaje="No se pudo cargar la información de cursos y trimestres." />;
+    return (
+      <ErrorCarga
+        mensaje="No se pudo cargar la información de cursos y trimestres."
+        reintentar={recargarBase}
+      />
+    );
   }
 
   return (
@@ -420,7 +425,7 @@ export function Centralizador() {
                       >
                         <Vacio
                           titulo="Sin coincidencias"
-                          descripcion="No se encontraron estudiantes que coincidan con los filtros aplicados."
+                          texto="No se encontraron estudiantes que coincidan con los filtros aplicados."
                         />
                       </td>
                     </tr>

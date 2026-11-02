@@ -19,6 +19,7 @@ import { NotasTrimestre } from './pages/profesor/NotasTrimestre';
 import { PanelRiesgo } from './pages/profesor/PanelRiesgo';
 import { Planilla } from './pages/profesor/Planilla';
 import { ControlEntregas } from './pages/secretaria/ControlEntregas';
+import { Centralizador } from './pages/secretaria/Centralizador';
 import { Cursos } from './pages/secretaria/Cursos';
 import { Estudiantes } from './pages/secretaria/Estudiantes';
 import { Materias } from './pages/secretaria/Materias';
@@ -65,6 +66,7 @@ export const rutas = [
           { path: '/secretaria/estudiantes', element: <Estudiantes /> },
           { path: '/secretaria/materias', element: <Materias /> },
           { path: '/secretaria/control-entregas', element: <ControlEntregas /> },
+          { path: '/secretaria/centralizador', element: <Centralizador /> },
           { path: '/secretaria/vinculos-familiares', element: <VinculacionPadres /> },
           { path: '/secretaria/publicacion-boletines', element: <PublicacionBoletines /> },
           { path: '/secretaria/unidad-educativa', element: <UnidadEducativa /> },

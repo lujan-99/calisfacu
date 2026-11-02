@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as api from '../../lib/api';
+import * as centralizadorLib from '../../lib/centralizador';
 import { abrir, CURSO, GESTION, MATERIA } from '../../prueba-utils';
 
 const CURSOS: api.Curso[] = [
@@ -668,5 +669,186 @@ describe('Publicación de boletines (US-11, T-050, decisión D20)', () => {
     expect(
       await screen.findByText('El boletín de ese trimestre ya está publicado'),
     ).toBeInTheDocument();
+  });
+});
+
+describe('Centralización de Notas (US-09, CA 1, CA 2, CA 3)', () => {
+  const centralizadorMockCompleto: centralizadorLib.CentralizadorCursoData = {
+    curso: {
+      id: 1,
+      nombre: 'Secundaria 4.º «A»',
+      nivel: 'SECUNDARIA',
+      anioEscolaridad: 4,
+      paralelo: 'A',
+    },
+    gestion: { id: 1, anio: 2026 },
+    trimestre: { id: 11, numero: 1, cerrado: false },
+    unidadEducativa: {
+      nombre: 'Unidad Educativa Juana Azurduy',
+      codigoSie: '80980123',
+    },
+    todasEntregadas: true,
+    materiasPendientes: [],
+    materias: [
+      { id: 101, nombre: 'Matemática', profesor: 'Carlos Quispe' },
+      { id: 102, nombre: 'Lenguaje y Comunicación', profesor: 'Ana Flores' },
+    ],
+    filas: [
+      {
+        numero: 1,
+        estudianteId: 1,
+        codigoRude: '80980001',
+        ci: '10203040',
+        apellidos: 'Mamani Ramos',
+        nombres: 'Alejandro',
+        estudiante: 'Mamani Ramos, Alejandro',
+        notas: { 101: 85, 102: 90 },
+        promedioTrimestral: 88,
+        observacion: 'APROBADO',
+      },
+      {
+        numero: 2,
+        estudianteId: 2,
+        codigoRude: '80980002',
+        ci: null,
+        apellidos: 'Condori Rojas',
+        nombres: 'Beatriz',
+        estudiante: 'Condori Rojas, Beatriz',
+        notas: { 101: 45, 102: 50 },
+        promedioTrimestral: 48,
+        observacion: 'REPROBADO',
+      },
+    ],
+    resumen: {
+      totalEstudiantes: 2,
+      promedioGeneral: 68,
+      aprobados: 1,
+      reprobados: 1,
+      pendientes: 0,
+      tasaAprobacion: 50,
+    },
+  };
+
+  const centralizadorMockIncompleto: centralizadorLib.CentralizadorCursoData = {
+    ...centralizadorMockCompleto,
+    todasEntregadas: false,
+    materiasPendientes: [
+      {
+        materiaId: 102,
+        materia: 'Lenguaje y Comunicación',
+        profesor: 'Ana Flores',
+        notasFaltantes: 4,
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    vi.spyOn(api, 'listarGestiones').mockResolvedValue([GESTION]);
+    vi.spyOn(api, 'listarCursos').mockResolvedValue(CURSOS);
+    vi.spyOn(api, 'listarTrimestres').mockResolvedValue([
+      { id: 11, numero: 1, cerrado: false },
+      { id: 12, numero: 2, cerrado: false },
+    ]);
+  });
+
+  it('debe listar materias pendientes y deshabilitar centralización cuando faltan notas (CA 3)', async () => {
+    vi.spyOn(centralizadorLib, 'obtenerCentralizadorCurso').mockResolvedValue(
+      centralizadorMockIncompleto,
+    );
+    abrir('/secretaria/centralizador', 'SECRETARIA');
+
+    expect(
+      await screen.findByText(/Centralización Bloqueada: 1 materia\(s\) pendientes de entrega/),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('Lenguaje y Comunicación').length).toBeGreaterThan(0);
+    expect(screen.getByText(/4 notas faltantes/)).toBeInTheDocument();
+
+    const botonEjecutar = screen.getByRole('button', { name: /Ejecutar Centralización Oficial/ });
+    expect(botonEjecutar).toBeDisabled();
+  });
+
+  it('debe mostrar planilla consolidada y permitir centralización cuando todas las materias fueron entregadas (CA 1)', async () => {
+    vi.spyOn(centralizadorLib, 'obtenerCentralizadorCurso').mockResolvedValue(
+      centralizadorMockCompleto,
+    );
+    const ejecutarSpy = vi
+      .spyOn(centralizadorLib, 'ejecutarCentralizacionCurso')
+      .mockResolvedValue({
+        exito: true,
+        mensaje: 'Centralización ejecutada exitosamente para Secundaria 4.º «A».',
+        centralizador: centralizadorMockCompleto,
+      });
+
+    abrir('/secretaria/centralizador', 'SECRETARIA');
+
+    expect(await screen.findByText('Todas las materias han sido entregadas')).toBeInTheDocument();
+    expect(screen.getByText('Mamani Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.getByText('Condori Rojas, Beatriz')).toBeInTheDocument();
+    expect(screen.getByText('88')).toBeInTheDocument();
+    expect(screen.getByText('48')).toBeInTheDocument();
+
+    const botonEjecutar = screen.getByRole('button', { name: /Ejecutar Centralización Oficial/ });
+    expect(botonEjecutar).not.toBeDisabled();
+    fireEvent.click(botonEjecutar);
+
+    await waitFor(() => expect(ejecutarSpy).toHaveBeenCalledWith(1, 11, false));
+    expect(
+      await screen.findByText('Centralización ejecutada exitosamente para Secundaria 4.º «A».'),
+    ).toBeInTheDocument();
+  });
+
+  it('debe contener botones de exportación oficial a PDF, Excel y CSV (CA 2)', async () => {
+    vi.spyOn(centralizadorLib, 'obtenerCentralizadorCurso').mockResolvedValue(
+      centralizadorMockCompleto,
+    );
+    const pdfSpy = vi
+      .spyOn(centralizadorLib, 'descargarCentralizadorPdf')
+      .mockResolvedValue(undefined);
+    const excelSpy = vi
+      .spyOn(centralizadorLib, 'descargarCentralizadorExcel')
+      .mockResolvedValue(undefined);
+    const csvSpy = vi
+      .spyOn(centralizadorLib, 'descargarCentralizadorCsv')
+      .mockImplementation(() => {});
+
+    abrir('/secretaria/centralizador', 'SECRETARIA');
+
+    const botonPdf = await screen.findByRole('button', { name: /Exportar Planilla PDF/ });
+    const botonExcel = screen.getByRole('button', { name: /Exportar Excel \(\.xlsx\)/ });
+    const botonCsv = screen.getByRole('button', { name: /Descargar CSV/ });
+
+    fireEvent.click(botonPdf);
+    await waitFor(() => expect(pdfSpy).toHaveBeenCalledWith(1, 11));
+
+    fireEvent.click(botonExcel);
+    await waitFor(() => expect(excelSpy).toHaveBeenCalledWith(1, 11));
+
+    fireEvent.click(botonCsv);
+    expect(csvSpy).toHaveBeenCalled();
+  });
+
+  it('debe filtrar estudiantes en la planilla por texto y estado académico', async () => {
+    vi.spyOn(centralizadorLib, 'obtenerCentralizadorCurso').mockResolvedValue(
+      centralizadorMockCompleto,
+    );
+    abrir('/secretaria/centralizador', 'SECRETARIA');
+
+    expect(await screen.findByText('Mamani Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.getByText('Condori Rojas, Beatriz')).toBeInTheDocument();
+
+    // Filtro por búsqueda de texto
+    const inputBusqueda = screen.getByLabelText(/Buscar estudiante o RUDE/);
+    fireEvent.change(inputBusqueda, { target: { value: 'Mamani' } });
+
+    expect(screen.getByText('Mamani Ramos, Alejandro')).toBeInTheDocument();
+    expect(screen.queryByText('Condori Rojas, Beatriz')).not.toBeInTheDocument();
+
+    // Filtro por estado
+    fireEvent.change(inputBusqueda, { target: { value: '' } });
+    const selectEstado = screen.getByLabelText(/Estado Académico/);
+    fireEvent.change(selectEstado, { target: { value: 'REPROBADO' } });
+
+    expect(screen.queryByText('Mamani Ramos, Alejandro')).not.toBeInTheDocument();
+    expect(screen.getByText('Condori Rojas, Beatriz')).toBeInTheDocument();
   });
 });

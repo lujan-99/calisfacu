@@ -38,6 +38,12 @@ export const MENU_POR_ROL: Record<Rol, OpcionMenu[]> = {
       cy: 'menu-control-entregas',
     },
     {
+      a: '/secretaria/centralizador',
+      texto: 'Centralizador de notas',
+      icono: 'tabla',
+      cy: 'menu-centralizador',
+    },
+    {
       a: '/secretaria/vinculos-familiares',
       texto: 'Vínculos familiares',
       icono: 'personas',

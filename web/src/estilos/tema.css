@@ -1922,3 +1922,67 @@ p {
   font-variant-numeric: tabular-nums;
   color: var(--color-primario);
 }
+
+/* ---------- Centralizador Oficial de Notas (US-09) ---------- */
+.fila-acciones-centralizador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.botones-principales {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lista-pendientes {
+  margin: 8px 0 0 16px;
+  padding: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.pie-centralizador-oficial {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--borde);
+}
+
+.espacio-firmas {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding: 24px 0 12px;
+}
+
+.linea-firma {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 240px;
+}
+
+.trazo-firma {
+  width: 220px;
+  height: 1px;
+  background: var(--texto-2);
+  margin-bottom: 8px;
+}
+
+.linea-firma span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto-1);
+}
+
+.linea-firma small {
+  font-size: 11.5px;
+  color: var(--texto-2);
+}

@@ -705,3 +705,16 @@ export const obtenerBoletinHijoApi = (estudianteId: number) =>
 
 export const descargarBoletinHijoPdfApi = (estudianteId: number): Promise<Blob> =>
   solicitarArchivo(`/padre/hijos/${estudianteId}/boletin/pdf`);
+
+export const obtenerCentralizadorApi = <T>(cursoId: number, trimestreId: number) =>
+  solicitar<T>(`/centralizador/cursos/${cursoId}?trimestreId=${trimestreId}`);
+
+export const ejecutarCentralizacionApi = <T>(
+  cursoId: number,
+  trimestreId: number,
+  cerrarTrimestre = false,
+) =>
+  solicitar<T>(
+    `/centralizador/cursos/${cursoId}/ejecutar`,
+    enviar('POST', { trimestreId, cerrarTrimestre }),
+  );

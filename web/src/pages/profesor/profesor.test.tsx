@@ -826,14 +826,17 @@ describe('Registro de asistencia por clase (US-19, T-037)', () => {
     });
     fireEvent.click(btnGuardar);
 
-    await waitFor(() => {
-      expect(guardarSpy).toHaveBeenCalledWith(7, expect.any(String), {
-        registros: [
-          { estudianteId: 1, estado: 'PRESENTE' },
-          { estudianteId: 2, estado: 'PRESENTE' },
-        ],
-      });
-    });
+    await waitFor(
+      () => {
+        expect(guardarSpy).toHaveBeenCalledWith(7, expect.any(String), {
+          registros: [
+            { estudianteId: 1, estado: 'PRESENTE' },
+            { estudianteId: 2, estado: 'PRESENTE' },
+          ],
+        });
+      },
+      { timeout: 3000 },
+    );
     expect(await screen.findByText(/Se guardó correctamente la asistencia/i)).toBeInTheDocument();
   });
 

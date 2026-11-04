@@ -10,6 +10,7 @@ import {
   SolicitudEdicionEstudiante,
 } from '../../database/entities';
 import { AccesoNotasService } from '../notas/acceso.service';
+import { CambiosNotasService } from '../notas/cambios-notas.service';
 
 /**
  * Módulo crítico: corrección auditable (US-04, M15).
@@ -21,6 +22,7 @@ import { AccesoNotasService } from '../notas/acceso.service';
 export class AuditoriaService {
   constructor(
     private readonly acceso: AccesoNotasService,
+    private readonly cambios: CambiosNotasService,
     @InjectDataSource() private readonly db: DataSource,
     @InjectRepository(Nota) private readonly notas: Repository<Nota>,
     @InjectRepository(RegistroAuditoria) private readonly registros: Repository<RegistroAuditoria>,
@@ -38,7 +40,7 @@ export class AuditoriaService {
   async corregir(notaId: number, valor: number, motivo: string, usuario: UsuarioToken) {
     const nota = await this.notaConActividad(notaId);
     await this.acceso.actividadDelProfesor(nota.actividad.id, usuario, true);
-    return this.db.transaction(async (tx) => {
+    const resultado = await this.db.transaction(async (tx) => {
       // El valor anterior se lee con la fila bloqueada: dos correcciones simultáneas se aplican una tras otra
       // y cada registro de auditoría guarda el valor que realmente reemplazó (M15).
       const actual = await tx.findOne(Nota, {
@@ -81,6 +83,12 @@ export class AuditoriaService {
       });
       return { notaId, valorAnterior: actual.valor, valorNuevo: valor };
     });
+    // US-08: la corrección también recalcula la nota trimestral y puede disparar o superar una alerta.
+    await this.cambios.notificar({
+      actividadId: nota.actividad.id,
+      estudianteIds: [nota.estudiante.id],
+    });
+    return resultado;
   }
 
   async historial(notaId: number, usuario: UsuarioToken) {

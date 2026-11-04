@@ -143,6 +143,8 @@ erDiagram
   trimestres ||--o{ entregas_notas : ""
   cursos ||--o{ centralizaciones : "una por trimestre"
   trimestres ||--o{ centralizaciones : ""
+  estudiantes ||--o{ alertas_promedio : "por materia y trimestre"
+  materias ||--o{ alertas_promedio : ""
 ```
 
 Decisiones del modelo:
@@ -157,6 +159,10 @@ Decisiones del modelo:
 - `entregas_notas` tiene una fila por materia y trimestre (`UNIQUE`): la entrega no se repite ni se deshace (US-10, D13).
 - `centralizaciones` tiene una fila por curso y trimestre (`UNIQUE`): se centraliza una sola vez, cuando todas las
   materias del curso entregaron (US-09, D21). La planilla se calcula al consultarla, igual que la nota trimestral.
+- `alertas_promedio` tiene un índice único parcial (`WHERE superada_en IS NULL`): un estudiante tiene a lo sumo una
+  alerta vigente por materia y trimestre, aun con dos correcciones simultáneas (US-08, D22). El módulo de notas avisa
+  los cambios con `CambiosNotasService` después de confirmar la transacción; `notificaciones` se suscribe, así el
+  módulo crítico no depende de las alertas.
 - `estudiantes.ci` (cédula de identidad) es opcional y no identifica al estudiante (D15).
 - `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos
   de la misma gestión (US-18, criterio 3; D10). La fila guarda también la gestión del curso para que la base lo exija.

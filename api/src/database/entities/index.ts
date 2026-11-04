@@ -11,6 +11,7 @@ import {
 } from './academico.entity';
 import {
   Actividad,
+  AlertaPromedio,
   Asistencia,
   Centralizacion,
   EntregaNotas,
@@ -45,6 +46,7 @@ export const ENTIDADES = [
   EntregaNotas,
   PublicacionBoletin,
   Centralizacion,
+  AlertaPromedio,
   SolicitudEdicion,
   SolicitudEdicionEstudiante,
 ];

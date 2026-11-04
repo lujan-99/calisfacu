@@ -14,6 +14,7 @@ import {
 } from '../../database/entities';
 import { nombreCurso } from '../academico/formato';
 import { AccesoNotasService } from './acceso.service';
+import { CambiosNotasService } from './cambios-notas.service';
 import type { CrearActividadDto, RegistrarPlanillaDto } from './notas.dto';
 
 /** Módulo crítico: registro de notas (US-01). */
@@ -21,6 +22,7 @@ import type { CrearActividadDto, RegistrarPlanillaDto } from './notas.dto';
 export class NotasService {
   constructor(
     private readonly acceso: AccesoNotasService,
+    private readonly cambios: CambiosNotasService,
     @InjectDataSource() private readonly db: DataSource,
     @InjectRepository(Estudiante) private readonly estudiantes: Repository<Estudiante>,
     @InjectRepository(Nota) private readonly notas: Repository<Nota>,
@@ -169,7 +171,7 @@ export class NotasService {
       throw new UnprocessableEntityException('Un estudiante aparece más de una vez en la planilla');
     }
 
-    return this.db.transaction(async (tx) => {
+    const resultado = await this.db.transaction(async (tx) => {
       // La gestión se toma en modo compartido: mientras se guardan notas no pueden cambiar los puntajes de sus
       // dimensiones (US-18, criterio 7; DimensionesService la bloquea en modo exclusivo).
       await tx.query(
@@ -210,5 +212,8 @@ export class NotasService {
       }
       return { guardadas: dto.notas.length };
     });
+    // US-08: recalcular y avisar después de confirmar (una alerta no se crea por notas que no se guardaron).
+    await this.cambios.notificar({ actividadId: actividad.id, estudianteIds: ids });
+    return resultado;
   }
 }

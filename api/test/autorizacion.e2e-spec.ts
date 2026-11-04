@@ -305,6 +305,18 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
       url: `/api/centralizador/cursos/${e.ajeno.curso.id}/ejecutar`,
       noPermitidos: secretariaYAdmin,
     },
+    // US-08: alertas de promedio bajo.
+    { metodo: 'get', url: '/api/notificaciones/alertas', noPermitidos: ['padre'] },
+    {
+      metodo: 'patch',
+      url: '/api/notificaciones/alertas/1/leer',
+      noPermitidos: ['secretaria', 'admin', 'padre'],
+    },
+    {
+      metodo: 'post',
+      url: '/api/notificaciones/alertas/1/atender',
+      noPermitidos: ['secretaria', 'admin', 'padre'],
+    },
     // El padre del escenario no está vinculado a e.ajeno (US-20).
     {
       metodo: 'get',

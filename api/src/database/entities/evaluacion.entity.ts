@@ -172,6 +172,57 @@ export class Centralizacion {
 }
 
 /**
+ * Alerta de promedio bajo (US-08, T-060; decisión D22): la nota trimestral de un estudiante en una materia quedó por
+ * debajo de 51. Está vigente hasta que la nota vuelve a 51 o más (`superadaEn`); mientras tanto no se repite (índice
+ * único parcial). El profesor la lee y la atiende con una nota de lo que hizo (contactar al tutor).
+ */
+@Entity('alertas_promedio')
+@Index('alertas_promedio_una_vigente', ['estudiante', 'materia', 'trimestre'], {
+  unique: true,
+  where: '"superada_en" IS NULL',
+})
+export class AlertaPromedio {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Estudiante, { nullable: false })
+  estudiante: Estudiante;
+
+  @ManyToOne(() => Materia, { nullable: false })
+  materia: Materia;
+
+  @ManyToOne(() => Trimestre, { nullable: false })
+  trimestre: Trimestre;
+
+  /** Nota trimestral que disparó la alerta. */
+  @Column()
+  nota: number;
+
+  /** Nota trimestral anterior al cambio que la disparó; null si no tenía (D4). */
+  @Column({ type: 'int', nullable: true })
+  notaAnterior: number | null;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  creadaEn: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  leidaEn: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  atendidaEn: Date | null;
+
+  @ManyToOne(() => Usuario, { nullable: true })
+  atendidaPor: Usuario | null;
+
+  @Column({ type: 'text', nullable: true })
+  notaAtencion: string | null;
+
+  /** Cuándo la nota volvió a 51 o más: desde entonces la alerta deja de estar vigente. */
+  @Column({ type: 'timestamptz', nullable: true })
+  superadaEn: Date | null;
+}
+
+/**
  * Solicitud de edición (decisión D16): el profesor pide corregir notas ya registradas de una actividad y el
  * administrador la aprueba o la rechaza con una observación. Cada estudiante aprobado habilita una corrección.
  */

@@ -1,6 +1,6 @@
 # US-08 · Alerta de Promedio Bajo
 
-- **Sprint:** Sprint 4 · **Prioridad:** BAJA · **Puntos:** valor 8, esfuerzo 8 · **Estado:** Planificada
+- **Sprint:** Sprint 4 · **Prioridad:** BAJA · **Puntos:** valor 8, esfuerzo 8 · **Estado:** En proceso
 
 ## Historia
 
@@ -8,7 +8,7 @@ Como profesor, quiero recibir una alerta automática cuando el promedio de un es
 
 ## Notas y dependencias
 
-Depende de US-02 y US-06. Canal de notificación: aviso en el sistema y correo (decisión D7 de `docs/backlog/reglas-ministerio.md`).
+Depende de US-02 y US-06. Canal de notificación: aviso en el sistema y correo (decisión D7 de `docs/backlog/reglas-ministerio.md`). Cuándo se dispara y cuándo se repite la alerta: decisión D22.
 
 ## Criterios de aceptación
 
@@ -26,6 +26,6 @@ Depende de US-02 y US-06. Canal de notificación: aviso en el sistema y correo (
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

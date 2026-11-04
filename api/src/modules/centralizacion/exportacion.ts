@@ -251,9 +251,11 @@ export async function generarExcelPlanilla(d: DatosExportacion): Promise<Buffer>
     titulo.font = { bold: true, size: 13 };
     hoja.mergeCells(titulo.number, 1, titulo.number, h.columnas.length);
     titulo.alignment = { horizontal: 'center' };
+    // La etiqueta va en la columna ancha de los nombres (la del N.º es angosta y la cortaría).
     for (const [etiqueta, valor] of h.encabezado) {
-      const r = hoja.addRow([etiqueta, valor]);
-      r.getCell(1).font = { bold: true };
+      const r = hoja.addRow([null, etiqueta, valor]);
+      r.getCell(2).font = { bold: true };
+      r.getCell(3).alignment = { horizontal: 'left' };
     }
     hoja.addRow([]);
     const cabecera = hoja.addRow(h.columnas);

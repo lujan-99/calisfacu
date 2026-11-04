@@ -138,7 +138,9 @@ describe('Exportación del centralizador (US-09)', () => {
     ]);
     const hoja = libro.getWorksheet('Centralizador');
     const valores: unknown[][] = [];
-    hoja?.eachRow((r) => valores.push((r.values as unknown[]).slice(1)));
+    hoja?.eachRow((r) =>
+      valores.push((r.values as unknown[]).slice(1).filter((c) => c !== undefined && c !== null)),
+    );
     expect(valores).toContainEqual(['Código SIE', '80000001']);
     expect(valores).toContainEqual([1, 'Condori, Eva', 70, 45, 57.5, 'Reprobado']);
     expect(valores.flat()).toEqual(expect.arrayContaining(['Director(a)', 'Maestro(a) asesor(a)']));

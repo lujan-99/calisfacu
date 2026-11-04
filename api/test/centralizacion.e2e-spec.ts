@@ -239,7 +239,11 @@ describe('Centralización de notas (US-09)', () => {
     ]);
     const filas = (nombre: string) => {
       const v: unknown[][] = [];
-      libro.getWorksheet(nombre)?.eachRow((f) => v.push((f.values as unknown[]).slice(1)));
+      libro
+        .getWorksheet(nombre)
+        ?.eachRow((f) =>
+          v.push((f.values as unknown[]).slice(1).filter((c) => c !== undefined && c !== null)),
+        );
       return v;
     };
     const consolidada = filas('Centralizador');

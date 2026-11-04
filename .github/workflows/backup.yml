@@ -34,7 +34,7 @@ jobs:
           gpg --batch --yes --pinentry-mode loopback --symmetric --cipher-algo AES256 \
               --passphrase "$BACKUP_PASSPHRASE" -o "calis-$(date +%F).dump.gpg" db.dump
           rm db.dump
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: respaldo-db-${{ github.run_id }}
           path: '*.dump.gpg'

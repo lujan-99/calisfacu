@@ -162,8 +162,8 @@ describe('Portal del Padre de Familia (US-11, T-051)', () => {
     vi.spyOn(api, 'obtenerBoletinHijoApi').mockResolvedValue(BOLETIN_PUBLICADO);
     abrir('/padre/boletin', 'PADRE');
 
-    expect(await screen.findByText(/Aviso de boletín disponible \(US-12\):/i)).toBeInTheDocument();
-    expect(screen.getByText(/menos de 15 minutos desde su publicación/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Boletín publicado:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Avisos del boletín/i, { selector: 'div' })).toBeInTheDocument();
   });
 });
 
@@ -191,13 +191,28 @@ describe('Avisos y Notificaciones de Boletín al Padre de Familia (US-12, T-062)
     vi.spyOn(api, 'listarNotificacionesPadreApi').mockResolvedValue([AVISO_PRUEBA]);
   });
 
+  it('debe decir que el aviso quedó solo en el sistema si el servidor no envía correos (T-062)', async () => {
+    vi.spyOn(api, 'listarNotificacionesPadreApi').mockResolvedValue([
+      {
+        ...AVISO_PRUEBA,
+        estadoEnvio: 'SIN_PROVEEDOR',
+        canalEnvio: 'SISTEMA',
+        tiempoEntregaMinutos: null,
+      },
+    ]);
+    abrir('/padre/notificaciones', 'PADRE');
+    expect(await screen.findByText(/solo dentro del sistema/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Enviado a/i)).not.toBeInTheDocument();
+  });
+
   it('debe listar las notificaciones de boletines y reflejar el tiempo de entrega en 15 minutos o menos (US-12, CA 1)', async () => {
     abrir('/padre/notificaciones', 'PADRE');
 
     expect(await screen.findByText(/Avisos de Boletines Publicados/i)).toBeInTheDocument();
     expect(screen.getByText('Boletín Disponible: Pérez Condori, Alejandro')).toBeInTheDocument();
-    expect(screen.getByText(/Enviada a padre@calisfacu.edu.bo en 8 minutos/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cumple SLA ≤ 15 min · US-12 CA 1/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Enviado a padre@calisfacu.edu.bo 8 min después de la publicación/i),
+    ).toBeInTheDocument();
     expect(screen.getByText('Nuevo aviso')).toBeInTheDocument();
   });
 

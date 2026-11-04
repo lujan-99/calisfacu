@@ -262,9 +262,8 @@ export function Boletin() {
           >
             <Icono nombre="correo" tam={20} />
             <div>
-              <strong>Aviso de boletín disponible (US-12):</strong> Se emitió la notificación
-              oficial por correo electrónico a la familia en menos de 15 minutos desde su
-              publicación.
+              <strong>Boletín publicado:</strong> al publicarse, CalisFacu avisó a la familia dentro
+              del sistema y por correo. Puede ver el estado de cada aviso en «Avisos del boletín».
             </div>
           </div>
           {/* Tarjeta de Resumen y Botón de Descarga Oficial */}

@@ -145,6 +145,9 @@ erDiagram
   trimestres ||--o{ centralizaciones : ""
   estudiantes ||--o{ alertas_promedio : "por materia y trimestre"
   materias ||--o{ alertas_promedio : ""
+  alertas_promedio }o--o| correos : "correo al profesor"
+  usuarios ||--o{ avisos_boletin : "padre"
+  avisos_boletin }o--o| correos : "correo al padre"
 ```
 
 Decisiones del modelo:
@@ -163,6 +166,8 @@ Decisiones del modelo:
   alerta vigente por materia y trimestre, aun con dos correcciones simultáneas (US-08, D22). El módulo de notas avisa
   los cambios con `CambiosNotasService` después de confirmar la transacción; `notificaciones` se suscribe, así el
   módulo crítico no depende de las alertas.
+- `correos` es la bandeja de salida (ADR-0011): el correo se guarda en la transacción de su aviso y se envía por la API
+  HTTP del proveedor con reintentos; `avisos_boletin` tiene un aviso por padre, estudiante y trimestre (`UNIQUE`, D23).
 - `estudiantes.ci` (cédula de identidad) es opcional y no identifica al estudiante (D15).
 - `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos
   de la misma gestión (US-18, criterio 3; D10). La fila guarda también la gestión del curso para que la base lo exija.

@@ -317,6 +317,17 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
       url: '/api/notificaciones/alertas/1/atender',
       noPermitidos: ['secretaria', 'admin', 'padre'],
     },
+    // US-12: avisos de boletín, solo del padre.
+    {
+      metodo: 'get',
+      url: '/api/notificaciones/padre',
+      noPermitidos: ['profesor', 'secretaria', 'admin'],
+    },
+    {
+      metodo: 'patch',
+      url: '/api/notificaciones/padre/1/leer',
+      noPermitidos: ['profesor', 'secretaria', 'admin'],
+    },
     // El padre del escenario no está vinculado a e.ajeno (US-20).
     {
       metodo: 'get',

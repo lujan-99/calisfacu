@@ -13,6 +13,8 @@ import {
   AlertaPromedio,
   AsignacionMateria,
   DimensionEvaluacion,
+  EstadoCorreo,
+  Estudiante,
   Nota,
   Rol,
   VinculoPadre,
@@ -21,6 +23,8 @@ import { nombreCurso } from '../academico/formato';
 import { CalculoService } from '../calculo/calculo.service';
 import { AccesoNotasService } from '../notas/acceso.service';
 import { CambiosNotasService, type CambioNotas } from '../notas/cambios-notas.service';
+import { correoAlertaPromedio } from './correo/plantillas';
+import { CorreosService, urlWeb } from './correo/correos.service';
 import { accionAlerta } from './reglas-alertas';
 
 type PorDimension = Record<string, number[]>;
@@ -36,6 +40,7 @@ export class AlertasService implements OnModuleInit {
     private readonly calculo: CalculoService,
     private readonly acceso: AccesoNotasService,
     private readonly cambios: CambiosNotasService,
+    private readonly correos: CorreosService,
     @InjectDataSource() private readonly db: DataSource,
   ) {}
 
@@ -47,7 +52,7 @@ export class AlertasService implements OnModuleInit {
   async evaluar({ actividadId, estudianteIds }: CambioNotas) {
     const actividad = await this.db.getRepository(Actividad).findOne({
       where: { id: actividadId },
-      relations: { materia: true, trimestre: { gestion: true } },
+      relations: { materia: { curso: true }, trimestre: { gestion: true } },
     });
     if (!actividad) return;
     const { materia, trimestre } = actividad;
@@ -77,6 +82,7 @@ export class AlertasService implements OnModuleInit {
       notas.filter((n) => n.actividad.id === actividadId).map((n) => n.id),
     );
 
+    let creadas = 0;
     for (const estudianteId of estudianteIds) {
       const actuales: PorDimension = {};
       const antes: PorDimension = {};
@@ -91,23 +97,72 @@ export class AlertasService implements OnModuleInit {
       const vigente = vigentes.find((v) => v.estudiante.id === estudianteId);
       const accion = accionAlerta(nota, Boolean(vigente));
       if (accion === 'CREAR' && nota !== null) {
-        try {
-          await this.db.getRepository(AlertaPromedio).insert({
-            estudiante: { id: estudianteId },
-            materia: { id: materia.id },
-            trimestre: { id: trimestre.id },
-            nota,
-            notaAnterior: this.calculo.notaTrimestral(dims, antes).nota,
-          });
-        } catch (e) {
-          // Dos cambios simultáneos: la otra petición ya creó la alerta vigente (índice único parcial).
-          if (!esDuplicado(e)) throw e;
-        }
+        creadas += await this.crear(
+          actividad,
+          estudianteId,
+          nota,
+          this.calculo.notaTrimestral(dims, antes).nota,
+        );
       } else if (accion === 'SUPERAR' && vigente) {
         await this.db
           .getRepository(AlertaPromedio)
           .update({ id: vigente.id, superadaEn: IsNull() }, { superadaEn: new Date() });
       }
+    }
+    if (creadas > 0) this.correos.despachar();
+  }
+
+  /**
+   * Crea la alerta y su correo al profesor de la materia (T-061) en una transacción: si otra petición ya creó la
+   * alerta vigente (índice único parcial), no queda un correo suelto. Devuelve 1 si la creó.
+   */
+  private async crear(
+    actividad: Actividad,
+    estudianteId: number,
+    nota: number,
+    notaAnterior: number | null,
+  ) {
+    const { materia, trimestre } = actividad;
+    const [estudiante, asignacion] = await Promise.all([
+      this.db.getRepository(Estudiante).findOneByOrFail({ id: estudianteId }),
+      this.db.getRepository(AsignacionMateria).findOne({
+        where: { materia: { id: materia.id } },
+        relations: { profesor: true },
+      }),
+    ]);
+    try {
+      await this.db.transaction(async (m) => {
+        const correo = asignacion
+          ? await this.correos.registrar(
+              {
+                destinatario: asignacion.profesor.email,
+                ...correoAlertaPromedio({
+                  profesor: asignacion.profesor.nombre,
+                  estudiante: `${estudiante.apellidos}, ${estudiante.nombres}`,
+                  materia: materia.nombre,
+                  curso: nombreCurso(materia.curso),
+                  trimestre: trimestre.numero,
+                  nota,
+                  notaAnterior,
+                  urlWeb: urlWeb(),
+                }),
+              },
+              m,
+            )
+          : null;
+        await m.getRepository(AlertaPromedio).insert({
+          estudiante: { id: estudianteId },
+          materia: { id: materia.id },
+          trimestre: { id: trimestre.id },
+          nota,
+          notaAnterior,
+          correo,
+        });
+      });
+      return 1;
+    } catch (e) {
+      if (!esDuplicado(e)) throw e;
+      return 0;
     }
   }
 
@@ -146,6 +201,7 @@ export class AlertasService implements OnModuleInit {
         materia: { curso: true },
         trimestre: true,
         atendidaPor: true,
+        correo: true,
       },
       order: { creadaEn: 'DESC', id: 'DESC' },
     });
@@ -186,8 +242,10 @@ export class AlertasService implements OnModuleInit {
       vigente: a.superadaEn === null,
       fechaSuperada: a.superadaEn?.toISOString() ?? null,
       leida: a.leidaEn !== null,
-      // El correo lo envía T-061; hasta entonces la alerta es solo el aviso dentro del sistema.
-      correoEnviado: false,
+      // T-061: el correo al profesor; sin proveedor configurado la alerta queda solo dentro del sistema.
+      correoEnviado: a.correo?.estado === EstadoCorreo.ENVIADO,
+      fechaEnvioCorreo: a.correo?.enviadoEn?.toISOString(),
+      estadoCorreo: a.correo?.estado ?? null,
       tutor: tutor
         ? {
             id: tutor.padre.id,

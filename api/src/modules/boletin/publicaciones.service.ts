@@ -16,6 +16,7 @@ import {
   Trimestre,
 } from '../../database/entities';
 import { CalculoService } from '../calculo/calculo.service';
+import { AvisosBoletinService } from '../notificaciones/avisos-boletin.service';
 import type { DatosBoletin } from './contenido';
 
 /**
@@ -26,6 +27,7 @@ import type { DatosBoletin } from './contenido';
 export class PublicacionesService {
   constructor(
     private readonly calculo: CalculoService,
+    private readonly avisos: AvisosBoletinService,
     @InjectDataSource() private readonly db: DataSource,
   ) {}
 
@@ -91,6 +93,8 @@ export class PublicacionesService {
       if (!esDuplicado(e)) throw e;
       throw new ConflictException('El boletín de ese trimestre ya está publicado');
     }
+    // US-12 (T-062): aviso dentro del sistema y correo a cada padre vinculado.
+    await this.avisos.alPublicar(cursoId, trimestreId);
     return (await this.listar(cursoId)).find((t) => t.trimestreId === trimestreId);
   }
 

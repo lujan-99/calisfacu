@@ -171,6 +171,62 @@ export class Centralizacion {
   centralizadoEn: Date;
 }
 
+/** Estado de un correo de la bandeja de salida (ADR-0011). */
+export enum EstadoCorreo {
+  PENDIENTE = 'PENDIENTE',
+  ENVIADO = 'ENVIADO',
+  FALLIDO = 'FALLIDO',
+  /** No hay proveedor configurado (CORREO_API_KEY): el aviso queda solo dentro del sistema. */
+  SIN_PROVEEDOR = 'SIN_PROVEEDOR',
+}
+
+/**
+ * Bandeja de salida de correos (T-061, ADR-0011): el aviso se guarda en la misma operación que lo origina y se envía
+ * por la API HTTP del proveedor (Render bloquea SMTP), con reintentos. Si el correo falla, el aviso dentro del sistema
+ * sigue funcionando (SQAP, Tabla 25).
+ */
+@Entity('correos')
+@Index(['estado', 'siguienteIntento'])
+export class Correo {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  destinatario: string;
+
+  @Column()
+  asunto: string;
+
+  @Column({ type: 'text' })
+  texto: string;
+
+  @Column({ type: 'text' })
+  html: string;
+
+  @Column({
+    type: 'enum',
+    enum: EstadoCorreo,
+    enumName: 'estado_correo',
+    default: EstadoCorreo.PENDIENTE,
+  })
+  estado: EstadoCorreo;
+
+  @Column({ default: 0 })
+  intentos: number;
+
+  @Column({ type: 'timestamptz', default: () => 'now()' })
+  siguienteIntento: Date;
+
+  @Column({ type: 'text', nullable: true })
+  ultimoError: string | null;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  creadoEn: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  enviadoEn: Date | null;
+}
+
 /**
  * Alerta de promedio bajo (US-08, T-060; decisión D22): la nota trimestral de un estudiante en una materia quedó por
  * debajo de 51. Está vigente hasta que la nota vuelve a 51 o más (`superadaEn`); mientras tanto no se repite (índice
@@ -220,6 +276,39 @@ export class AlertaPromedio {
   /** Cuándo la nota volvió a 51 o más: desde entonces la alerta deja de estar vigente. */
   @Column({ type: 'timestamptz', nullable: true })
   superadaEn: Date | null;
+
+  /** Correo al profesor (T-061). */
+  @ManyToOne(() => Correo, { nullable: true })
+  correo: Correo | null;
+}
+
+/**
+ * Aviso al padre de que el boletín de su hijo está disponible (US-12, T-062; decisión D23): uno por padre, estudiante
+ * y trimestre, creado al publicar el boletín (US-11). Una nueva publicación del mismo trimestre no lo repite.
+ */
+@Entity('avisos_boletin')
+@Unique(['padre', 'estudiante', 'trimestre'])
+export class AvisoBoletin {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Usuario, { nullable: false })
+  padre: Usuario;
+
+  @ManyToOne(() => Estudiante, { nullable: false })
+  estudiante: Estudiante;
+
+  @ManyToOne(() => Trimestre, { nullable: false })
+  trimestre: Trimestre;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  creadoEn: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  leidoEn: Date | null;
+
+  @ManyToOne(() => Correo, { nullable: true })
+  correo: Correo | null;
 }
 
 /**

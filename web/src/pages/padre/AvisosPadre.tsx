@@ -253,33 +253,49 @@ export function AvisosPadre() {
                       su consulta y descarga en formato PDF.
                     </p>
 
-                    {/* Verificación de cumplimiento US-12 CA 1 (<= 15 min) */}
-                    <div
-                      style={{
-                        padding: '10px 14px',
-                        borderRadius: 6,
-                        background: '#f0fdf4',
-                        border: '1px solid #bbf7d0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: 8,
-                        fontSize: '0.88rem',
-                        color: '#166534',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <Icono nombre="check" tam={16} />
-                        <span>
-                          <strong>Notificación por correo:</strong>{' '}
-                          {`Enviada a ${aviso.correoDestinatario ?? 'correo del tutor'} en ${aviso.tiempoEntregaMinutos} minutos (Cumple SLA ≤ 15 min · US-12 CA 1).`}
-                        </span>
-                      </div>
-                      <span style={{ fontSize: '0.82rem', color: '#15803d' }}>
-                        Publicado: {formatoFecha(aviso.fechaPublicacion)}
-                      </span>
-                    </div>
+                    {/* Estado real del correo (US-12 CA 1: <= 15 min), según la API */}
+                    {(() => {
+                      const enviado = aviso.estadoEnvio === 'ENVIADO';
+                      const texto = enviado
+                        ? `Enviado a ${aviso.correoDestinatario ?? 'su correo'} ${
+                            aviso.tiempoEntregaMinutos === null
+                              ? ''
+                              : `${aviso.tiempoEntregaMinutos} min después de la publicación`
+                          }.`
+                        : aviso.estadoEnvio === 'PENDIENTE'
+                          ? 'El correo está en camino; el aviso ya está disponible aquí.'
+                          : aviso.estadoEnvio === 'FALLIDO'
+                            ? 'No se pudo entregar el correo; el aviso está disponible aquí.'
+                            : 'Este aviso está solo dentro del sistema (el envío por correo no está activo).';
+                      return (
+                        <div
+                          data-cy="estado-correo-aviso"
+                          style={{
+                            padding: '10px 14px',
+                            borderRadius: 6,
+                            background: enviado ? '#f0fdf4' : '#f8fafc',
+                            border: `1px solid ${enviado ? '#bbf7d0' : '#e2e8f0'}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: 8,
+                            fontSize: '0.88rem',
+                            color: enviado ? '#166534' : '#334155',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <Icono nombre={enviado ? 'check' : 'correo'} tam={16} />
+                            <span>
+                              <strong>Notificación por correo:</strong> {texto}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '0.82rem' }}>
+                            Publicado: {formatoFecha(aviso.fechaPublicacion)}
+                          </span>
+                        </div>
+                      );
+                    })()}
 
                     {/* Acciones */}
                     <div

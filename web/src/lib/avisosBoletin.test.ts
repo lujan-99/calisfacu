@@ -133,51 +133,9 @@ describe('Avisos de Boletín Disponible (US-12, T-062)', () => {
     expect(resultado).toEqual(AVISOS_PRUEBA);
   });
 
-  it('debe generar avisos de respaldo si la API aún no está disponible pero el boletín está publicado', async () => {
-    vi.spyOn(api, 'listarNotificacionesPadreApi').mockRejectedValue(new Error('Endpoint no listo'));
-    vi.spyOn(api, 'listarHijosTutorApi').mockResolvedValue([
-      {
-        id: 20,
-        nombres: 'Sofía',
-        apellidos: 'Vargas',
-        codigoRude: '90000000020',
-        curso: {
-          id: 3,
-          nombre: 'Primaria 1.º «A»',
-          nivel: 'PRIMARIA',
-          paralelo: 'A',
-          anioEscolaridad: 1,
-        },
-        gestion: { id: 1, anio: 2026 },
-      },
-    ]);
-    vi.spyOn(api, 'obtenerBoletinHijoApi').mockResolvedValue({
-      estudiante: {
-        id: 20,
-        nombres: 'Sofía',
-        apellidos: 'Vargas',
-        codigoRude: '90000000020',
-        curso: {
-          id: 3,
-          nombre: 'Primaria 1.º «A»',
-          nivel: 'PRIMARIA',
-          paralelo: 'A',
-          anioEscolaridad: 1,
-        },
-      },
-      publicado: true,
-      estadoPeriodo: 'PUBLICADO',
-      promedioAnual: 90,
-      porcentajeAsistencia: 100,
-      estadoAnual: 'PROMOVIDO',
-      materias: [],
-    });
-
-    const resultado = await listarAvisosBoletinPadre();
-    expect(resultado).toHaveLength(1);
-    expect(resultado[0].estudianteNombre).toBe('Vargas, Sofía');
-    expect(resultado[0].tiempoEntregaMinutos).toBeLessThanOrEqual(TIEMPO_MAXIMO_ENTREGA_MINUTOS);
-    expect(resultado[0].canalEnvio).toBe('EMAIL');
+  it('debe propagar el error de la API sin inventar avisos ni correos enviados', async () => {
+    vi.spyOn(api, 'listarNotificacionesPadreApi').mockRejectedValue(new Error('Sin conexión'));
+    await expect(listarAvisosBoletinPadre()).rejects.toThrow('Sin conexión');
   });
 
   it('debe marcar una notificación como leída invocando la API correspondiente', async () => {

@@ -1,6 +1,6 @@
 # US-12 · Aviso de Boletín
 
-- **Sprint:** Sprint 4 · **Prioridad:** BAJA · **Puntos:** valor 3, esfuerzo 2 · **Estado:** Planificada
+- **Sprint:** Sprint 4 · **Prioridad:** BAJA · **Puntos:** valor 3, esfuerzo 2 · **Estado:** En proceso
 
 ## Historia
 
@@ -8,7 +8,7 @@ Como padre de familia, quiero recibir una notificación cuando el boletín de mi
 
 ## Notas y dependencias
 
-Depende de US-07, US-11 y US-20. Usa el mismo canal de notificación que US-08. (Valores estimados: validar con el dueño del producto.)
+Depende de US-07, US-11 y US-20. Usa el mismo canal de notificación que US-08. A quién y cuándo se avisa: decisión D23; envío del correo: ADR-0011. (Valores estimados: validar con el dueño del producto.)
 
 ## Criterios de aceptación
 
@@ -23,6 +23,6 @@ Depende de US-07, US-11 y US-20. Usa el mismo canal de notificación que US-08. 
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

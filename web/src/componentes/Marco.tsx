@@ -79,6 +79,7 @@ export const MENU_POR_ROL: Record<Rol, OpcionMenu[]> = {
   ],
   PADRE: [
     { a: '/padre/boletin', texto: 'Boletín de mi hijo', icono: 'documento', cy: 'menu-boletin' },
+    { a: '/padre/notificaciones', texto: 'Avisos del boletín', icono: 'correo', cy: 'menu-avisos' },
   ],
 };
 

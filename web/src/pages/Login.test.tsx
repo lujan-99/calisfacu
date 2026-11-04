@@ -52,7 +52,7 @@ describe('Inicio de sesión y menú por rol (US-17)', () => {
       'Menú del administrador',
       ['Dimensiones de evaluación', 'Solicitudes de edición'],
     ],
-    ['PADRE', 'Menú del padre de familia', ['Boletín de mi hijo']],
+    ['PADRE', 'Menú del padre de familia', ['Boletín de mi hijo', 'Avisos del boletín']],
   ] as const)('debe mostrar a %s solo sus opciones', async (rol, nombreMenu, opciones) => {
     vi.spyOn(api, 'listarGestiones').mockResolvedValue([]);
     vi.spyOn(api, 'listarCursos').mockResolvedValue([]);

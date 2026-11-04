@@ -27,7 +27,12 @@ const ROLES = [
     inicio: '/admin/dimensiones',
     menu: ['Dimensiones de evaluación', 'Solicitudes de edición'],
   },
-  { rol: 'Padre', email: 'padreEmail', inicio: '/padre/boletin', menu: ['Boletín de mi hijo'] },
+  {
+    rol: 'Padre',
+    email: 'padreEmail',
+    inicio: '/padre/boletin',
+    menu: ['Boletín de mi hijo', 'Avisos del boletín'],
+  },
 ];
 
 describe('Inicio de sesión por rol (US-17)', () => {

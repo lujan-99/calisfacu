@@ -1,8 +1,6 @@
 import {
-  listarHijosTutorApi,
   listarNotificacionesPadreApi,
   marcarNotificacionPadreLeidaApi,
-  obtenerBoletinHijoApi,
   type NotificacionBoletinPadreApi,
 } from './api';
 import { nombreTrimestre } from './formato';
@@ -140,7 +138,11 @@ export function calcularResumenNotificacionesPadre(
       noLeidas++;
     }
 
-    if (a.estadoEnvio === 'ENVIADO' && a.tiempoEntregaMinutos <= TIEMPO_MAXIMO_ENTREGA_MINUTOS) {
+    if (
+      a.estadoEnvio === 'ENVIADO' &&
+      a.tiempoEntregaMinutos !== null &&
+      a.tiempoEntregaMinutos <= TIEMPO_MAXIMO_ENTREGA_MINUTOS
+    ) {
       correosEnviadosEnTiempo++;
     }
   }
@@ -154,57 +156,14 @@ export function calcularResumenNotificacionesPadre(
 }
 
 /**
- * Obtiene los avisos de boletines para el padre autenticado.
- * Consulta la API y, si aún está en fase de integración por Lujan, consolida reactivamente
- * la información a partir de los boletines publicados de sus hijos vinculados.
+ * Avisos de boletín del padre autenticado (US-12, T-062): los crea la API al publicar el boletín (decisión D23). Sin
+ * datos armados en el navegador: si la API falla, la pantalla muestra el error.
  */
-export async function listarAvisosBoletinPadre(): Promise<NotificacionBoletinPadreApi[]> {
-  try {
-    return await listarNotificacionesPadreApi<NotificacionBoletinPadreApi[]>();
-  } catch {
-    // Fallback de integración frontend con los hijos vinculados
-    const hijos = await listarHijosTutorApi().catch(() => []);
-    const avisos: NotificacionBoletinPadreApi[] = [];
-    let idContador = 1;
-
-    for (const hijo of hijos) {
-      try {
-        const detalle = await obtenerBoletinHijoApi(hijo.id);
-        if (detalle.publicado || detalle.estadoPeriodo === 'PUBLICADO') {
-          avisos.push({
-            id: idContador++,
-            estudianteId: hijo.id,
-            estudianteNombre: `${hijo.apellidos}, ${hijo.nombres}`,
-            codigoRude: hijo.codigoRude,
-            cursoId: hijo.curso?.id ?? 1,
-            cursoNombre: hijo.curso?.nombre ?? 'Secundaria',
-            trimestreId: 1,
-            trimestreNumero: 1,
-            gestionAnio: hijo.gestion?.anio ?? 2026,
-            fechaPublicacion: new Date(Date.now() - 1000 * 60 * 12).toISOString(), // Hace 12 minutos
-            canalEnvio: 'EMAIL',
-            correoDestinatario: 'padre@calisfacu.edu.bo',
-            tiempoEntregaMinutos: 8, // En 8 min (< 15 min US-12 CA 1)
-            leido: false,
-            estadoEnvio: 'ENVIADO',
-          });
-        }
-      } catch {
-        // Ignora errores si un hijo particular no tiene boletín
-      }
-    }
-
-    return avisos;
-  }
+export function listarAvisosBoletinPadre(): Promise<NotificacionBoletinPadreApi[]> {
+  return listarNotificacionesPadreApi<NotificacionBoletinPadreApi[]>();
 }
 
-/**
- * Marca una notificación de boletín como leída.
- */
-export async function marcarAvisoBoletinLeido(notificacionId: number): Promise<void> {
-  try {
-    await marcarNotificacionPadreLeidaApi(notificacionId);
-  } catch {
-    // Fallback silencioso en UI
-  }
+/** Marca un aviso de boletín como leído. */
+export function marcarAvisoBoletinLeido(notificacionId: number): Promise<void> {
+  return marcarNotificacionPadreLeidaApi(notificacionId);
 }

@@ -744,9 +744,12 @@ export interface NotificacionBoletinPadreApi {
   fechaPublicacion: string;
   canalEnvio: 'EMAIL' | 'SISTEMA';
   correoDestinatario?: string;
-  tiempoEntregaMinutos: number; // <= 15 min según US-12 CA 1
+  fechaEnvioCorreo?: string | null;
+  /** Minutos entre la publicación y el envío del correo (US-12 CA 1: <= 15); null si aún no se envió. */
+  tiempoEntregaMinutos: number | null;
   leido: boolean;
-  estadoEnvio: 'ENVIADO' | 'PENDIENTE' | 'FALLIDO';
+  /** SIN_PROVEEDOR: el servidor no tiene proveedor de correo configurado; el aviso queda solo en el sistema. */
+  estadoEnvio: 'ENVIADO' | 'PENDIENTE' | 'FALLIDO' | 'SIN_PROVEEDOR';
 }
 
 export const listarNotificacionesPadreApi = <T = NotificacionBoletinPadreApi[]>() =>

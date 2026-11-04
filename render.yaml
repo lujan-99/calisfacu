@@ -31,6 +31,17 @@ services:
         value: '2'
       - key: LIMITE_LOGIN_POR_MINUTO
         value: '20'
+      # T-061/T-062 (ADR-0011): correo por la API de Brevo. La clave y el remitente se cargan en Render (no van al
+      # repositorio); sin clave los avisos quedan solo dentro del sistema. Los usuarios del seed tienen correos
+      # ficticios: todo va a la casilla de pruebas.
+      - key: CORREO_API_KEY
+        sync: false
+      - key: CORREO_REMITENTE
+        sync: false
+      - key: CORREO_REDIRIGIR_A
+        sync: false
+      - key: WEB_URL
+        value: https://calisfacu-web-staging.onrender.com
       # Staging usa solo datos sintéticos: el seed se carga si la base está vacía (SQAP, Sección 7.2).
       - key: SEMBRAR
         value: '1'

@@ -12,6 +12,8 @@ import {
 import {
   Actividad,
   AlertaPromedio,
+  AvisoBoletin,
+  Correo,
   Asistencia,
   Centralizacion,
   EntregaNotas,
@@ -46,7 +48,9 @@ export const ENTIDADES = [
   EntregaNotas,
   PublicacionBoletin,
   Centralizacion,
+  Correo,
   AlertaPromedio,
+  AvisoBoletin,
   SolicitudEdicion,
   SolicitudEdicionEstudiante,
 ];

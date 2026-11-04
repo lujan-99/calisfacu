@@ -13,6 +13,7 @@ import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles, UsuarioActual, type UsuarioToken } from '../../common/decoradores';
 import { Rol } from '../../database/entities';
 import { AlertasService } from './alertas.service';
+import { AvisosBoletinService } from './avisos-boletin.service';
 import { AtenderAlertaDto } from './notificaciones.dto';
 
 /** Alertas de promedio bajo (US-08): el aviso dentro del sistema para el profesor de la materia. */
@@ -48,5 +49,25 @@ export class AlertasController {
     @UsuarioActual() usuario: UsuarioToken,
   ) {
     return this.alertas.atender(id, dto.notaAtencion, usuario);
+  }
+}
+
+/** Avisos de boletín disponible para el padre (US-12): solo ve los suyos. */
+@ApiTags('notificaciones')
+@ApiBearerAuth()
+@Roles(Rol.PADRE)
+@Controller('notificaciones/padre')
+export class AvisosPadreController {
+  constructor(private readonly avisos: AvisosBoletinService) {}
+
+  @Get()
+  listar(@UsuarioActual() usuario: UsuarioToken) {
+    return this.avisos.delPadre(usuario);
+  }
+
+  @Patch(':id/leer')
+  @HttpCode(204)
+  async leer(@Param('id', ParseIntPipe) id: number, @UsuarioActual() usuario: UsuarioToken) {
+    await this.avisos.marcarLeido(id, usuario);
   }
 }

@@ -8,7 +8,7 @@ Como profesor, quiero recibir una alerta automática cuando el promedio de un es
 
 ## Notas y dependencias
 
-Depende de US-02 y US-06. Canal de notificación: aviso en el sistema y correo (decisión D7 de `docs/backlog/reglas-ministerio.md`). Cuándo se dispara y cuándo se repite la alerta: decisión D22.
+Depende de US-02 y US-06. Canal de notificación: aviso en el sistema y correo (decisión D7 de `docs/backlog/reglas-ministerio.md`). Cuándo se dispara y cuándo se repite la alerta: decisión D22; envío del correo: ADR-0011.
 
 ## Criterios de aceptación
 

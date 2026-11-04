@@ -1,0 +1,50 @@
+{
+  "Total": {
+    "transaction": "Total",
+    "sampleCount": 56017,
+    "errorCount": 0,
+    "errorPct": 0.0,
+    "meanResTime": 16.937929557098478,
+    "medianResTime": 14.0,
+    "minResTime": 3.0,
+    "maxResTime": 304.0,
+    "pct1ResTime": 21.0,
+    "pct2ResTime": 25.0,
+    "pct3ResTime": 43.0,
+    "throughput": 93.29092105153592,
+    "receivedKBytesPerSec": 278.3838987205536,
+    "sentKBytesPerSec": 32.87480301396441
+  },
+  "Generar boletin de un estudiante": {
+    "transaction": "Generar boletin de un estudiante",
+    "sampleCount": 56016,
+    "errorCount": 0,
+    "errorPct": 0.0,
+    "meanResTime": 16.93691088260489,
+    "medianResTime": 14.0,
+    "minResTime": 3.0,
+    "maxResTime": 304.0,
+    "pct1ResTime": 21.0,
+    "pct2ResTime": 25.0,
+    "pct3ResTime": 43.0,
+    "throughput": 93.51133250643959,
+    "receivedKBytesPerSec": 279.04526175120486,
+    "sentKBytesPerSec": 32.952631727762764
+  },
+  "SETUP login": {
+    "transaction": "SETUP login",
+    "sampleCount": 1,
+    "errorCount": 0,
+    "errorPct": 0.0,
+    "meanResTime": 74.0,
+    "medianResTime": 74.0,
+    "minResTime": 74.0,
+    "maxResTime": 74.0,
+    "pct1ResTime": 74.0,
+    "pct2ResTime": 74.0,
+    "pct3ResTime": 74.0,
+    "throughput": 13.513513513513514,
+    "receivedKBytesPerSec": 10.808171452702704,
+    "sentKBytesPerSec": 3.483952702702703
+  }
+}

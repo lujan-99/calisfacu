@@ -84,8 +84,8 @@ export function AvisosPadre() {
             <span className="hero-metrica-etiqueta">Total recibidas</span>
           </div>
           <div className="hero-metrica-tarjeta">
-            <span className="hero-metrica-numero">&le; 15 min</span>
-            <span className="hero-metrica-etiqueta">Entrega garantizada</span>
+            <span className="hero-metrica-numero">{resumen.correosEnviadosEnTiempo}</span>
+            <span className="hero-metrica-etiqueta">Correos en &le; 15 min</span>
           </div>
         </div>
       </section>

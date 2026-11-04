@@ -4,20 +4,20 @@
 
 ## Informe de avance: cierre del Sprint 3 y backend del Sprint 4
 
-Centralización de notas (US-09), alertas de promedio bajo (US-08) y defectos de seguridad CAL-003 y CAL-004, con
-evidencias de pruebas, integración continua y staging
+Centralización de notas (US-09), alertas de promedio bajo (US-08), avisos de boletín (US-12), defectos de seguridad
+CAL-003 y CAL-004, manuales, auditoría de evidencias y RC2, con evidencias de pruebas, integración continua y staging
 
 Equipo L-001 · COM450 Calidad de Software · Universidad San Francisco Xavier · Gestión II/2026
 
 Cliente piloto: Unidad Educativa Nazareno
 
-<p class="u">03/11/2026 · develop <code>aa5e09a</code> · Jenkins develop #51 · staging <code>4d75398</code> con <code>TRUST_PROXY=2</code></p>
+<p class="u">03 y 04/11/2026 · develop <code>86b4f59</code> · Jenkins develop #55 · RC2 <code>v1.0.0-rc.2</code></p>
 
 </div>
 
 ## 1. Propósito y alcance
 
-Este informe documenta, con capturas, el trabajo del 03/11/2026 sobre la rama `develop`. Ese día se cerraron los
+Este informe documenta, con capturas, el trabajo del 03 y el 04/11/2026 sobre la rama `develop`. Ese día se cerraron los
 pendientes técnicos del Sprint 3 y se construyó el backend del Sprint 4 que faltaba para las pantallas que Galvan subió
 el 02/11/2026:
 
@@ -44,12 +44,13 @@ haría un profesor. Las de la sección 8 son de Jenkins, SonarQube Cloud y stagi
 | T-060           | Alertas al recalcular la nota trimestral; no se repiten; lectura y atención por el profesor                         | `43e1bcd`                       | Figuras 9 a 11 |
 | T-059 y web     | Pantallas contra la API real; exportación habilitada solo después de centralizar; Cypress de US-09                  | `a828cb0`                       | Figura 15      |
 
-Decisiones nuevas en `docs/backlog/reglas-ministerio.md`: **D21** (cómo se centraliza y qué lleva la planilla oficial)
-y **D22** (cuándo se dispara y cuándo se repite la alerta).
+Decisiones nuevas en `docs/backlog/reglas-ministerio.md`: **D21** (cómo se centraliza y qué lleva la planilla oficial),
+**D22** (cuándo se dispara y cuándo se repite la alerta) y **D23** (a quién se avisa del boletín); y el **ADR-0011**
+(correo con bandeja de salida).
 
 ![Figura 1](capturas/t01-git-commits.png)
 
-_Figura 1. Commits del Sprint 4 en `develop`: los de Galvan (pantallas, 02/11) y los de este informe (03/11)._
+_Figura 1. Commits del Sprint 4 en `develop` (primera parte): los de Galvan (pantallas, 02/11) y los de este informe (03/11)._
 
 ## 3. Cierre de pendientes del Sprint 3
 
@@ -280,31 +281,126 @@ esa cadena de proxies en `app.setup.spec.ts`), se cambió la variable en Render 
 _Figura 19. El centralizador en staging (`https://calisfacu-web-staging.onrender.com`), con la API desplegada por
 Jenkins._
 
-## 9. Problemas encontrados en el camino
+## 9. Segunda parte (04/11/2026): correo de alertas y avisos de boletín (T-061 y T-062)
 
-| Problema                                                                                     | Cómo se resolvió                                                                                                              |
-| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| CAL-003 no limitaba en staging: con `TRUST_PROXY=1` se contaba la IP del borde de Cloudflare | `aa5e09a` y `TRUST_PROXY=2` en Render (sección 8)                                                                             |
-| SonarQube: `sort()` sin comparador en `boletin-padre.service.ts` (crítico, del 30/10)        | `4d75398`                                                                                                                     |
-| La segunda página de la planilla PDF no repetía los títulos de las columnas                  | `9275746`                                                                                                                     |
-| En el Excel, las etiquetas del encabezado se cortaban en la columna angosta del N.º          | `54f4242`                                                                                                                     |
-| «al menos 1 caracteres» en los mensajes de validación                                        | `4f4c43a`                                                                                                                     |
-| `inicio-sesion.cy.ts` en rojo desde los menús nuevos del 02/11                               | `a828cb0`                                                                                                                     |
-| La e2e de la cola de boletines falló una vez en local                                        | No es un defecto: una API local en `:3101` compartía el Redis y su worker tomaba los trabajos de la prueba. Sin ella, 226/226 |
-| `control-entregas.cy.ts` falla si todas las materias ya están entregadas                     | La prueba depende de los datos (espera alguna pendiente). Con la base limpia pasa; queda anotado para Galvan                  |
+El SQAP (Tabla 25) pide el correo por la API HTTP del proveedor, porque Render bloquea SMTP, y que el aviso dentro del
+sistema funcione aunque falle el correo. Se decidió en el **ADR-0011**:
 
-## 10. Pendientes
+- Cada aviso guarda su correo en la tabla `correos` (bandeja de salida) **en la misma transacción**. `CorreosService`
+  lo envía enseguida por la API transaccional de Brevo sin hacer esperar a quien registra la nota o publica el boletín y,
+  si falla, reintenta a los 1, 2, 4 y 8 minutos (5 intentos; un 4xx distinto de 429 es definitivo). Con dos fallos
+  seguidos el correo sale igual en 3 minutos (US-08 pide 5).
+- **T-061:** la alerta de US-08 envía el correo al profesor de la materia; la API informa `correoEnviado` y
+  `estadoCorreo` reales.
+- **T-062 (decisión D23):** al publicar el boletín, cada padre activo vinculado a un estudiante del curso recibe un aviso
+  en «Avisos del boletín» y un correo; volver a publicar no lo repite. `GET /api/notificaciones/padre` y
+  `PATCH /:id/leer`.
+- Sin `CORREO_API_KEY` el correo queda `SIN_PROVEEDOR` y el aviso sigue dentro del sistema. **Staging está así hoy:** falta
+  crear la cuenta de Brevo y cargar la clave (sección 14).
+- La pantalla del padre usaba avisos armados en el navegador («correo enviado en 8 minutos») y una tarjeta fija «≤ 15
+  min, entrega garantizada»: ahora muestra el estado real de cada correo.
 
-**Del Sprint 3 (dependen de personas):** la demo con el cliente y el acta `revision-sprint3.md` (después se cierran los
-issues T-043 a T-051), la prueba de usabilidad T-054 con 5 profesores, la auditoría T-055 de Galvan, las inspecciones
-Fagan del SRS y del SAD con sus firmas, y la verificación de CAL-001 y CAL-002 por Galvan.
+![Figura 20](capturas/t10-correo-pruebas.png)
 
-**Del Sprint 4:**
+_Figura 20. `correo.spec.ts` (formato del proveedor, errores definitivos, reintentos, escape del HTML) y
+`correo-avisos.e2e-spec.ts` con un proveedor falso local: el correo de la alerta sale tras un 503 y su reintento, el del
+boletín llega solo al padre vinculado y la alerta funciona sin proveedor._
 
-- **T-061** (correo de las alertas) y **T-062** (aviso por correo del boletín al padre) son de Galvan según el backlog.
-  La alerta ya existe en la API (`correoEnviado: false` hasta T-061); `notificaciones` es el módulo donde va el correo.
-- La pantalla de avisos del padre (`AvisosPadre.tsx`) sigue mostrando avisos armados en el navegador con «correo
-  enviado, en 8 minutos» mientras no exista la API de T-062. No debe presentarse como evidencia del criterio 1 de US-12.
-- `informe-cumplimiento-sprint4.md` (02/11) da por cumplidos criterios que dependían de esos datos simulados y deja
-  T-057, T-058 y T-060 «esperando backend»; hay que actualizarlo con este informe.
-- Se cierran los issues de CAL-003 y CAL-004 en GitHub cuando Galvan verifique la corrección en staging.
+![Figura 21](capturas/w09-avisos-padre.png)
+
+_Figura 21. «Avisos del boletín» del padre: el aviso se creó al publicar y dice la verdad sobre el correo (en este
+ambiente no hay proveedor configurado)._
+
+![Figura 22](capturas/t12-bandeja-correos.png)
+
+_Figura 22. La bandeja de salida guarda cada correo con su estado, intentos y último error._
+
+## 10. Manuales (T-066 y T-065)
+
+- **Manual técnico** (`docs/manuales/manual-tecnico.md`, `0f451fd`): arquitectura, requisitos, instalación, todas las
+  variables de entorno (incluidas las de correo y `TRUST_PROXY`), base de datos y respaldos, pruebas, Jenkins, Render,
+  producción, operación y problemas conocidos. Se verificó siguiendo la instalación en una carpeta vacía: la API, el
+  inicio de sesión y la web funcionaron en unos 3 minutos (Figura 23). Falta que lo siga una persona que no conoce el
+  proyecto, como pide su criterio.
+- **Manual de usuario** (`docs/manuales/manual-usuario.md`, `0350219`): por rol y por tarea, con 23 capturas. Falta el
+  recorrido con un profesor piloto.
+
+![Figura 23](capturas/t09-instalacion-limpia.png)
+
+_Figura 23. Instalación limpia siguiendo la Sección 3 del manual técnico._
+
+## 11. Auditoría de las evidencias de prueba (T-068) y seguimiento
+
+- **Acta** `docs/actas/auditoria-cierre-sprint4-pruebas.md` (`ec8ed74`): 6 hallazgos sobre las evidencias del 02/11, uno
+  crítico (las pantallas armaban datos en el navegador y las pruebas los validaban). Todos se corrigieron; por
+  independencia, la verificación queda para Galvan. `informe-cumplimiento-sprint4.md` se reescribió con lo verificado.
+- **Backlog** (`251837c`): T-030, T-052 y T-053 en «Hecho»; T-057 a T-062 en «En revisión»; US-17 a US-20 dejan de decir
+  «requiere aprobación del docente».
+- **GitHub:** T-057 a T-062, T-065, T-066 y T-068 con la etiqueta `estado:en-revision` y un comentario con su evidencia;
+  CAL-003 y CAL-004 en `estado:resuelto`. No se cerró ninguno: según el proceso, las tareas se cierran después de la
+  demo y los defectos después de la verificación de la otra persona.
+
+![Figura 24](capturas/t11-resumen-pruebas.png)
+
+_Figura 24. Estado de las pruebas al 04/11: API 343 (35 suites, 97,8 % de líneas), web 217, lint y formato sin
+observaciones y `npm audit` sin vulnerabilidades altas._
+
+## 12. RC2 (T-063)
+
+La RC2 se etiquetó (`v1.0.0-rc.2`, anotada) sobre `ec8ed74`. En Jenkins las etiquetas `v*-rc.*` corren las pruebas y
+la etapa **Rendimiento**: JMeter con 100 usuarios durante 10 minutos por plan, sobre una base `seed:perf`.
+
+| Plan                           | RC1 p95 | RC2 p95       | RC3 p95  | Errores (M04) | Umbral                         |
+| ------------------------------ | ------- | ------------- | -------- | ------------- | ------------------------------ |
+| Boletín de un estudiante (M03) | 39 ms   | 25 ms         | en curso | 0 %           | p95 ≤ 2000 ms                  |
+| Registrar planilla             | 178 ms  | **51 548 ms** | en curso | 0 %           | Solo tasa de error < 1 % (M04) |
+
+**Hallazgo de la RC2.** M03 y M04 se cumplieron y el pipeline quedó en verde, pero la planilla pasó de 178 ms a 51,5 s
+de p95 (de unas 88 a 4,4 peticiones por segundo). La causa fue T-060: después de cada registro, las alertas cargaban
+todas las notas de los estudiantes en la materia, y en la prueba de carga (que crea actividades sin límite en una misma
+materia) cada petición tardaba más que la anterior. Se corrigió en `86b4f59`: PostgreSQL suma las notas por estudiante
+y dimensión y `CalculoService.notaTrimestralAgregada` (módulo crítico, con TDD y una prueba de equivalencia con el
+cálculo original) obtiene la misma nota. En local, con 100 usuarios durante 3 minutos, el p95 quedó estable en 478 ms
+(Figura 25); la RC3 (`v1.0.0-rc.3`, Jenkins `calisfacu » v1.0.0-rc.3` #1) lo mide con la carga completa: al terminar, sus resultados quedan en los artefactos de ese build.
+
+**Propuesta:** el SQAP no tiene umbral de tiempo para «registrar planilla», y por eso la regresión no detuvo el pipeline.
+Se propone agregarlo (cambio de umbral: lo deciden los dos integrantes con el procedimiento de la Sección 16). La
+evidencia está en `docs/evidencias/v1.0.0-rc.2/` y `v1.0.0-rc.3/`.
+
+![Figura 25](capturas/t13-jmeter-planilla-local.png)
+
+_Figura 25. p95 de «Registrar planilla» cada 30 segundos con la corrección (JMeter local, 100 usuarios): estable entre
+385 y 580 ms, sin crecer con la cantidad de notas._
+
+## 13. Problemas encontrados en el camino
+
+| Problema                                                                                                 | Cómo se resolvió                                                                                                              |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| CAL-003 no limitaba en staging: con `TRUST_PROXY=1` se contaba la IP del borde de Cloudflare             | `aa5e09a` y `TRUST_PROXY=2` en Render (sección 8)                                                                             |
+| SonarQube: `sort()` sin comparador en `boletin-padre.service.ts` (crítico, del 30/10)                    | `4d75398`                                                                                                                     |
+| La segunda página de la planilla PDF no repetía los títulos de las columnas                              | `9275746`                                                                                                                     |
+| En el Excel, las etiquetas del encabezado se cortaban en la columna angosta del N.º                      | `54f4242`                                                                                                                     |
+| «al menos 1 caracteres» en los mensajes de validación                                                    | `4f4c43a`                                                                                                                     |
+| `inicio-sesion.cy.ts` en rojo desde los menús nuevos del 02/11                                           | `a828cb0`                                                                                                                     |
+| La e2e de la cola de boletines falló una vez en local                                                    | No es un defecto: una API local en `:3101` compartía el Redis y su worker tomaba los trabajos de la prueba. Sin ella, 226/226 |
+| `control-entregas.cy.ts` falla si todas las materias ya están entregadas                                 | `7022e2d`: compara cada filtro con lo que respondió la API (probado con la base limpia y con todo entregado)                  |
+| El generador del backlog sobrescribió los 13 casos de M01 con los 5 del Excel (no llegó a ningún commit) | `fb6f8e2`: el script ya no toca las historias, `reglas-ministerio.md` ni `casos-calculo.json`                                 |
+| Regresión de rendimiento de la planilla en la RC2 (p95 de 51,5 s) por las alertas de T-060               | `86b4f59` (sección 12)                                                                                                        |
+| Pantallas que afirmaban «correo en ≤ 15 min, entrega garantizada» sin dato                               | `0eb3204` y `0350219`: muestran el estado real del correo                                                                     |
+
+## 14. Pendientes
+
+**Necesitan a una persona distinta o al cliente (no se pueden hacer desde el código):**
+
+- Las demos de los sprints y la aceptación del cliente (T-064). Después se cierran los issues de las tareas y se puede
+  hacer el release v1.0 (T-069), cuya aprobación en Jenkins la da una persona distinta de quien crea la etiqueta.
+- La prueba de usabilidad T-054 con 5 profesores nuevos y el recorrido del manual de usuario con un profesor piloto.
+- Las auditorías de Galvan: T-055 (desarrollo del Sprint 3) y T-067 (SQAP), y la verificación de CAL-001 a CAL-004 y de
+  las correcciones de las actas T-056 y T-068.
+- Las inspecciones Fagan del SRS (con el cliente) y del SAD (con un inspector de otro equipo), con sus firmas.
+- Que otra persona siga el manual técnico en una máquina limpia.
+
+**Configuración que falta en staging:** crear una cuenta gratuita en Brevo, verificar el remitente y cargar en Render
+(servicio `calisfacu-api-staging`) `CORREO_API_KEY`, `CORREO_REMITENTE` y `CORREO_REDIRIGIR_A` (la casilla del equipo,
+porque los usuarios del seed tienen correos ficticios); después, **Manual Deploy**. Hasta entonces los avisos quedan solo
+dentro del sistema.

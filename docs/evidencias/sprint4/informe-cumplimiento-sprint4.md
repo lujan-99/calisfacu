@@ -72,7 +72,7 @@
 | **T-060**               | Servicio de alertas al recalcular                    | Lujan          | En revisión (`43e1bcd`)                                   |
 | **T-061**               | Notificaciones en el sistema y por correo            | Galvan         | En revisión (correo en `0eb3204`, hecho por Lujan)        |
 | **T-062**               | Aviso por correo al publicar un boletín              | Galvan         | En revisión (`0eb3204`, hecho por Lujan)                  |
-| **T-063**               | RC2 con todas las métricas                           | Galvan         | Ver `docs/evidencias/v1.0.0-rc.2/`                        |
+| **T-063**               | RC2 con todas las métricas                           | Galvan         | RC2 hecha; RC3 en Jenkins                                 |
 | **T-065**               | Manual de usuario                                    | Galvan         | Redactado (`0350219`); falta el recorrido con un profesor |
 | **T-066**               | Manual técnico                                       | Lujan          | Hecho (`0f451fd`); falta que lo siga otra persona         |
 | **T-068**               | Auditoría de las evidencias de prueba                | Lujan          | Hecha (acta `auditoria-cierre-sprint4-pruebas.md`)        |

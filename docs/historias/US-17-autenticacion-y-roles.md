@@ -8,7 +8,7 @@ Como usuario del sistema (profesor, secretaria, padre de familia o administrador
 
 ## Notas y dependencias
 
-NUEVA (propuesta del análisis; requiere aprobación del docente). Base de todas las historias: sin ella no se cumple RNF-04 (solo el docente de la materia modifica notas) ni la métrica M09.
+NUEVA (propuesta del análisis; aprobada por el docente el 30/10/2026). Base de todas las historias: sin ella no se cumple RNF-04 (solo el docente de la materia modifica notas) ni la métrica M09.
 
 ## Criterios de aceptación
 

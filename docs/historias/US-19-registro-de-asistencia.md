@@ -8,7 +8,7 @@ Como profesor, quiero registrar la asistencia de mis estudiantes en cada clase, 
 
 ## Notas y dependencias
 
-NUEVA (propuesta del análisis; requiere aprobación del docente). US-06 y US-07 muestran el porcentaje de asistencia, pero ninguna historia lo registraba. Depende de US-18.
+NUEVA (propuesta del análisis; aprobada por el docente el 30/10/2026). US-06 y US-07 muestran el porcentaje de asistencia, pero ninguna historia lo registraba. Depende de US-18.
 
 ## Criterios de aceptación
 

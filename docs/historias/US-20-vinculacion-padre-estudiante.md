@@ -8,7 +8,7 @@ Como secretaria, quiero vincular la cuenta de cada padre de familia con sus hijo
 
 ## Notas y dependencias
 
-NUEVA (propuesta del análisis; requiere aprobación del docente). US-11 y US-12 dicen "mi hijo", pero nada define qué hijo es de quién. Sin esto, un padre podría ver datos de otro estudiante (datos de menores).
+NUEVA (propuesta del análisis; aprobada por el docente el 30/10/2026). US-11 y US-12 dicen "mi hijo", pero nada define qué hijo es de quién. Sin esto, un padre podría ver datos de otro estudiante (datos de menores).
 
 ## Criterios de aceptación
 

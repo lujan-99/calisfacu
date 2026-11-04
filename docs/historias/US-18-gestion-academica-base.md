@@ -8,7 +8,7 @@ Como secretaria, quiero registrar la gestión, sus trimestres, los cursos, las m
 
 ## Notas y dependencias
 
-NUEVA (propuesta del análisis; requiere aprobación del docente). US-01 necesita que existan estudiantes, materias, periodos y la asignación profesor–materia.
+NUEVA (propuesta del análisis; aprobada por el docente el 30/10/2026). US-01 necesita que existan estudiantes, materias, periodos y la asignación profesor–materia.
 
 ## Criterios de aceptación
 

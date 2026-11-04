@@ -27,7 +27,7 @@ export class BoletinPadreService {
       datos,
       new Set(publicaciones.map((p) => p.trimestre.id)),
     );
-    const numeros = publicaciones.map((p) => p.trimestre.numero).sort();
+    const numeros = publicaciones.map((p) => p.trimestre.numero).sort((a, b) => a - b);
     const completo = numeros.length === datos.trimestres.length;
     return {
       estudiante: {

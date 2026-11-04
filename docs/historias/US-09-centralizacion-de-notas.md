@@ -1,6 +1,6 @@
 # US-09 · Centralización de Notas
 
-- **Sprint:** Sprint 4 · **Prioridad:** MEDIA · **Puntos:** valor 8, esfuerzo 8 · **Estado:** Planificada
+- **Sprint:** Sprint 4 · **Prioridad:** MEDIA · **Puntos:** valor 8, esfuerzo 8 · **Estado:** En proceso
 
 ## Historia
 
@@ -8,7 +8,7 @@ Como secretaria, quiero que las notas de todos los profesores se centralicen aut
 
 ## Notas y dependencias
 
-Depende de US-01, US-02 y US-10. (Valores estimados: validar con el dueño del producto.)
+Depende de US-01, US-02 y US-10. (Valores estimados: validar con el dueño del producto.) Reglas de la centralización, del cierre del trimestre y del formato de la planilla: decisión D21 de `docs/backlog/reglas-ministerio.md`.
 
 ## Criterios de aceptación
 
@@ -29,6 +29,6 @@ Depende de US-01, US-02 y US-10. (Valores estimados: validar con el dueño del p
 
 ## Antes de empezar
 
-- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
-- [ ] No quedan ❓ sin respuesta del cliente.
-- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).
+- [x] Cumple la Definition of Ready (`docs/backlog/backlog.md`).
+- [x] No quedan ❓ sin respuesta del cliente.
+- [x] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).

@@ -294,6 +294,17 @@ describe('Autorización de la gestión académica (M09, RNF-04)', () => {
       url: `/api/boletines/publicaciones/${e.ajeno.curso.id}/${e.t1.id}`,
       noPermitidos: secretariaYAdmin,
     },
+    // US-09: la centralización es de la secretaria y del administrador.
+    ...['', '/pdf', '/excel'].map((sufijo) => ({
+      metodo: 'get' as const,
+      url: `/api/centralizador/cursos/${e.ajeno.curso.id}${sufijo}?trimestreId=${e.t1.id}`,
+      noPermitidos: secretariaYAdmin,
+    })),
+    {
+      metodo: 'post',
+      url: `/api/centralizador/cursos/${e.ajeno.curso.id}/ejecutar`,
+      noPermitidos: secretariaYAdmin,
+    },
     // El padre del escenario no está vinculado a e.ajeno (US-20).
     {
       metodo: 'get',

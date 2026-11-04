@@ -141,6 +141,8 @@ erDiagram
   solicitudes_edicion ||--|{ solicitudes_edicion_estudiantes : "una corrección cada uno"
   materias ||--o{ entregas_notas : "una por trimestre"
   trimestres ||--o{ entregas_notas : ""
+  cursos ||--o{ centralizaciones : "una por trimestre"
+  trimestres ||--o{ centralizaciones : ""
 ```
 
 Decisiones del modelo:
@@ -153,6 +155,8 @@ Decisiones del modelo:
 - `solicitudes_edicion_estudiantes.usada_en` se llena en la misma transacción que la corrección: cada aprobación
   habilita una sola corrección (D16). Un rechazo exige observación (`CHECK`).
 - `entregas_notas` tiene una fila por materia y trimestre (`UNIQUE`): la entrega no se repite ni se deshace (US-10, D13).
+- `centralizaciones` tiene una fila por curso y trimestre (`UNIQUE`): se centraliza una sola vez, cuando todas las
+  materias del curso entregaron (US-09, D21). La planilla se calcula al consultarla, igual que la nota trimestral.
 - `estudiantes.ci` (cédula de identidad) es opcional y no identifica al estudiante (D15).
 - `estudiantes.codigo_rude` (Registro Único de Estudiantes) es único por gestión: nadie queda inscrito en dos cursos
   de la misma gestión (US-18, criterio 3; D10). La fila guarda también la gestión del curso para que la base lo exija.
@@ -161,21 +165,21 @@ Decisiones del modelo:
 
 # 6. Seguridad (RNF-04)
 
-| Amenaza                          | Control                                                                                                                | Verificación                     |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Acceso sin sesión                | `JwtAuthGuard` global; solo son públicas `/api/salud`, `/api/auth/login` y `/api/institucion` (nombre, colores y logo) | `autorizacion.e2e-spec.ts` (401) |
-| Rol sin permiso                  | `@Roles()` + `RolesGuard`                                                                                              | M09 (403)                        |
-| Profesor de otra materia         | `AccesoNotasService` comprueba la asignación profesor–materia                                                          | M09 (403)                        |
-| Padre que cambia el ID en la URL | `AccesoFamiliarService` comprueba el vínculo padre–estudiante; un ID inexistente también recibe 403 (US-20, D17)       | M09 (403)                        |
-| Boletines de un curso ajeno      | El trabajo de la cola guarda quién lo pidió: otro usuario recibe 404; el PDF vence a las 24 horas (D19)                | `boletin.e2e-spec.ts`            |
-| Fuerza bruta                     | Bloqueo de 15 minutos tras 5 intentos; mismo mensaje para correo inexistente y contraseña incorrecta                   | e2e de inicio de sesión          |
-| Sesión abandonada                | Token de 30 minutos que la web renueva (`POST /api/auth/renovar`) solo mientras hay actividad (D11)                    | e2e de expiración de sesión      |
-| Archivo malicioso (logo)         | Solo PNG, JPEG o WebP, reconocidos por su contenido (sin SVG); 256 KB; `X-Content-Type-Options: nosniff`               | `academico.e2e-spec.ts`          |
-| Contraseñas                      | Hash argon2; la columna no se selecciona por defecto                                                                   | Revisión de código               |
-| Repudio de cambios               | Auditoría inmutable (ADR-0005)                                                                                         | M15                              |
-| Entrada maliciosa                | `ValidationPipe` con `whitelist` y `forbidNonWhitelisted`; consultas parametrizadas de TypeORM                         | e2e (400)                        |
-| Secretos                         | Solo en Jenkins Credentials, GitHub Secrets y el panel de cada plataforma                                              | Auditoría de cierre              |
-| Dependencias vulnerables         | `npm audit --audit-level=high`, Dependabot, SonarQube Cloud                                                            | M08                              |
+| Amenaza                          | Control                                                                                                                                                                           | Verificación                                     |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Acceso sin sesión                | `JwtAuthGuard` global; solo son públicas `/api/salud`, `/api/auth/login` y `/api/institucion` (nombre, colores y logo)                                                            | `autorizacion.e2e-spec.ts` (401)                 |
+| Rol sin permiso                  | `@Roles()` + `RolesGuard`                                                                                                                                                         | M09 (403)                                        |
+| Profesor de otra materia         | `AccesoNotasService` comprueba la asignación profesor–materia                                                                                                                     | M09 (403)                                        |
+| Padre que cambia el ID en la URL | `AccesoFamiliarService` comprueba el vínculo padre–estudiante; un ID inexistente también recibe 403 (US-20, D17)                                                                  | M09 (403)                                        |
+| Boletines de un curso ajeno      | El trabajo de la cola guarda quién lo pidió: otro usuario recibe 404; el PDF vence a las 24 horas (D19)                                                                           | `boletin.e2e-spec.ts`                            |
+| Fuerza bruta                     | Bloqueo de 15 minutos tras 5 intentos por cuenta; límite de inicios de sesión por IP (10 por minuto, 429; CAL-003); mismo mensaje para correo inexistente y contraseña incorrecta | `seguridad.e2e-spec.ts`, e2e de inicio de sesión |
+| Sesión abandonada                | Token de 30 minutos que la web renueva (`POST /api/auth/renovar`) solo mientras hay actividad (D11)                                                                               | e2e de expiración de sesión                      |
+| Archivo malicioso (logo)         | Solo PNG, JPEG o WebP, reconocidos por su contenido (sin SVG); 256 KB; `X-Content-Type-Options: nosniff`                                                                          | `academico.e2e-spec.ts`                          |
+| Contraseñas                      | Hash argon2; la columna no se selecciona por defecto                                                                                                                              | Revisión de código                               |
+| Repudio de cambios               | Auditoría inmutable (ADR-0005)                                                                                                                                                    | M15                                              |
+| Entrada maliciosa                | `ValidationPipe` con `whitelist` y `forbidNonWhitelisted`; consultas parametrizadas de TypeORM                                                                                    | e2e (400)                                        |
+| Secretos                         | Solo en Jenkins Credentials, GitHub Secrets y el panel de cada plataforma                                                                                                         | Auditoría de cierre                              |
+| Dependencias vulnerables         | `npm audit --audit-level=high`, Dependabot, SonarQube Cloud                                                                                                                       | M08                                              |
 
 # 7. Despliegue
 

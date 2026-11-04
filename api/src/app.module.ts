@@ -8,6 +8,7 @@ import { AuditoriaModule } from './modules/auditoria/auditoria.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BoletinModule } from './modules/boletin/boletin.module';
 import { CalculoModule } from './modules/calculo/calculo.module';
+import { CentralizacionModule } from './modules/centralizacion/centralizacion.module';
 import { EntregasModule } from './modules/entregas/entregas.module';
 import { FamiliasModule } from './modules/familias/familias.module';
 import { ImportacionModule } from './modules/importacion/importacion.module';
@@ -31,6 +32,7 @@ import { SaludModule } from './modules/salud/salud.module';
     FamiliasModule,
     PanelModule,
     BoletinModule,
+    CentralizacionModule,
   ],
 })
 export class AppModule {}

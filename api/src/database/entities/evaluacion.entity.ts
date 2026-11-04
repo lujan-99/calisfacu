@@ -148,6 +148,30 @@ export class PublicacionBoletin {
 }
 
 /**
+ * Centralización de las notas de un curso en un trimestre (US-09, T-057; decisión D21). La hace la secretaria o el
+ * administrador cuando todas las materias del curso entregaron sus notas (US-10); desde entonces se exporta la
+ * planilla oficial. El trimestre se cierra cuando están centralizados todos los cursos de la gestión.
+ */
+@Entity('centralizaciones')
+@Unique(['curso', 'trimestre'])
+export class Centralizacion {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Curso, { nullable: false })
+  curso: Curso;
+
+  @ManyToOne(() => Trimestre, { nullable: false })
+  trimestre: Trimestre;
+
+  @ManyToOne(() => Usuario, { nullable: false })
+  centralizadoPor: Usuario;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  centralizadoEn: Date;
+}
+
+/**
  * Solicitud de edición (decisión D16): el profesor pide corregir notas ya registradas de una actividad y el
  * administrador la aprueba o la rechaza con una observación. Cada estudiante aprobado habilita una corrección.
  */

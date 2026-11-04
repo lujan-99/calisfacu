@@ -24,10 +24,11 @@ services:
         value: 30m
       - key: CORS_ORIGINS
         value: https://calisfacu-web-staging.onrender.com
-      # CAL-003: límite de inicios de sesión por IP. Render pone un proxy delante: 1 salto de confianza. Cypress inicia
-      # sesión por la pantalla en cada prueba (menos de 20 por minuto).
+      # CAL-003: límite de inicios de sesión por IP. Delante de la API están Cloudflare y el balanceador de Render: con
+      # 2 saltos de confianza se cuenta la IP del cliente (con 1 se contaba la del borde de Cloudflare, que cambia en
+      # cada petición, y el límite no se alcanzaba). Cypress inicia sesión por la pantalla en cada prueba (< 20/min).
       - key: TRUST_PROXY
-        value: '1'
+        value: '2'
       - key: LIMITE_LOGIN_POR_MINUTO
         value: '20'
       # Staging usa solo datos sintéticos: el seed se carga si la base está vacía (SQAP, Sección 7.2).

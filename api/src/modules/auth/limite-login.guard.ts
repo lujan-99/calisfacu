@@ -22,7 +22,7 @@ export function limiteLoginPorMinuto(valor: string | undefined): number {
  * Límite de intentos de inicio de sesión por IP (CAL-003; revisión OWASP del Sprint 3, hallazgo H3, A07 y A04).
  * Complementa el bloqueo por cuenta (5 intentos, 15 minutos): sin él, un atacante podía probar una contraseña común
  * contra muchas cuentas. Ventana deslizante de 60 s en memoria: la API corre en una sola instancia (ADR-0009).
- * Detrás del proxy de Render la IP real llega en X-Forwarded-For (`TRUST_PROXY`, app.setup.ts).
+ * Detrás de Cloudflare y del balanceador de Render la IP real llega en X-Forwarded-For (`TRUST_PROXY=2`, app.setup.ts).
  */
 @Injectable()
 export class LimiteLoginGuard implements CanActivate {

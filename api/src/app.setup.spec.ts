@@ -1,4 +1,5 @@
-import { Controller, Get, type INestApplication } from '@nestjs/common';
+import { Controller, Get, Req, type INestApplication } from '@nestjs/common';
+import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import type { App } from 'supertest/types';
@@ -9,6 +10,11 @@ class PruebaController {
   @Get()
   responder() {
     return { ok: true };
+  }
+
+  @Get('ip')
+  ip(@Req() req: Request) {
+    return { ip: req.ip };
   }
 }
 
@@ -58,5 +64,28 @@ describe('configurarApp: cabeceras de seguridad', () => {
     const res = await crear('development');
     expect(res.headers['content-security-policy']).toBeUndefined();
     expect(res.headers['x-content-type-options']).toBe('nosniff');
+  });
+
+  /**
+   * CAL-003 en staging: cliente → Cloudflare → balanceador de Render → API. Cloudflare agrega la IP del cliente a
+   * X-Forwarded-For y Render agrega la del borde de Cloudflare. Con TRUST_PROXY=2 se cuenta la IP del cliente aunque
+   * él mande un X-Forwarded-For falso; con 1 se contaría la del borde, que cambia entre peticiones.
+   */
+  it('debe tomar la IP del cliente detrás de dos proxies sin creer un X-Forwarded-For falso', async () => {
+    const original = process.env.TRUST_PROXY;
+    process.env.TRUST_PROXY = '2';
+    try {
+      const modulo = await Test.createTestingModule({ controllers: [PruebaController] }).compile();
+      app = configurarApp(modulo.createNestApplication());
+      await app.init();
+      const ip = (xff: string) =>
+        request(app.getHttpServer()).get('/api/prueba/ip').set('X-Forwarded-For', xff);
+      expect((await ip('203.0.113.7, 198.51.100.1')).body).toEqual({ ip: '203.0.113.7' });
+      expect((await ip('6.6.6.6, 203.0.113.7, 198.51.100.2')).body).toEqual({
+        ip: '203.0.113.7',
+      });
+    } finally {
+      process.env.TRUST_PROXY = original;
+    }
   });
 });

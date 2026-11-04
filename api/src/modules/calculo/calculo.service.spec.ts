@@ -107,6 +107,52 @@ describe('CalculoService', () => {
     });
   });
 
+  /**
+   * T-060, rendimiento (RC2): las alertas recalculan con la suma y la cantidad de notas de cada dimensión, agregadas en
+   * PostgreSQL, en lugar de cargar todas las notas. El resultado debe ser idéntico al de las listas de notas.
+   */
+  describe('notaTrimestralAgregada (RC2)', () => {
+    const agregar = (porDimension: Record<string, number[]>) =>
+      Object.fromEntries(
+        Object.entries(porDimension).map(([codigo, notas]) => [
+          codigo,
+          {
+            suma: notas.reduce((s, n) => s.plus(String(n)), new Decimal(0)).toString(),
+            cantidad: notas.length,
+          },
+        ]),
+      );
+
+    it.each<Record<string, number[]>>([
+      { SER: [80], SABER: [70, 90], HACER: [80], AUTOEVALUACION: [100] },
+      // D2: 50,45 se redondea solo al final (reprueba).
+      { SER: [100], SABER: [51], HACER: [40], AUTOEVALUACION: [30] },
+      // Promedios periódicos: 1/3 y 2/3 de punto.
+      {
+        SER: [1, 2, 2],
+        SABER: [33.33, 66.67, 50.01],
+        HACER: [99.99, 1],
+        AUTOEVALUACION: [55.55, 44.45, 1],
+      },
+      { SER: [80], SABER: [70], HACER: [80] },
+    ])('debe dar el mismo resultado que notaTrimestral con las mismas notas', (porDimension) => {
+      expect(calculo.notaTrimestralAgregada(dims, agregar(porDimension))).toEqual(
+        calculo.notaTrimestral(dims, porDimension),
+      );
+    });
+
+    it('debe tratar una dimensión con cantidad 0 como pendiente (D4)', () => {
+      const r = calculo.notaTrimestralAgregada(dims, {
+        SER: { suma: '80', cantidad: 1 },
+        SABER: { suma: '70', cantidad: 1 },
+        HACER: { suma: '80', cantidad: 1 },
+        AUTOEVALUACION: { suma: '0', cantidad: 0 },
+      });
+      expect(r.pendientes).toEqual(['AUTOEVALUACION']);
+      expect(r.nota).toBeNull();
+    });
+  });
+
   describe('notaAnual (US-02, criterio 4, regla provisional)', () => {
     it('debe promediar los tres trimestres y redondear', () => {
       expect(calculo.notaAnual([50, 51, 51])).toBe(51);

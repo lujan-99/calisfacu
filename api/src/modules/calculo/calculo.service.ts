@@ -25,6 +25,12 @@ export interface ResultadoTrimestral {
   pendientes: string[];
 }
 
+/** Suma y cantidad de las notas de una dimensión (la suma puede venir de PostgreSQL como texto `numeric`). */
+export interface SumaDimension {
+  suma: Decimal | string | number;
+  cantidad: number;
+}
+
 export type Tendencia = 'ASCENDENTE' | 'DESCENDENTE' | 'ESTABLE' | 'PENDIENTE';
 export type EstadoAnual = 'PROMOVIDO' | 'EN_RIESGO' | 'PENDIENTE';
 
@@ -86,9 +92,31 @@ export class CalculoService {
     dimensiones: readonly ConfigDimension[],
     notasPorDimension: Readonly<Record<string, readonly number[]>>,
   ): ResultadoTrimestral {
+    const sumas: Record<string, SumaDimension> = {};
+    for (const [codigo, notas] of Object.entries(notasPorDimension)) {
+      sumas[codigo] = {
+        suma: notas.reduce((s, n) => s.plus(dec(n)), new Decimal(0)),
+        cantidad: notas.length,
+      };
+    }
+    return this.notaTrimestralAgregada(dimensiones, sumas);
+  }
+
+  /**
+   * La misma nota trimestral a partir de la suma y la cantidad de notas de cada dimensión, para no cargar todas las
+   * notas cuando PostgreSQL ya las agregó (alertas, T-060). Promedio = suma / cantidad, con aritmética decimal exacta.
+   */
+  notaTrimestralAgregada(
+    dimensiones: readonly ConfigDimension[],
+    sumasPorDimension: Readonly<Record<string, SumaDimension>>,
+  ): ResultadoTrimestral {
     this.validarDimensiones(dimensiones);
-    const resultado: ResultadoDimension[] = dimensiones.map((d) => {
-      const prom = this.promedio(notasPorDimension[d.codigo] ?? []);
+    const promedios = dimensiones.map((d) => {
+      const s = sumasPorDimension[d.codigo];
+      return s && s.cantidad > 0 ? new Decimal(String(s.suma)).dividedBy(s.cantidad) : null;
+    });
+    const resultado: ResultadoDimension[] = dimensiones.map((d, i) => {
+      const prom = promedios[i];
       return {
         codigo: d.codigo,
         puntajeMaximo: d.puntajeMaximo,
@@ -102,10 +130,10 @@ export class CalculoService {
     if (pendientes.length > 0) {
       return { dimensiones: resultado, sinRedondear: null, nota: null, aprobado: null, pendientes };
     }
-    const suma = dimensiones.reduce((s, d) => {
-      const prom = this.promedio(notasPorDimension[d.codigo]) as Decimal;
-      return s.plus(this.puntosDimension(prom, d.puntajeMaximo));
-    }, new Decimal(0));
+    const suma = dimensiones.reduce(
+      (s, d, i) => s.plus(this.puntosDimension(promedios[i] as Decimal, d.puntajeMaximo)),
+      new Decimal(0),
+    );
     const nota = this.redondear(suma);
     return {
       dimensiones: resultado,

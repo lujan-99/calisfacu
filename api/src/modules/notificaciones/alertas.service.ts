@@ -5,6 +5,7 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import Decimal from 'decimal.js';
 import { type DataSource, In, IsNull } from 'typeorm';
 import type { UsuarioToken } from '../../common/decoradores';
 import { esDuplicado } from '../../common/transformaciones';
@@ -20,14 +21,12 @@ import {
   VinculoPadre,
 } from '../../database/entities';
 import { nombreCurso } from '../academico/formato';
-import { CalculoService } from '../calculo/calculo.service';
+import { CalculoService, type SumaDimension } from '../calculo/calculo.service';
 import { AccesoNotasService } from '../notas/acceso.service';
 import { CambiosNotasService, type CambioNotas } from '../notas/cambios-notas.service';
 import { correoAlertaPromedio } from './correo/plantillas';
 import { CorreosService, urlWeb } from './correo/correos.service';
 import { accionAlerta } from './reglas-alertas';
-
-type PorDimension = Record<string, number[]>;
 
 /**
  * Alertas de promedio bajo (US-08, T-060; decisión D22). Cada vez que cambian notas (registro, importación o
@@ -52,21 +51,29 @@ export class AlertasService implements OnModuleInit {
   async evaluar({ actividadId, estudianteIds }: CambioNotas) {
     const actividad = await this.db.getRepository(Actividad).findOne({
       where: { id: actividadId },
-      relations: { materia: { curso: true }, trimestre: { gestion: true } },
+      relations: { materia: { curso: true }, trimestre: { gestion: true }, dimension: true },
     });
     if (!actividad) return;
     const { materia, trimestre } = actividad;
-    const [dims, notas, vigentes] = await Promise.all([
+    // RC2: PostgreSQL suma las notas por estudiante y dimensión; cargar todas las notas de la materia hacía que cada
+    // registro tardara más que el anterior (p95 de 51 s en la planilla con 100 usuarios).
+    const [dims, sumas, cambiadas, vigentes] = await Promise.all([
       this.db.getRepository(DimensionEvaluacion).find({
         where: { gestion: { id: trimestre.gestion.id } },
         order: { orden: 'ASC' },
       }),
+      this.db.query<{ estudianteId: number; codigo: string; suma: string; cantidad: string }[]>(
+        `SELECT n.estudiante_id AS "estudianteId", d.codigo, SUM(n.valor) AS suma, COUNT(*) AS cantidad
+         FROM notas n
+         JOIN actividades a ON a.id = n.actividad_id
+         JOIN dimensiones_evaluacion d ON d.id = a.dimension_id
+         WHERE a.materia_id = $1 AND a.trimestre_id = $2 AND n.estudiante_id = ANY($3)
+         GROUP BY n.estudiante_id, d.codigo`,
+        [materia.id, trimestre.id, estudianteIds],
+      ),
       this.db.getRepository(Nota).find({
-        where: {
-          estudiante: { id: In(estudianteIds) },
-          actividad: { materia: { id: materia.id }, trimestre: { id: trimestre.id } },
-        },
-        relations: { estudiante: true, actividad: { dimension: true } },
+        where: { actividad: { id: actividadId }, estudiante: { id: In(estudianteIds) } },
+        relations: { estudiante: true },
       }),
       this.db.getRepository(AlertaPromedio).find({
         where: {
@@ -78,30 +85,24 @@ export class AlertasService implements OnModuleInit {
         relations: { estudiante: true },
       }),
     ]);
-    const anteriores = await this.valoresAnteriores(
-      notas.filter((n) => n.actividad.id === actividadId).map((n) => n.id),
-    );
+    const anteriores = await this.valoresAnteriores(cambiadas.map((n) => n.id));
 
     let creadas = 0;
     for (const estudianteId of estudianteIds) {
-      const actuales: PorDimension = {};
-      const antes: PorDimension = {};
-      for (const n of notas.filter((x) => x.estudiante.id === estudianteId)) {
-        const codigo = n.actividad.dimension.codigo;
-        (actuales[codigo] ??= []).push(n.valor);
-        // Antes del cambio, la nota de la actividad tenía su valor anterior o no existía.
-        const previo = n.actividad.id === actividadId ? anteriores.get(n.id) : n.valor;
-        if (previo !== undefined && previo !== null) (antes[codigo] ??= []).push(previo);
+      const actuales: Record<string, SumaDimension> = {};
+      for (const f of sumas.filter((x) => Number(x.estudianteId) === estudianteId)) {
+        actuales[f.codigo] = { suma: new Decimal(f.suma), cantidad: Number(f.cantidad) };
       }
-      const nota = this.calculo.notaTrimestral(dims, actuales).nota;
+      const nota = this.calculo.notaTrimestralAgregada(dims, actuales).nota;
       const vigente = vigentes.find((v) => v.estudiante.id === estudianteId);
       const accion = accionAlerta(nota, Boolean(vigente));
       if (accion === 'CREAR' && nota !== null) {
+        const cambio = cambiadas.find((n) => n.estudiante.id === estudianteId);
         creadas += await this.crear(
           actividad,
           estudianteId,
           nota,
-          this.calculo.notaTrimestral(dims, antes).nota,
+          this.notaAntesDelCambio(dims, actuales, actividad.dimension.codigo, cambio, anteriores),
         );
       } else if (accion === 'SUPERAR' && vigente) {
         await this.db
@@ -110,6 +111,30 @@ export class AlertasService implements OnModuleInit {
       }
     }
     if (creadas > 0) this.correos.despachar();
+  }
+
+  /**
+   * Nota trimestral antes del cambio: en la dimensión de la actividad, la nota cambiada tenía su valor anterior (según
+   * la auditoría) o no existía.
+   */
+  private notaAntesDelCambio(
+    dims: DimensionEvaluacion[],
+    actuales: Record<string, SumaDimension>,
+    codigo: string,
+    cambio: Nota | undefined,
+    anteriores: Map<number, number | null>,
+  ) {
+    const antes = { ...actuales };
+    const actual = actuales[codigo];
+    if (cambio && actual) {
+      const previo = anteriores.get(cambio.id);
+      const suma = new Decimal(String(actual.suma)).minus(String(cambio.valor));
+      antes[codigo] =
+        previo === undefined || previo === null
+          ? { suma, cantidad: actual.cantidad - 1 }
+          : { suma: suma.plus(String(previo)), cantidad: actual.cantidad };
+    }
+    return this.calculo.notaTrimestralAgregada(dims, antes).nota;
   }
 
   /**

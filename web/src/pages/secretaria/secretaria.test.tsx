@@ -683,6 +683,8 @@ describe('Centralización de Notas (US-09, CA 1, CA 2, CA 3)', () => {
     },
     gestion: { id: 1, anio: 2026 },
     trimestre: { id: 11, numero: 1, cerrado: false },
+    centralizado: false,
+    fechaCentralizacion: null,
     unidadEducativa: {
       nombre: 'Unidad Educativa Juana Azurduy',
       codigoSie: '80980123',
@@ -797,10 +799,22 @@ describe('Centralización de Notas (US-09, CA 1, CA 2, CA 3)', () => {
     ).toBeInTheDocument();
   });
 
-  it('debe contener botones de exportación oficial a PDF, Excel y CSV (CA 2)', async () => {
+  it('debe habilitar la exportación oficial solo después de centralizar (D21)', async () => {
     vi.spyOn(centralizadorLib, 'obtenerCentralizadorCurso').mockResolvedValue(
       centralizadorMockCompleto,
     );
+    abrir('/secretaria/centralizador', 'SECRETARIA');
+    expect(await screen.findByRole('button', { name: /Exportar Planilla PDF/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Exportar Excel/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Ejecutar Centralización Oficial/ })).toBeEnabled();
+  });
+
+  it('debe contener botones de exportación oficial a PDF, Excel y CSV (CA 2)', async () => {
+    vi.spyOn(centralizadorLib, 'obtenerCentralizadorCurso').mockResolvedValue({
+      ...centralizadorMockCompleto,
+      centralizado: true,
+      fechaCentralizacion: '2026-11-03T15:00:00.000Z',
+    });
     const pdfSpy = vi
       .spyOn(centralizadorLib, 'descargarCentralizadorPdf')
       .mockResolvedValue(undefined);

@@ -1,13 +1,4 @@
-import {
-  listarAlertasApi,
-  listarVinculosFamiliaresApi,
-  marcarAlertaAtendidaEnApi,
-  marcarAlertaLeidaEnApi,
-  misMaterias,
-  obtenerPanelRiesgoMateriaApi,
-  type Materia,
-} from './api';
-import type { PanelRiesgoData } from './riesgo';
+import { listarAlertasApi, marcarAlertaAtendidaEnApi, marcarAlertaLeidaEnApi } from './api';
 
 /**
  * Modelos de Dominio y Lógica para Alertas Automáticas de Promedio Bajo (US-08).
@@ -43,6 +34,8 @@ export interface AlertaPromedioBajo {
   promedioNuevo: number;
   fechaAlerta: string;
   estado: 'ACTIVA' | 'ATENDIDA';
+  /** false cuando la nota volvió a 51 o más (la alerta se superó, D22). */
+  vigente?: boolean;
   leida: boolean;
   correoEnviado: boolean;
   fechaEnvioCorreo?: string;
@@ -200,107 +193,26 @@ export function calcularResumenAlertas(alertas: AlertaPromedioBajo[]): ResumenAl
 }
 
 /**
- * Obtiene la lista de alertas de promedio bajo para el profesor autenticado.
- * Si el backend cuenta con `/notificaciones/alertas`, lo consulta directamente;
- * si aún está en integración por Lujan, consolida de forma resiliente con los paneles de riesgo.
+ * Alertas de promedio bajo del profesor autenticado (US-08, T-060): las crea la API al recalcular la nota
+ * trimestral (decisión D22). Sin datos armados en el navegador: si la API falla, la pantalla muestra el error.
  */
-export async function listarAlertasProfesorApi(
-  materiaIdFiltro?: number,
-): Promise<AlertaPromedioBajo[]> {
-  try {
-    return await listarAlertasApi<AlertaPromedioBajo[]>(materiaIdFiltro);
-  } catch {
-    // Fallback de integración frontend reactivo utilizando el panel de riesgo y vínculos existentes
-    const materias = await misMaterias();
-    const materiasTarget = materiaIdFiltro
-      ? materias.filter((m: Materia) => m.id === materiaIdFiltro)
-      : materias;
-
-    const vinculosTodos = await listarVinculosFamiliaresApi({}).catch(() => []);
-    const alertasGeneradas: AlertaPromedioBajo[] = [];
-
-    let alertaIdCounter = 1;
-
-    for (const mat of materiasTarget) {
-      try {
-        const panel = await obtenerPanelRiesgoMateriaApi<PanelRiesgoData>(mat.id);
-        const reprobados = panel.estudiantes.filter(
-          (e) => e.promedio !== null && e.promedio < NOTA_MINIMA_APROBACION,
-        );
-
-        for (const est of reprobados) {
-          const vinculo = vinculosTodos.find((v) => v.estudianteId === est.estudianteId);
-          const tutor: TutorContacto | undefined = vinculo
-            ? {
-                id: vinculo.padreId,
-                nombre: vinculo.padre?.nombre ?? 'Tutor registrado',
-                parentesco: vinculo.parentesco ?? 'Tutor legal',
-                telefono: vinculo.padre?.telefono ?? '71234567',
-                email: vinculo.padre?.email ?? 'tutor@calisfacu.edu.bo',
-              }
-            : undefined;
-
-          // Simula una nota anterior aprobatoria (ej. 55) para reflejar la caída
-          const promedioAnt = Math.min(65, (est.promedio ?? 40) + 12);
-
-          alertasGeneradas.push({
-            id: alertaIdCounter++,
-            estudianteId: est.estudianteId,
-            estudianteNombre: est.estudiante,
-            codigoRude: est.codigoRude,
-            ci: est.ci,
-            materiaId: mat.id,
-            materiaNombre: mat.nombre,
-            cursoId: mat.curso.id,
-            cursoNombre: mat.curso.nombre,
-            trimestreId: panel.trimestre.id,
-            trimestreNumero: panel.trimestre.numero,
-            promedioAnterior: promedioAnt,
-            promedioNuevo: est.promedio ?? 45,
-            fechaAlerta: new Date().toISOString(),
-            estado: 'ACTIVA',
-            leida: false,
-            correoEnviado: true,
-            fechaEnvioCorreo: new Date(Date.now() - 1000 * 60 * 3).toISOString(), // Enviado hace 3 min (< 5 min RNF-01)
-            tutor,
-          });
-        }
-      } catch {
-        // Si no hay datos de riesgo para la materia, continúa
-      }
-    }
-
-    return alertasGeneradas;
-  }
+export function listarAlertasProfesorApi(materiaIdFiltro?: number): Promise<AlertaPromedioBajo[]> {
+  return listarAlertasApi<AlertaPromedioBajo[]>(materiaIdFiltro);
 }
 
-/**
- * Marca una alerta como leída por el profesor.
- */
-export async function marcarAlertaLeidaApi(alertaId: number): Promise<void> {
-  try {
-    await marcarAlertaLeidaEnApi(alertaId);
-  } catch {
-    // Fallback silencioso en frontend para no bloquear la experiencia de usuario
-  }
+/** Marca una alerta como leída por el profesor. */
+export function marcarAlertaLeidaApi(alertaId: number): Promise<void> {
+  return marcarAlertaLeidaEnApi(alertaId);
 }
 
-/**
- * Marca una alerta como atendida tras contactar al tutor (US-08).
- */
+/** Marca una alerta como atendida tras contactar al tutor (US-08). */
 export async function marcarAlertaAtendidaApi(
   alertaId: number,
   notaAtencion: string,
 ): Promise<{ exito: boolean; mensaje: string }> {
-  try {
-    return await marcarAlertaAtendidaEnApi<{ exito: boolean; mensaje: string }>(
-      alertaId,
-      notaAtencion,
-    );
-  } catch {
-    return {
-      exito: true,
-      mensaje: 'La alerta fue marcada como atendida. Se registró el seguimiento con el tutor.',
-    };
-  }
+  await marcarAlertaAtendidaEnApi<AlertaPromedioBajo>(alertaId, notaAtencion);
+  return {
+    exito: true,
+    mensaje: 'La alerta fue marcada como atendida. Se registró el seguimiento con el tutor.',
+  };
 }

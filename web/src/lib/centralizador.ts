@@ -1,18 +1,4 @@
-import {
-  descargarArchivoApi,
-  ejecutarCentralizacionApi,
-  listarCursos,
-  listarEstudiantes,
-  listarGestiones,
-  listarMaterias,
-  listarTrimestres,
-  obtenerCentralizadorApi,
-  obtenerControlEntregas,
-  type Curso,
-  type EntregaMateria,
-  type Estudiante,
-  type Materia,
-} from './api';
+import { descargarArchivoApi, ejecutarCentralizacionApi, obtenerCentralizadorApi } from './api';
 import { descargarBlob } from './boletin';
 
 /**
@@ -37,9 +23,10 @@ export interface FilaCentralizador {
   estudiante: string;
   /** Notas por ID de materia (escala 1 a 100, D1) */
   notas: Record<number, number | null>;
-  /** Promedio trimestral consolidado (D2/D12) */
+  /** Promedio de las notas de las materias: indicador con dos decimales (D12), no nota oficial */
   promedioTrimestral: number | null;
-  /** Observación reglamentaria: APROBADO (>= 51) o REPROBADO (< 51) */
+  materiasReprobadas?: number;
+  /** Aprueba si aprueba todas sus materias (>= 51); pendiente si a alguna le falta nota (D21) */
   observacion: 'APROBADO' | 'REPROBADO' | 'PENDIENTE';
 }
 
@@ -85,139 +72,9 @@ export interface CentralizadorCursoData {
   materias: MateriaCentralizador[];
   filas: FilaCentralizador[];
   resumen: ResumenCentralizador;
-  fechaCentralizacion?: string;
-}
-
-/**
- * Evalúa las materias del curso y determina cuáles faltan entregar para el trimestre (US-09 CA 3 y US-10).
- */
-export function evaluarEntregasCurso(
-  materiasCurso: Materia[],
-  entregas: EntregaMateria[],
-): {
-  todasEntregadas: boolean;
-  materiasPendientes: MateriaPendienteCentralizacion[];
-  materiasEntregadas: number;
-  totalMaterias: number;
-} {
-  const materiasPendientes: MateriaPendienteCentralizacion[] = [];
-  let materiasEntregadas = 0;
-
-  for (const m of materiasCurso) {
-    const entrega = entregas.find((e) => e.materiaId === m.id);
-    if (entrega && entrega.estado === 'ENTREGADO') {
-      materiasEntregadas++;
-    } else {
-      materiasPendientes.push({
-        materiaId: m.id,
-        materia: m.nombre,
-        profesor: entrega?.profesor || (m.profesor ? m.profesor.nombre : 'Sin profesor asignado'),
-        notasFaltantes: entrega?.notasFaltantes,
-      });
-    }
-  }
-
-  const todasEntregadas = materiasCurso.length > 0 && materiasPendientes.length === 0;
-
-  return {
-    todasEntregadas,
-    materiasPendientes,
-    materiasEntregadas,
-    totalMaterias: materiasCurso.length,
-  };
-}
-
-/**
- * Calcula el promedio trimestral redondeado según la regla ministerial D2 (ROUND_HALF_UP).
- */
-export function redondearNotaMinisterial(valor: number): number {
-  return Math.round(valor);
-}
-
-/**
- * Calcula las filas consolidadas y métricas de la planilla centralizadora (US-09 CA 1).
- */
-export function construirFilasCentralizador(
-  estudiantes: Estudiante[],
-  materias: MateriaCentralizador[],
-  notasPorEstudianteYMateria: Record<number, Record<number, number | null>>,
-): { filas: FilaCentralizador[]; resumen: ResumenCentralizador } {
-  let sumaPromedios = 0;
-  let conteoConPromedio = 0;
-  let aprobados = 0;
-  let reprobados = 0;
-  let pendientes = 0;
-
-  const filas: FilaCentralizador[] = estudiantes.map((e, index) => {
-    const notasEstudiante = notasPorEstudianteYMateria[e.id] ?? {};
-    const notasMaterias: Record<number, number | null> = {};
-
-    let sumaNotasValidas = 0;
-    let materiasConNota = 0;
-
-    for (const m of materias) {
-      const nota = notasEstudiante[m.id] ?? null;
-      notasMaterias[m.id] = nota;
-      if (nota !== null && Number.isFinite(nota)) {
-        sumaNotasValidas += nota;
-        materiasConNota++;
-      }
-    }
-
-    let promedioTrimestral: number | null = null;
-    let observacion: 'APROBADO' | 'REPROBADO' | 'PENDIENTE' = 'PENDIENTE';
-
-    // Si tiene notas en todas las materias del curso, se calcula el promedio consolidado oficial
-    if (materias.length > 0 && materiasConNota === materias.length) {
-      promedioTrimestral = redondearNotaMinisterial(sumaNotasValidas / materias.length);
-      if (promedioTrimestral >= 51) {
-        observacion = 'APROBADO';
-        aprobados++;
-      } else {
-        observacion = 'REPROBADO';
-        reprobados++;
-      }
-      sumaPromedios += promedioTrimestral;
-      conteoConPromedio++;
-    } else if (materiasConNota > 0) {
-      // Cálculo parcial en elaboración
-      promedioTrimestral = Math.round((sumaNotasValidas / materiasConNota) * 10) / 10;
-      observacion = promedioTrimestral >= 51 ? 'APROBADO' : 'REPROBADO';
-      pendientes++;
-    } else {
-      pendientes++;
-    }
-
-    return {
-      numero: index + 1,
-      estudianteId: e.id,
-      codigoRude: e.codigoRude,
-      ci: e.ci ?? null,
-      apellidos: e.apellidos,
-      nombres: e.nombres,
-      estudiante: `${e.apellidos}, ${e.nombres}`,
-      notas: notasMaterias,
-      promedioTrimestral,
-      observacion,
-    };
-  });
-
-  const promedioGeneral =
-    conteoConPromedio > 0 ? Math.round((sumaPromedios / conteoConPromedio) * 10) / 10 : null;
-
-  const evaluados = aprobados + reprobados;
-  const tasaAprobacion = evaluados > 0 ? Math.round((aprobados / evaluados) * 1000) / 10 : null;
-
-  const resumen: ResumenCentralizador = {
-    totalEstudiantes: estudiantes.length,
-    promedioGeneral,
-    aprobados,
-    reprobados,
-    pendientes,
-    tasaAprobacion,
-  };
-
-  return { filas, resumen };
+  /** Ya se centralizó el curso en el trimestre: desde entonces se exporta la planilla oficial (D21). */
+  centralizado: boolean;
+  fechaCentralizacion: string | null;
 }
 
 /**
@@ -296,163 +153,52 @@ export function descargarCentralizadorCsv(
 }
 
 /**
- * Obtiene la planilla consolidada de un curso y trimestre.
- * Si el backend expone `/centralizador/cursos/:cursoId`, lo consulta directamente.
- * Caso contrario, consolida los datos existentes de cursos, materias, entregas y estudiantes.
+ * Planilla consolidada de un curso y trimestre (US-09 CA 1 y CA 3), calculada por la API (T-057, decisión D21).
+ * Sin datos armados en el navegador: si la API falla, la pantalla muestra el error.
  */
-export async function obtenerCentralizadorCurso(
+export function obtenerCentralizadorCurso(
   cursoId: number,
   trimestreId: number,
 ): Promise<CentralizadorCursoData> {
-  try {
-    return await obtenerCentralizadorApi<CentralizadorCursoData>(cursoId, trimestreId);
-  } catch {
-    // Modo de integración resiliente con servicios de backend existentes (US-10, US-18)
-    const [gestiones, cursos, materias] = await Promise.all([
-      listarGestiones(),
-      listarCursos({}),
-      listarMaterias({ cursoId }),
-    ]);
-
-    const gestionActiva = gestiones[0] ?? { id: 1, anio: 2026 };
-    const trimestres = await listarTrimestres(gestionActiva.id);
-    const trimestreActivo = trimestres.find((t) => t.id === trimestreId) ??
-      trimestres[0] ?? { id: 1, numero: 1, cerrado: false };
-
-    const cursoActivo =
-      cursos.find((c) => c.id === cursoId) ??
-      ({ id: cursoId, nombre: `Curso ${cursoId}` } as Curso);
-
-    const estudiantes = await listarEstudiantes({ cursoId });
-    const entregas = await obtenerControlEntregas(gestionActiva.id, trimestreActivo.id);
-    const entregasCurso = entregas.filter((e) => e.cursoId === cursoId);
-
-    const { todasEntregadas, materiasPendientes } = evaluarEntregasCurso(materias, entregasCurso);
-
-    const materiasCentralizador: MateriaCentralizador[] = materias.map((m) => ({
-      id: m.id,
-      nombre: m.nombre,
-      profesor: m.profesor?.nombre,
-    }));
-
-    // Simulación / recopilación de notas existentes
-    const notasPorEstudianteYMateria: Record<number, Record<number, number | null>> = {};
-    for (const e of estudiantes) {
-      notasPorEstudianteYMateria[e.id] = {};
-      for (const m of materias) {
-        const entrega = entregasCurso.find((ent) => ent.materiaId === m.id);
-        // Si está entregada, simulamos notas regulares o consulta si existieran
-        if (entrega && entrega.estado === 'ENTREGADO') {
-          // Genera una nota sintética consistente para pruebas si no hay endpoint
-          const notaBase = 60 + ((e.id * 7 + m.id * 13) % 36);
-          notasPorEstudianteYMateria[e.id][m.id] = notaBase;
-        } else {
-          notasPorEstudianteYMateria[e.id][m.id] = null;
-        }
-      }
-    }
-
-    const { filas, resumen } = construirFilasCentralizador(
-      estudiantes,
-      materiasCentralizador,
-      notasPorEstudianteYMateria,
-    );
-
-    return {
-      curso: {
-        id: cursoActivo.id,
-        nombre: cursoActivo.nombre,
-        nivel: cursoActivo.nivel,
-        anioEscolaridad: cursoActivo.anioEscolaridad,
-        paralelo: cursoActivo.paralelo,
-      },
-      gestion: {
-        id: gestionActiva.id,
-        anio: gestionActiva.anio,
-      },
-      trimestre: {
-        id: trimestreActivo.id,
-        numero: trimestreActivo.numero,
-        cerrado: trimestreActivo.cerrado,
-      },
-      unidadEducativa: {
-        nombre: 'Unidad Educativa',
-        codigoSie: '80980123',
-      },
-      todasEntregadas,
-      materiasPendientes,
-      materias: materiasCentralizador,
-      filas,
-      resumen,
-    };
-  }
+  return obtenerCentralizadorApi<CentralizadorCursoData>(cursoId, trimestreId);
 }
 
 /**
- * Ejecuta la centralización oficial del trimestre para un curso (US-09 CA 1).
+ * Ejecuta la centralización oficial del trimestre para un curso (US-09 CA 1). La API la rechaza (422) y lista las
+ * materias pendientes si falta alguna entrega (CA 3).
  */
-export async function ejecutarCentralizacionCurso(
+export function ejecutarCentralizacionCurso(
   cursoId: number,
   trimestreId: number,
   cerrarTrimestre = false,
 ): Promise<{ exito: boolean; mensaje: string; centralizador?: CentralizadorCursoData }> {
-  try {
-    return await ejecutarCentralizacionApi<{
-      exito: boolean;
-      mensaje: string;
-      centralizador?: CentralizadorCursoData;
-    }>(cursoId, trimestreId, cerrarTrimestre);
-  } catch {
-    // Si no está el endpoint en backend todavía, validamos con la lógica de negocio del frontend
-    const datos = await obtenerCentralizadorCurso(cursoId, trimestreId);
-    if (!datos.todasEntregadas) {
-      throw new Error(
-        `No se puede centralizar el trimestre: existen ${datos.materiasPendientes.length} materia(s) pendientes de entrega.`,
-      );
-    }
-    return {
-      exito: true,
-      mensaje: `Centralización ejecutada exitosamente para ${datos.curso.nombre}. Planilla consolidada generada.`,
-      centralizador: datos,
-    };
-  }
+  return ejecutarCentralizacionApi<{
+    exito: boolean;
+    mensaje: string;
+    centralizador?: CentralizadorCursoData;
+  }>(cursoId, trimestreId, cerrarTrimestre);
 }
 
-/**
- * Descarga el centralizador oficial en PDF generado por el backend (US-09 CA 2).
- */
+/** Descarga la planilla oficial en PDF generada por la API (US-09 CA 2, T-058). */
 export async function descargarCentralizadorPdf(
   cursoId: number,
   trimestreId: number,
   nombreArchivo?: string,
 ): Promise<void> {
-  try {
-    const blob = await descargarArchivoApi(
-      `/centralizador/cursos/${cursoId}/pdf?trimestreId=${trimestreId}`,
-    );
-    descargarBlob(blob, nombreArchivo ?? `Centralizador_Curso_${cursoId}_T${trimestreId}.pdf`);
-  } catch {
-    // Fallback: descargar CSV estructurado si el motor PDFKit de backend aún no está conectado
-    const datos = await obtenerCentralizadorCurso(cursoId, trimestreId);
-    descargarCentralizadorCsv(datos, nombreArchivo?.replace('.pdf', '.csv'));
-  }
+  const blob = await descargarArchivoApi(
+    `/centralizador/cursos/${cursoId}/pdf?trimestreId=${trimestreId}`,
+  );
+  descargarBlob(blob, nombreArchivo ?? `Centralizador_Curso_${cursoId}_T${trimestreId}.pdf`);
 }
 
-/**
- * Descarga el centralizador oficial en Excel (.xlsx) generado por el backend (US-09 CA 2).
- */
+/** Descarga la planilla oficial en Excel (.xlsx) generada por la API (US-09 CA 2, T-058). */
 export async function descargarCentralizadorExcel(
   cursoId: number,
   trimestreId: number,
   nombreArchivo?: string,
 ): Promise<void> {
-  try {
-    const blob = await descargarArchivoApi(
-      `/centralizador/cursos/${cursoId}/excel?trimestreId=${trimestreId}`,
-    );
-    descargarBlob(blob, nombreArchivo ?? `Centralizador_Curso_${cursoId}_T${trimestreId}.xlsx`);
-  } catch {
-    const datos = await obtenerCentralizadorCurso(cursoId, trimestreId);
-    descargarCentralizadorCsv(datos, nombreArchivo?.replace('.xlsx', '.csv'));
-  }
+  const blob = await descargarArchivoApi(
+    `/centralizador/cursos/${cursoId}/excel?trimestreId=${trimestreId}`,
+  );
+  descargarBlob(blob, nombreArchivo ?? `Centralizador_Curso_${cursoId}_T${trimestreId}.xlsx`);
 }

@@ -301,20 +301,25 @@ export function Centralizador() {
                 type="button"
                 className="boton boton-primario"
                 data-cy="boton-ejecutar-centralizacion"
-                disabled={!datos.todasEntregadas || procesando}
+                disabled={!datos.todasEntregadas || datos.centralizado || procesando}
                 onClick={() => {
                   void handleEjecutarCentralizacion();
                 }}
               >
                 <Icono nombre="tabla" />
-                <span>Ejecutar Centralización Oficial</span>
+                <span>
+                  {datos.centralizado
+                    ? `Centralizado el ${new Date(datos.fechaCentralizacion ?? '').toLocaleDateString('es-BO')}`
+                    : 'Ejecutar Centralización Oficial'}
+                </span>
               </button>
 
               <button
                 type="button"
                 className="boton boton-secundario"
                 data-cy="boton-exportar-pdf"
-                disabled={procesando}
+                disabled={!datos.centralizado || procesando}
+                title={datos.centralizado ? undefined : 'Primero ejecute la centralización'}
                 onClick={() => {
                   void handleExportarPdf();
                 }}
@@ -327,7 +332,8 @@ export function Centralizador() {
                 type="button"
                 className="boton boton-secundario"
                 data-cy="boton-exportar-excel"
-                disabled={procesando}
+                disabled={!datos.centralizado || procesando}
+                title={datos.centralizado ? undefined : 'Primero ejecute la centralización'}
                 onClick={() => {
                   void handleExportarExcel();
                 }}

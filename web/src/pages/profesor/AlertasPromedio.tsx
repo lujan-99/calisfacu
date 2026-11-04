@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dialogo } from '../../componentes/Dialogo';
-import { Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
+import { Aviso, Cargando, ErrorCarga, Vacio } from '../../componentes/Estados';
 import { Icono } from '../../componentes/Icono';
 import { misMaterias, type Materia } from '../../lib/api';
 import {
@@ -29,6 +29,7 @@ export function AlertasPromedio() {
   const [notaAtencion, setNotaAtencion] = useState<string>('');
   const [guardandoAtencion, setGuardandoAtencion] = useState<boolean>(false);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [errorAccion, setErrorAccion] = useState<string | null>(null);
 
   // Carga paralela de materias del profesor y alertas automáticas
   const { carga, recargar } = useCarga(async () => {
@@ -51,8 +52,15 @@ export function AlertasPromedio() {
 
   const handleMarcarLeida = async (alerta: AlertaPromedioBajo) => {
     if (alerta.leida) return;
-    await marcarAlertaLeidaApi(alerta.id);
-    recargar();
+    setErrorAccion(null);
+    try {
+      await marcarAlertaLeidaApi(alerta.id);
+      recargar();
+    } catch (err) {
+      setErrorAccion(
+        err instanceof Error ? err.message : 'No se pudo marcar la alerta como leída.',
+      );
+    }
   };
 
   const abrirModalAtencion = (alerta: AlertaPromedioBajo) => {
@@ -69,8 +77,12 @@ export function AlertasPromedio() {
         notaAtencion.trim() || 'Contacto realizado con el tutor.',
       );
       setMensajeExito(res.mensaje);
+      setErrorAccion(null);
       setAlertaParaAtender(null);
       recargar();
+    } catch (err) {
+      setErrorAccion(err instanceof Error ? err.message : 'No se pudo registrar la atención.');
+      setAlertaParaAtender(null);
     } finally {
       setGuardandoAtencion(false);
     }
@@ -132,6 +144,12 @@ export function AlertasPromedio() {
           <span className="hero-metrica-etiqueta">Correos Enviados (&lt; 5 min)</span>
         </div>
       </section>
+
+      {errorAccion && (
+        <Aviso tipo="error" cy="aviso-error-alertas">
+          {errorAccion}
+        </Aviso>
+      )}
 
       {/* Mensaje de Éxito */}
       {mensajeExito && (

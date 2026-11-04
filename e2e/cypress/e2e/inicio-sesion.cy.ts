@@ -4,7 +4,7 @@ const ROLES = [
     rol: 'Profesor',
     email: 'profesorEmail',
     inicio: '/profesor/materias',
-    menu: ['Mis materias'],
+    menu: ['Mis materias', 'Alertas tempranas'],
   },
   {
     rol: 'Secretaria',
@@ -15,6 +15,7 @@ const ROLES = [
       'Estudiantes',
       'Materias y asignaciones',
       'Control de entregas',
+      'Centralizador de notas',
       'Vínculos familiares',
       'Publicación de boletines',
       'Unidad educativa',

@@ -5,8 +5,7 @@ Marque cada casilla al terminar.
 
 ## 1. Apenas termine la RC3 (Jenkins `calisfacu » v1.0.0-rc.3`)
 
-- [ ] `scripts/completar-rc3.sh` → baja los resultados de JMeter, llena la sección 12 del informe y regenera el PDF.
-- [ ] Revisar y hacer commit (el script imprime el comando).
+- [x] RC3 completada (04/11): boletín p95 22 ms, planilla p95 2,25 s, 0 % de errores.
 
 ## 2. Correo real en staging (10 minutos)
 
@@ -40,7 +39,7 @@ Marque cada casilla al terminar.
 
 ## 5. Decisión pendiente del equipo
 
-- [ ] Umbral de p95 para «registrar planilla» en la etapa Rendimiento (propuesta en
+- [ ] Umbral de p95 para «registrar planilla» (RC1 178 ms; RC2 51,5 s; RC3 2,25 s porque la prueba acumula miles de actividades en una materia y la consulta de alertas crece con ellas; propuesta en
       `docs/evidencias/v1.0.0-rc.2/README.md`; cambio al SQAP, Sección 16).
 
 ## 6. Release v1.0 (T-069), al final

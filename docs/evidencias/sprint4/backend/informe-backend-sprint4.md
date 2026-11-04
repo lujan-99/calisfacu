@@ -352,8 +352,8 @@ la etapa **Rendimiento**: JMeter con 100 usuarios durante 10 minutos por plan, s
 
 | Plan                           | RC1 p95 | RC2 p95       | RC3 p95  | Errores (M04) | Umbral                         |
 | ------------------------------ | ------- | ------------- | -------- | ------------- | ------------------------------ |
-| Boletín de un estudiante (M03) | 39 ms   | 25 ms         | en curso | 0 %           | p95 ≤ 2000 ms                  |
-| Registrar planilla             | 178 ms  | **51 548 ms** | en curso | 0 %           | Solo tasa de error < 1 % (M04) |
+| Boletín de un estudiante (M03) | 39 ms   | 25 ms         | 22 ms    | 0 %           | p95 ≤ 2000 ms                  |
+| Registrar planilla             | 178 ms  | **51 548 ms** | 2 253 ms | 0 %           | Solo tasa de error < 1 % (M04) |
 
 **Hallazgo de la RC2.** M03 y M04 se cumplieron y el pipeline quedó en verde, pero la planilla pasó de 178 ms a 51,5 s
 de p95 (de unas 88 a 4,4 peticiones por segundo). La causa fue T-060: después de cada registro, las alertas cargaban
@@ -361,7 +361,7 @@ todas las notas de los estudiantes en la materia, y en la prueba de carga (que c
 materia) cada petición tardaba más que la anterior. Se corrigió en `86b4f59`: PostgreSQL suma las notas por estudiante
 y dimensión y `CalculoService.notaTrimestralAgregada` (módulo crítico, con TDD y una prueba de equivalencia con el
 cálculo original) obtiene la misma nota. En local, con 100 usuarios durante 3 minutos, el p95 quedó estable en 478 ms
-(Figura 25); la RC3 (`v1.0.0-rc.3`, Jenkins `calisfacu » v1.0.0-rc.3` #1) lo mide con la carga completa: al terminar, sus resultados quedan en los artefactos de ese build.
+(Figura 25); la RC3 (`v1.0.0-rc.3`, Jenkins `calisfacu » v1.0.0-rc.3` #1) lo midió con la carga completa (SUCCESS): planilla p95 2 253 ms, 51.2 peticiones/s y 0.0 % de errores.
 
 **Propuesta:** el SQAP no tiene umbral de tiempo para «registrar planilla», y por eso la regresión no detuvo el pipeline.
 Se propone agregarlo (cambio de umbral: lo deciden los dos integrantes con el procedimiento de la Sección 16). La

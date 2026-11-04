@@ -1,6 +1,14 @@
-"""Genera docs/backlog/*.md y docs/historias/*.md desde backlog_v2_4sprints.xlsx (fuente del curso)."""
+"""Genera docs/backlog/backlog.md y docs/backlog/tareas-transversales.md desde backlog_v2_4sprints.xlsx.
+
+Las historias (docs/historias/), reglas-ministerio.md y api/test/fixtures/casos-calculo.json se mantienen a mano desde
+el Sprint 2: tienen decisiones (D1 a D23), estados y los 13 casos frontera de M01 que el Excel no tiene. Antes este
+script los sobrescribía y borraba ese trabajo. Para regenerarlos igual (por ejemplo, al empezar un backlog nuevo):
+    python3 docs/herramientas/gen_backlog_md.py --todo
+El JSON de casos nunca se reemplaza por uno con menos casos.
+"""
 import json
 import re
+import sys
 
 import openpyxl
 
@@ -143,7 +151,9 @@ R = ['# Reglas de evaluación del Ministerio de Educación', '',
      '- Reglamento de Evaluación RM 0190/2024: evaluación trimestral.',
      '- Escala de 1 a 100 y aprobación con 51: vigente desde 2013.',
      '- Verificar contra el texto oficial antes de firmar la tabla.']
-open(f'{DOCS}/backlog/reglas-ministerio.md', 'w').write('\n'.join(R) + '\n')
+TODO = '--todo' in sys.argv
+if TODO:
+    open(f'{DOCS}/backlog/reglas-ministerio.md', 'w').write('\n'.join(R) + '\n')
 
 for h in hist:
     L = [f"# {h['id']} · {h['alias']}", '',
@@ -161,7 +171,8 @@ for h in hist:
           '- [ ] Cumple la Definition of Ready (`docs/backlog/backlog.md`).',
           '- [ ] No quedan ❓ sin respuesta del cliente.',
           '- [ ] Se trabaja directo en `develop`, con commits que citan la historia (ADR-0008).']
-    open(f"{DOCS}/historias/{archivo(h)}", 'w').write('\n'.join(L) + '\n')
+    if TODO:
+        open(f"{DOCS}/historias/{archivo(h)}", 'w').write('\n'.join(L) + '\n')
 
 tr = sorted([t for k, v in T.items() if k in ('Calidad', 'Infra') for t in v], key=lambda t: t['id'])
 open(f'{DOCS}/backlog/tareas-transversales.md', 'w').write('\n'.join([
@@ -171,5 +182,10 @@ open(f'{DOCS}/backlog/tareas-transversales.md', 'w').write('\n'.join([
 
 casos = [dict(caso=c[0], promedios=dict(SER=c[1], SABER=c[2], HACER=c[3], AUTOEVALUACION=c[4]),
               sinRedondear=c[9], nota=c[10], resultado=c[11]) for c in CAS]
-json.dump(casos, open(RAIZ / 'api/test/fixtures/casos-calculo.json', 'w'), ensure_ascii=False, indent=2)
-print('historias', len(hist))
+FIXTURE = RAIZ / 'api/test/fixtures/casos-calculo.json'
+actuales = json.loads(FIXTURE.read_text()) if FIXTURE.exists() else []
+if TODO and len(casos) >= len(actuales):
+    json.dump(casos, open(FIXTURE, 'w'), ensure_ascii=False, indent=2)
+elif TODO:
+    print(f'casos-calculo.json no se reemplaza: tiene {len(actuales)} casos y el Excel {len(casos)}')
+print('historias', len(hist), '(escritas)' if TODO else '(sin tocar; use --todo)')

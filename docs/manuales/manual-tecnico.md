@@ -197,16 +197,16 @@ sistema).
 
 ## 11. Problemas conocidos y solución
 
-| Síntoma                                                                            | Causa y solución                                                                                                      |
-| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| La API de Render no arranca: `Cannot find module 'bullmq'`                         | La imagen no copió `api/node_modules` (CAL-001). Ya corregido en `api/Dockerfile`; la imagen lo verifica al construir |
-| La restauración del respaldo falla con permisos del rol `postgres`                 | Restaurar con `--no-owner --no-privileges` (CAL-002)                                                                  |
-| El límite de inicios de sesión no corta en Render                                  | `TRUST_PROXY` debe ser `2`                                                                                            |
-| La web muestra «No se pudo conectar» en local                                      | `VITE_API_URL` sin `/api` o `CORS_ORIGINS` sin el origen de la web                                                    |
-| La e2e de la cola de boletines falla solo en local                                 | Hay otra API usando el mismo Redis (ver Sección 6)                                                                    |
-| `npm install` no aplica un `overrides` nuevo                                       | Usar `npm update <paquete>`                                                                                           |
-| Al guardar el backlog `.xlsx` con un script se pierden los valores de las fórmulas | Recalcular con `soffice --headless --convert-to xlsx`                                                                 |
-| `docs/herramientas/gen_backlog_md.py` pisa las historias y `reglas-ministerio.md`  | Después de correrlo, revertir esos archivos y conservar `backlog.md`                                                  |
+| Síntoma                                                                            | Causa y solución                                                                                                                                           |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| La API de Render no arranca: `Cannot find module 'bullmq'`                         | La imagen no copió `api/node_modules` (CAL-001). Ya corregido en `api/Dockerfile`; la imagen lo verifica al construir                                      |
+| La restauración del respaldo falla con permisos del rol `postgres`                 | Restaurar con `--no-owner --no-privileges` (CAL-002)                                                                                                       |
+| El límite de inicios de sesión no corta en Render                                  | `TRUST_PROXY` debe ser `2`                                                                                                                                 |
+| La web muestra «No se pudo conectar» en local                                      | `VITE_API_URL` sin `/api` o `CORS_ORIGINS` sin el origen de la web                                                                                         |
+| La e2e de la cola de boletines falla solo en local                                 | Hay otra API usando el mismo Redis (ver Sección 6)                                                                                                         |
+| `npm install` no aplica un `overrides` nuevo                                       | Usar `npm update <paquete>`                                                                                                                                |
+| Al guardar el backlog `.xlsx` con un script se pierden los valores de las fórmulas | Recalcular con `soffice --headless --convert-to xlsx`                                                                                                      |
+| Las historias o los 13 casos de M01 vuelven a un estado viejo                      | Se corrió una versión anterior de `gen_backlog_md.py`; desde el 04/11/2026 solo regenera `backlog.md` y `tareas-transversales.md` (`--todo` para lo demás) |
 
 ## 12. Referencias
 

@@ -58,7 +58,7 @@ npm run ci:local                         # todas las etapas de Jenkins en local
 10. **Secretos:** nunca en el código ni en los logs. Usar variables de entorno (`.env.example` lista las necesarias).
 11. **Dependencias:** licencia MIT, Apache-2.0, BSD, ISC o 0BSD; justificar en el commit; si la dependencia tiene scripts de instalación, apruébelos con `npm install-scripts approve` y agregar la fila en `docs/sqap/matrices-sqap.xlsx` (hoja Componentes de terceros). `npm audit --audit-level=high` debe pasar.
 12. **Umbrales:** no baje un umbral para que el pipeline pase. Un umbral cambia solo con el procedimiento del SQAP (Sección 16): SQAP, matrices y configuración en el mismo commit.
-13. **Documentación viva:** si cambia el comportamiento, actualice en el mismo commit la historia, el SRS, el SAD o el SQAP que corresponda. Si cambia el Excel del backlog, regenere el Markdown con `python3 docs/herramientas/gen_backlog_md.py`.
+13. **Documentación viva:** si cambia el comportamiento, actualice en el mismo commit la historia, el SRS, el SAD o el SQAP que corresponda. Si cambia el Excel del backlog, regenere `backlog.md` y `tareas-transversales.md` con `python3 docs/herramientas/gen_backlog_md.py` (las historias, `reglas-ministerio.md` y `casos-calculo.json` se mantienen a mano; guardar el Excel con openpyxl borra los valores de las fórmulas: recalcúlelo con `soffice --headless --convert-to xlsx`).
 14. **Si un requisito es ambiguo**, decida una regla razonable, documéntela en el mismo commit (historia, `reglas-ministerio.md` o un ADR) e informe la decisión. Las decisiones vigentes están en `docs/backlog/reglas-ministerio.md` (D1 a D23).
 
 ## Convenciones de código

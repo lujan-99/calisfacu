@@ -26,7 +26,7 @@ describe('Seguridad del inicio de sesión (CAL-003, CAL-004)', () => {
     const r = await login({ email: 123 }).expect(400);
     expect((r.body as { message: string[] }).message).toEqual([
       'El campo «email» debe ser un correo electrónico válido',
-      'El campo «contrasena» debe tener al menos 1 caracteres',
+      'El campo «contrasena» debe tener al menos 1 carácter',
       'El campo «contrasena» debe ser un texto',
     ]);
   });

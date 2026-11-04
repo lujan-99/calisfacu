@@ -43,8 +43,8 @@ tres avisos informativos de caché.
 | --- | --------- | ---------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
 | H1  | A05       | La API no enviaba cabeceras de seguridad y anunciaba `X-Powered-By: Express` | Media     | Corregido: `ff7cd22` y `6ba9d85` (helmet; 5 pruebas en `app.setup.spec.ts`)                                      |
 | H2  | A05       | La web no tenía CSP ni protección contra clickjacking                        | Media     | Corregido: `9a070b0` (`render.yaml`); verificado con Chromium sin violaciones de CSP                             |
-| H3  | A04, A07  | El inicio de sesión no limita peticiones por IP                              | Media     | Abierto: CAL-003 (#74), Sprint 4                                                                                 |
-| H4  | A05       | Los mensajes de validación salen en inglés                                   | Baja      | Abierto: CAL-004 (#75)                                                                                           |
+| H3  | A04, A07  | El inicio de sesión no limita peticiones por IP                              | Media     | Corregido: CAL-003 (#74), `LimiteLoginGuard`                                                                     |
+| H4  | A05       | Los mensajes de validación salen en inglés                                   | Baja      | Corregido: CAL-004 (#75), `pipeValidacion`                                                                       |
 | H5  | A08       | La hoja de Google Fonts se carga sin SRI                                     | Baja      | Aceptado: Google cambia el CSS por navegador y SRI lo rompería; la CSP limita el origen a `fonts.googleapis.com` |
 
 ## 4. Decisión

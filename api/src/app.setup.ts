@@ -1,6 +1,8 @@
-import { ValidationPipe, type INestApplication } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import { pipeValidacion } from './common/validacion';
 
 /** Configuración común de la aplicación: la usan main.ts y las pruebas e2e. */
 export function configurarApp(app: INestApplication): INestApplication {
@@ -17,10 +19,12 @@ export function configurarApp(app: INestApplication): INestApplication {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
+  // CAL-003: detrás del proxy de Render, la IP del cliente sale de X-Forwarded-For (número de saltos de confianza).
+  const saltos = Number(process.env.TRUST_PROXY ?? 0);
+  if (saltos > 0) (app as NestExpressApplication).set('trust proxy', saltos);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
-  );
+  // CAL-004: mensajes de validación en español.
+  app.useGlobalPipes(pipeValidacion());
   app.enableCors({ origin: (process.env.CORS_ORIGINS ?? 'http://localhost:5173').split(',') });
   if (!produccion) {
     const doc = new DocumentBuilder()

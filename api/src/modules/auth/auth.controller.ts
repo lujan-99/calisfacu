@@ -1,7 +1,8 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Publico, UsuarioActual, type UsuarioToken } from '../../common/decoradores';
 import { AuthService } from './auth.service';
+import { LimiteLoginGuard } from './limite-login.guard';
 import { LoginDto } from './login.dto';
 
 @ApiTags('auth')
@@ -10,6 +11,7 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @Publico()
+  @UseGuards(LimiteLoginGuard)
   @Post('login')
   @HttpCode(200)
   login(@Body() dto: LoginDto) {

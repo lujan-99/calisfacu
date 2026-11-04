@@ -113,6 +113,7 @@ pipeline {
         DATABASE_URL = "postgresql://calis:calis@postgres-ci:5432/${env.DB_NAME}_perf"
         JWT_SECRET = 'solo-para-la-prueba-de-carga'
         NODE_ENV = 'perf'
+        LIMITE_LOGIN_POR_MINUTO = '0'                       // CAL-003: los 100 usuarios de JMeter entran desde una IP
       }
       steps {
         sh 'createdb "${DB_NAME}_perf" && npm run -w api db:migrate && npm run -w api seed:perf'

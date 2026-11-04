@@ -3,6 +3,12 @@
 > SQAP, Secciones 7 y 12 (Tabla 8). Elaborado el 02/11/2026 por Galvan (Tester SQA / Dev Frontend) y verificado con la configuración de calidad del proyecto.
 > Cobertura de historias del Sprint 4: **US-09 (Centralización de notas)**, **US-08 (Alerta de promedio bajo)** y **US-12 (Aviso de boletín disponible)**.
 
+> **Nota de la auditoría T-068 (04/11/2026, Lujan):** las ejecuciones de este informe son reales (las 222 pruebas de la
+> web corren en `8b24a26`), pero sus pruebas validaban datos armados en el navegador mientras la API no existía, y la
+> tabla de métricas presenta como M02 pruebas unitarias (M02 son los escenarios de Cypress) y declara M05, M06, M07, M09 y
+> M10 sin medirlos. Ver `docs/actas/auditoria-cierre-sprint4-pruebas.md` y, para el estado verificado,
+> `informe-cumplimiento-sprint4.md` y `backend/informe-backend-sprint4.pdf`.
+
 - **Rama:** `develop` (ADR-0008).
 - **Ambiente:** Local verificado con PostgreSQL 16 y Redis 7 (Docker).
 - **Evidencias archivadas en esta carpeta:** `junit-web.xml`, `junit-api.xml` y la subcarpeta `capturas/` con capturas PNG de la consola Git Bash y registros `.txt` completos de cada comando ejecutado.

@@ -193,13 +193,16 @@ function dibujarHoja(doc: PDFKit.PDFDocument, h: HojaPlanilla) {
 
   const total = h.anchos.reduce((s, a) => s + a, 0);
   const anchos = h.anchos.map((a) => (a / total) * ancho);
-  const fila = (celdas: string[], negrita: boolean) => {
+  const fila = (celdas: string[], negrita: boolean): void => {
     doc.font(negrita ? 'Helvetica-Bold' : 'Helvetica').fontSize(8);
     const alto =
       Math.max(...celdas.map((c, i) => doc.heightOfString(c, { width: anchos[i] - 6 }))) + 6;
     if (doc.y + alto > doc.page.height - MARGEN) {
       doc.addPage();
       doc.y = MARGEN;
+      // En la página que continúa, se repiten los títulos de las columnas.
+      if (!negrita) fila(h.columnas, true);
+      doc.font('Helvetica').fontSize(8);
     }
     const y = doc.y;
     let x = MARGEN;

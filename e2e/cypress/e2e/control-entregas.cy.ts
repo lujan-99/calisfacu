@@ -3,6 +3,10 @@
 
 describe('Control de entrega de notas por curso (US-10, T-040)', () => {
   beforeEach(() => {
+    // Sin caché: un 304 llega sin cuerpo y las pruebas necesitan saber qué materias hay en cada estado.
+    cy.intercept('GET', '**/api/entregas*', (req) => {
+      delete req.headers['if-none-match'];
+    }).as('entregas');
     cy.ingresar(Cypress.env('secretariaEmail') as string);
     cy.get('[data-cy=menu-control-entregas]').click();
   });
@@ -17,12 +21,19 @@ describe('Control de entrega de notas por curso (US-10, T-040)', () => {
   });
 
   it('debe permitir filtrar por estado de entrega (pendientes vs entregados)', () => {
-    // Filtrar solo pendientes
-    cy.get('[data-cy=filtro-estado]').select('PENDIENTE');
-    cy.get('[data-cy=badge-pendiente]').should('be.visible');
+    // La base es compartida (staging): según lo que ya se entregó, puede no haber pendientes o entregadas.
+    cy.wait('@entregas').then(({ response }) => {
+      const estados = (response?.body as { estado: string }[]).map((x) => x.estado);
+      const pendientes = estados.filter((e) => e === 'PENDIENTE').length;
+      const entregadas = estados.length - pendientes;
 
-    // Filtrar solo entregadas
-    cy.get('[data-cy=filtro-estado]').select('ENTREGADO');
+      cy.get('[data-cy=filtro-estado]').select('PENDIENTE');
+      cy.get('[data-cy=fila-entrega-materia]').should('have.length', pendientes);
+      if (pendientes > 0) cy.get('[data-cy=badge-pendiente]').should('be.visible');
+
+      cy.get('[data-cy=filtro-estado]').select('ENTREGADO');
+      cy.get('[data-cy=fila-entrega-materia]').should('have.length', entregadas);
+    });
   });
 
   it('debe permitir buscar materias o profesores por nombre', () => {
